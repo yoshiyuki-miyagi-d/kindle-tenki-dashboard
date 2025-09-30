@@ -57,6 +57,21 @@
                     {{end}}
                 </div>
             </section>
+
+            <section class="news">
+                <h3>NHKニュース</h3>
+                <div class="news-list">
+                    {{range .News}}
+                    <article class="news-item">
+                        <div class="news-header">
+                            <h4 class="news-title">{{.Title}}</h4>
+                            <span class="news-date">{{.PubDate}}</span>
+                        </div>
+                        <p class="news-description">{{.Description}}</p>
+                    </article>
+                    {{end}}
+                </div>
+            </section>
         </main>
 
         <footer>
