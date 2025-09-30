@@ -1,0 +1,167 @@
+/* Kindle Paperwhite最適化CSS */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Georgia", "Times", serif;
+    font-size: 18px;
+    line-height: 1.6;
+    color: #000;
+    background: #fff;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.container {
+    border: 2px solid #000;
+    padding: 16px;
+}
+
+/* ヘッダー */
+header {
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.update-time {
+    font-size: 14px;
+    color: #333;
+}
+
+/* メインコンテンツ */
+main {
+    margin-bottom: 20px;
+}
+
+.current-weather {
+    margin-bottom: 24px;
+}
+
+.location h2 {
+    font-size: 22px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.weather-main {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 16px;
+    border: 1px solid #000;
+}
+
+.temperature {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.weather-desc {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+/* 詳細情報 */
+.weather-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    border: 1px solid #000;
+    font-size: 16px;
+}
+
+.label {
+    font-weight: bold;
+}
+
+/* 予報セクション */
+.forecast {
+    border-top: 2px solid #000;
+    padding-top: 16px;
+}
+
+.forecast h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.forecast-item {
+    text-align: center;
+    padding: 8px;
+    border: 1px solid #000;
+    font-size: 14px;
+}
+
+.forecast-item .time {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.forecast-item .temp {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.forecast-item .desc {
+    font-size: 12px;
+}
+
+/* フッター */
+footer {
+    text-align: center;
+    border-top: 1px solid #000;
+    padding-top: 8px;
+    font-size: 12px;
+    color: #666;
+}
+
+/* Kindle特有の最適化 */
+@media screen and (max-width: 600px) {
+    body {
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .temperature {
+        font-size: 36px;
+    }
+
+    .forecast-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 印刷時の最適化 */
+@media print {
+    body {
+        color: #000;
+        background: #fff;
+    }
+}

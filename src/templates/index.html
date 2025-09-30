@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天気ダッシュボード</title>
+    <link rel="stylesheet" href="styles/kindle.css">
+    <meta http-equiv="refresh" content="21600">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>天気情報</h1>
+            <p class="update-time">最終更新: {{.UpdateTime}}</p>
+        </header>
+
+        <main>
+            <section class="current-weather">
+                <div class="location">
+                    <h2>{{.Location}}</h2>
+                </div>
+
+                <div class="weather-main">
+                    <div class="temperature">{{.Temperature}}°C</div>
+                    <div class="weather-desc">{{.Description}}</div>
+                </div>
+
+                <div class="weather-details">
+                    <div class="detail-item">
+                        <span class="label">体感温度:</span>
+                        <span class="value">{{.FeelsLike}}°C</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">湿度:</span>
+                        <span class="value">{{.Humidity}}%</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">風速:</span>
+                        <span class="value">{{.WindSpeed}} m/s</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">気圧:</span>
+                        <span class="value">{{.Pressure}} hPa</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="forecast">
+                <h3>今日の予報</h3>
+                <div class="forecast-grid">
+                    {{range .HourlyForecast}}
+                    <div class="forecast-item">
+                        <div class="time">{{.Time}}</div>
+                        <div class="temp">{{.Temp}}°</div>
+                        <div class="desc">{{.Desc}}</div>
+                    </div>
+                    {{end}}
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Powered by OpenWeatherMap</p>
+        </footer>
+    </div>
+</body>
+</html>
