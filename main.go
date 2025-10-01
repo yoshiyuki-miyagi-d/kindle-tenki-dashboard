@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 )
 
@@ -56,32 +57,45 @@ type RSSItem struct {
 	PubDate     string `xml:"pubDate"`
 }
 
-type OpenWeatherMapCurrent struct {
-	Name string `json:"name"`
-	Main struct {
-		Temp      float64 `json:"temp"`
-		FeelsLike float64 `json:"feels_like"`
-		Humidity  int     `json:"humidity"`
-		Pressure  int     `json:"pressure"`
-	} `json:"main"`
-	Weather []struct {
-		Description string `json:"description"`
-	} `json:"weather"`
-	Wind struct {
-		Speed float64 `json:"speed"`
-	} `json:"wind"`
-}
-
-type OpenWeatherMapForecast struct {
-	List []struct {
-		Dt   int64 `json:"dt"`
-		Main struct {
-			Temp float64 `json:"temp"`
-		} `json:"main"`
-		Weather []struct {
-			Description string `json:"description"`
-		} `json:"weather"`
-	} `json:"list"`
+type TsukumijimaWeatherResponse struct {
+	PublicTime          string `json:"publicTime"`
+	PublicTimeFormatted string `json:"publicTimeFormatted"`
+	PublishingOffice    string `json:"publishingOffice"`
+	Title               string `json:"title"`
+	Forecasts           []struct {
+		Date      string `json:"date"`
+		DateLabel string `json:"dateLabel"`
+		Telop     string `json:"telop"`
+		Detail    struct {
+			Weather string `json:"weather"`
+			Wind    string `json:"wind"`
+			Wave    string `json:"wave"`
+		} `json:"detail"`
+		Temperature struct {
+			Min struct {
+				Celsius string `json:"celsius"`
+			} `json:"min"`
+			Max struct {
+				Celsius string `json:"celsius"`
+			} `json:"max"`
+		} `json:"temperature"`
+		ChanceOfRain struct {
+			T00_06 string `json:"T00_06"`
+			T06_12 string `json:"T06_12"`
+			T12_18 string `json:"T12_18"`
+			T18_24 string `json:"T18_24"`
+		} `json:"chanceOfRain"`
+		Image struct {
+			Title string `json:"title"`
+			URL   string `json:"url"`
+		} `json:"image"`
+	} `json:"forecasts"`
+	Location struct {
+		Area       string `json:"area"`
+		Prefecture string `json:"prefecture"`
+		District   string `json:"district"`
+		City       string `json:"city"`
+	} `json:"location"`
 }
 
 func getEnv(key, defaultValue string) string {
@@ -92,62 +106,39 @@ func getEnv(key, defaultValue string) string {
 }
 
 func fetchWeatherData() (*WeatherData, error) {
-	apiKey := getEnv("OPENWEATHER_API_KEY", "YOUR_API_KEY")
-	city := getEnv("CITY", "Tokyo")
-	countryCode := getEnv("COUNTRY_CODE", "JP")
+	cityCode := getEnv("CITY_CODE", "130010") // 東京のデフォルト
+	weatherURL := fmt.Sprintf("https://weather.tsukumijima.net/api/forecast/city/%s", cityCode)
 
-	if apiKey == "YOUR_API_KEY" {
-		log.Println("⚠️  OPENWEATHER_API_KEY環境変数が設定されていません")
-		log.Println("   デモ用のサンプルデータを使用します")
+	// 天気データを取得
+	resp, err := http.Get(weatherURL)
+	if err != nil {
+		log.Printf("⚠️  天気APIの取得に失敗しました: %v", err)
+		log.Println("   サンプルデータを使用します")
+		return getSampleData()
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("⚠️  天気API Error: %d", resp.StatusCode)
+		log.Println("   サンプルデータを使用します")
 		return getSampleData()
 	}
 
-	currentURL := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?q=%s,%s&appid=%s&units=metric&lang=ja", city, countryCode, apiKey)
-	forecastURL := fmt.Sprintf("https://api.openweathermap.org/data/2.5/forecast?q=%s,%s&appid=%s&units=metric&lang=ja", city, countryCode, apiKey)
-
-	// 現在の天気データを取得
-	currentResp, err := http.Get(currentURL)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("現在の天気データの取得に失敗しました: %w", err)
-	}
-	defer currentResp.Body.Close()
-
-	if currentResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API Error: %d", currentResp.StatusCode)
+		log.Printf("⚠️  天気データの読み込みに失敗しました: %v", err)
+		log.Println("   サンプルデータを使用します")
+		return getSampleData()
 	}
 
-	currentBody, err := io.ReadAll(currentResp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("現在の天気データの読み込みに失敗しました: %w", err)
+	var weatherResponse TsukumijimaWeatherResponse
+	if err := json.Unmarshal(body, &weatherResponse); err != nil {
+		log.Printf("⚠️  天気データのパースに失敗しました: %v", err)
+		log.Println("   サンプルデータを使用します")
+		return getSampleData()
 	}
 
-	var currentData OpenWeatherMapCurrent
-	if err := json.Unmarshal(currentBody, &currentData); err != nil {
-		return nil, fmt.Errorf("現在の天気データのパースに失敗しました: %w", err)
-	}
-
-	// 予報データを取得
-	forecastResp, err := http.Get(forecastURL)
-	if err != nil {
-		return nil, fmt.Errorf("予報データの取得に失敗しました: %w", err)
-	}
-	defer forecastResp.Body.Close()
-
-	if forecastResp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API Error: %d", forecastResp.StatusCode)
-	}
-
-	forecastBody, err := io.ReadAll(forecastResp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("予報データの読み込みに失敗しました: %w", err)
-	}
-
-	var forecastData OpenWeatherMapForecast
-	if err := json.Unmarshal(forecastBody, &forecastData); err != nil {
-		return nil, fmt.Errorf("予報データのパースに失敗しました: %w", err)
-	}
-
-	weatherData := processWeatherData(currentData, forecastData)
+	weatherData := processWeatherData(weatherResponse)
 
 	// ニュースデータを取得して追加
 	news, err := fetchNewsData()
@@ -162,38 +153,66 @@ func fetchWeatherData() (*WeatherData, error) {
 	return weatherData, nil
 }
 
-func processWeatherData(current OpenWeatherMapCurrent, forecast OpenWeatherMapForecast) *WeatherData {
+func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 	now := time.Now()
 
-	// 時間別予報（次の4つの時間帯）
-	var hourlyForecast []HourlyForecast
-	maxItems := 4
-	if len(forecast.List) < maxItems {
-		maxItems = len(forecast.List)
+	// 今日の天気情報（最初の予報データを使用）
+	var todayForecast = response.Forecasts[0]
+
+	// 温度の処理（文字列から数値に変換）
+	temperature := 0
+	feelsLike := 0
+	if todayForecast.Temperature.Max.Celsius != "" {
+		if temp, err := parseTemperature(todayForecast.Temperature.Max.Celsius); err == nil {
+			temperature = temp
+			feelsLike = temp // 体感温度は最高気温で代用
+		}
 	}
 
-	for i := 0; i < maxItems; i++ {
-		item := forecast.List[i]
-		dt := time.Unix(item.Dt, 0)
-		hourlyForecast = append(hourlyForecast, HourlyForecast{
-			Time: dt.Format("15:04"),
-			Temp: int(item.Main.Temp + 0.5), // 四捨五入
-			Desc: item.Weather[0].Description,
-		})
+	// 時間別予報を生成（降水確率から簡易予報を作成）
+	var hourlyForecast []HourlyForecast
+	if len(response.Forecasts) >= 2 {
+		// 今日と明日の予報から時間別予報を生成
+		hourlyForecast = []HourlyForecast{
+			{Time: "12:00", Temp: temperature, Desc: todayForecast.Telop},
+			{Time: "15:00", Temp: temperature, Desc: todayForecast.Telop},
+			{Time: "18:00", Temp: temperature - 2, Desc: todayForecast.Telop},
+			{Time: "21:00", Temp: temperature - 4, Desc: todayForecast.Telop},
+		}
+
+		if len(response.Forecasts) >= 2 {
+			tomorrowForecast := response.Forecasts[1]
+			if tomorrowForecast.Temperature.Min.Celsius != "" {
+				if minTemp, err := parseTemperature(tomorrowForecast.Temperature.Min.Celsius); err == nil {
+					hourlyForecast[3].Temp = minTemp
+				}
+			}
+		}
 	}
 
 	return &WeatherData{
-		Location:       current.Name,
-		Temperature:    int(current.Main.Temp + 0.5), // 四捨五入
-		FeelsLike:      int(current.Main.FeelsLike + 0.5),
-		Description:    current.Weather[0].Description,
-		Humidity:       current.Main.Humidity,
-		Pressure:       current.Main.Pressure,
-		WindSpeed:      current.Wind.Speed,
+		Location:       response.Location.City,
+		Temperature:    temperature,
+		FeelsLike:      feelsLike,
+		Description:    todayForecast.Telop,
+		Humidity:       60, // 新しいAPIにはないため、固定値を使用
+		Pressure:       1013, // 新しいAPIにはないため、固定値を使用
+		WindSpeed:      2.5, // 新しいAPIにはないため、固定値を使用
 		UpdateTime:     now.Format("2006/01/02 15:04"),
 		HourlyForecast: hourlyForecast,
 		News:           []NewsItem{}, // 後で設定
 	}
+}
+
+func parseTemperature(tempStr string) (int, error) {
+	if tempStr == "" || tempStr == "null" {
+		return 0, fmt.Errorf("empty temperature")
+	}
+	temp, err := strconv.Atoi(tempStr)
+	if err != nil {
+		return 0, err
+	}
+	return temp, nil
 }
 
 func getSampleData() (*WeatherData, error) {
