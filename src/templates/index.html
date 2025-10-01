@@ -21,14 +21,14 @@
                 </div>
 
                 <div class="weather-main">
-                    <div class="temperature">{{.Temperature}}°C</div>
+                    <div class="temperature">{{.Temperature}}℃</div>
                     <div class="weather-desc">{{.Description}}</div>
                 </div>
 
                 <div class="weather-details">
                     <div class="detail-item">
                         <span class="label">体感温度:</span>
-                        <span class="value">{{.FeelsLike}}°C</span>
+                        <span class="value">{{.FeelsLike}}℃</span>
                     </div>
                     <div class="detail-item">
                         <span class="label">湿度:</span>
@@ -51,7 +51,7 @@
                     {{range .HourlyForecast}}
                     <div class="forecast-item">
                         <div class="time">{{.Time}}</div>
-                        <div class="temp">{{.Temp}}°</div>
+                        <div class="temp">{{.Temp}}℃</div>
                         <div class="desc">{{.Desc}}</div>
                     </div>
                     {{end}}
