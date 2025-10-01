@@ -160,6 +160,7 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 	var todayForecast = response.Forecasts[0]
 
 	// 温度の処理（文字列から数値に変換）
+	// 今日のデータがnullの場合は明日のデータを使用
 	temperature := 0
 	feelsLike := 0
 	if todayForecast.Temperature.Max.Celsius != "" {
@@ -167,24 +168,92 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 			temperature = temp
 			feelsLike = temp // 体感温度は最高気温で代用
 		}
+	} else if len(response.Forecasts) >= 2 && response.Forecasts[1].Temperature.Max.Celsius != "" {
+		// 今日のデータがない場合は明日の最高気温を使用
+		if temp, err := parseTemperature(response.Forecasts[1].Temperature.Max.Celsius); err == nil {
+			temperature = temp
+			feelsLike = temp
+		}
 	}
 
-	// 時間別予報を生成（降水確率から簡易予報を作成）
+	// 時間別予報を生成（現在時刻以降の予報のみ表示）
 	var hourlyForecast []HourlyForecast
+	currentHour := now.Hour()
+
 	if len(response.Forecasts) >= 2 {
-		// 今日と明日の予報から時間別予報を生成
-		hourlyForecast = []HourlyForecast{
-			{Time: "12:00", Temp: temperature, Desc: todayForecast.Telop},
-			{Time: "15:00", Temp: temperature, Desc: todayForecast.Telop},
-			{Time: "18:00", Temp: temperature - 2, Desc: todayForecast.Telop},
-			{Time: "21:00", Temp: temperature - 4, Desc: todayForecast.Telop},
+		tomorrowForecast := response.Forecasts[1]
+		var tomorrowMinTemp, tomorrowMaxTemp int
+		if tomorrowForecast.Temperature.Min.Celsius != "" {
+			if minTemp, err := parseTemperature(tomorrowForecast.Temperature.Min.Celsius); err == nil {
+				tomorrowMinTemp = minTemp
+			}
+		}
+		if tomorrowForecast.Temperature.Max.Celsius != "" {
+			if maxTemp, err := parseTemperature(tomorrowForecast.Temperature.Max.Celsius); err == nil {
+				tomorrowMaxTemp = maxTemp
+			}
 		}
 
-		if len(response.Forecasts) >= 2 {
-			tomorrowForecast := response.Forecasts[1]
-			if tomorrowForecast.Temperature.Min.Celsius != "" {
-				if minTemp, err := parseTemperature(tomorrowForecast.Temperature.Min.Celsius); err == nil {
-					hourlyForecast[3].Temp = minTemp
+		// 予報時刻のスロット（3時間ごと、48時間後まで）
+		var forecastTimes []struct {
+			hour  int
+			label string
+		}
+
+		// 現在時刻から48時間後までの3時間ごとのスロットを生成
+		for h := 0; h <= 72; h += 3 {
+			hourInDay := h % 24
+			forecastTimes = append(forecastTimes, struct {
+				hour  int
+				label string
+			}{
+				hour:  h,
+				label: fmt.Sprintf("%02d:00", hourInDay),
+			})
+		}
+
+		for _, ft := range forecastTimes {
+			// 現在時刻以降の予報のみ追加
+			if ft.hour > currentHour {
+				var temp int
+				var desc string
+
+				// 24時以降は明日の予報
+				if ft.hour >= 24 {
+					// 明日の予報：時間帯によって気温を調整
+					hourInDay := ft.hour % 24
+					if hourInDay >= 0 && hourInDay < 6 {
+						temp = tomorrowMinTemp
+					} else if hourInDay >= 6 && hourInDay < 15 {
+						temp = tomorrowMaxTemp
+					} else if hourInDay >= 15 && hourInDay < 18 {
+						temp = tomorrowMaxTemp - 2
+					} else {
+						temp = tomorrowMinTemp + 2
+					}
+					desc = tomorrowForecast.Telop
+				} else {
+					// 今日の予報
+					// 時間帯によって気温を調整
+					if ft.hour <= 15 {
+						temp = temperature
+					} else if ft.hour <= 18 {
+						temp = temperature - 2
+					} else {
+						temp = temperature - 4
+					}
+					desc = todayForecast.Telop
+				}
+
+				hourlyForecast = append(hourlyForecast, HourlyForecast{
+					Time: ft.label,
+					Temp: temp,
+					Desc: desc,
+				})
+
+				// 48時間後まで（最大16件程度）
+				if len(hourlyForecast) >= 16 {
+					break
 				}
 			}
 		}
