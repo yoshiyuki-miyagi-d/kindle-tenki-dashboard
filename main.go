@@ -28,9 +28,10 @@ type WeatherData struct {
 }
 
 type HourlyForecast struct {
-	Time string `json:"time"`
-	Temp int    `json:"temp"`
-	Desc string `json:"desc"`
+	Time        string `json:"time"`
+	Temp        int    `json:"temp"`
+	Desc        string `json:"desc"`
+	ChartHeight int    `json:"chartHeight"` // グラフ表示用の高さ(%)
 }
 
 type NewsItem struct {
@@ -259,6 +260,31 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 		}
 	}
 
+	// グラフ表示用の高さを計算
+	if len(hourlyForecast) > 0 {
+		minTemp := hourlyForecast[0].Temp
+		maxTemp := hourlyForecast[0].Temp
+		for _, hf := range hourlyForecast {
+			if hf.Temp < minTemp {
+				minTemp = hf.Temp
+			}
+			if hf.Temp > maxTemp {
+				maxTemp = hf.Temp
+			}
+		}
+
+		// 最小気温を20%、最高気温を100%にマッピング
+		tempRange := maxTemp - minTemp
+		if tempRange == 0 {
+			tempRange = 1 // ゼロ除算を防ぐ
+		}
+
+		for i := range hourlyForecast {
+			heightPercent := 20 + ((hourlyForecast[i].Temp-minTemp)*80)/tempRange
+			hourlyForecast[i].ChartHeight = heightPercent
+		}
+	}
+
 	return &WeatherData{
 		Location:       response.Location.City,
 		Temperature:    temperature,
@@ -386,8 +412,11 @@ func generateHTML(data *WeatherData) error {
 		return fmt.Errorf("テンプレートファイルの読み込みに失敗しました: %w", err)
 	}
 
-	// Go のhtml/template でパース
-	tmpl, err := template.New("index").Parse(string(tmplContent))
+	// Go のhtml/template でパース（算術関数を追加）
+	tmpl, err := template.New("index").Funcs(template.FuncMap{
+		"mul": func(a, b int) int { return a * b },
+		"sub": func(a, b int) int { return a - b },
+	}).Parse(string(tmplContent))
 	if err != nil {
 		return fmt.Errorf("テンプレートのパースに失敗しました: %w", err)
 	}
