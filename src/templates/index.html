@@ -98,7 +98,7 @@
                             {{range .News}}
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title">{{.Title}}</div>
+                                    <div class="news-title"><a href="{{.Link}}">{{.Title}}</a></div>
                                     <span class="news-date">{{.PubDate}}</span>
                                 </div>
                                 <p class="news-description">{{.Description}}</p>
@@ -112,7 +112,7 @@
                             {{range .EconomyNews}}
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title">{{.Title}}</div>
+                                    <div class="news-title"><a href="{{.Link}}">{{.Title}}</a></div>
                                     <span class="news-date">{{.PubDate}}</span>
                                 </div>
                                 <p class="news-description">{{.Description}}</p>
