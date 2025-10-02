@@ -4,3 +4,6 @@ node_modules/
 npm-debug.log*
 .DS_Store
 *.log
+
+# 生成ファイル (GitHub Actionsで生成)
+docs/

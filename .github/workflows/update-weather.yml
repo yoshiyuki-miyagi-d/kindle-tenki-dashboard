@@ -31,21 +31,6 @@ jobs:
         TZ: Asia/Tokyo
       run: go run main.go
 
-    - name: 変更をコミット
-      env:
-        TZ: Asia/Tokyo
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-
-        if [[ -n $(git status --porcelain) ]]; then
-          git add docs/
-          git commit -m "天気情報を更新した $(date '+%Y-%m-%d %H:%M:%S')"
-          git push
-        else
-          echo "変更がないため、コミットをスキップします"
-        fi
-
     - name: GitHub Pagesをデプロイ
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/main'
