@@ -70,7 +70,7 @@ main {
 }
 
 .temperature {
-    font-size: clamp(32px, 8vw, 40px);
+    font-size: clamp(48px, 12vw, 64px);
     font-weight: bold;
     white-space: nowrap;
 }
