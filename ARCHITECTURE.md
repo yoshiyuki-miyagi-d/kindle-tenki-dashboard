@@ -61,6 +61,11 @@ Kindle Paperwhiteで表示するための天気情報ダッシュボード。E-i
 - 文字列の気温データを整数に変換
 - null値や空文字列のハンドリング
 
+#### 2.3 天気アイコン変換 (`getWeatherIcon`)
+- 天気の説明文からUnicode絵文字を返す
+- 対応パターン: 晴れ(☀️)、曇り(☁️)、雨(☔)、雪(⛄)、雷(⚡)、霧(🌫️)など
+- パターンマッチングに`containsAny`関数を使用
+
 ### 3. HTML生成層 (`generateHTML`)
 
 #### 3.1 テンプレートエンジン
@@ -126,6 +131,7 @@ type WeatherData struct {
     MaxTemp         int              // 最高気温(℃)
     FeelsLike       int              // 体感温度(℃)
     Description     string           // 天気概況
+    WeatherIcon     string           // 天気アイコン(絵文字)
     Wind            string           // 風の情報
     ChanceOfRain    []string         // 6時間ごとの降水確率
     UpdateTime      string           // 更新時刻
@@ -140,6 +146,7 @@ type HourlyForecast struct {
     Time        string // 時刻 (HH:MM)
     Temp        int    // 気温(℃)
     Desc        string // 天気
+    WeatherIcon string // 天気アイコン(絵文字)
     RainChance  string // 降水確率
     ChartHeight int    // グラフ高さ(%) 20-100
 }
@@ -183,12 +190,12 @@ type NewsItem struct {
 
 ### 2. E-ink最適化
 - 最小限のCSS
-- JavaScriptなし (自動更新なし)
-- 画像なし (テキストのみ)
+- JavaScriptなし
+- 画像なし (Unicode絵文字のみ使用)
 
 ### 3. バッテリー節約
-- ページ更新頻度: 6時間ごと
-- ユーザー側の手動リフレッシュ推奨
+- サーバー側更新頻度: 6時間ごと
+- ページ自動リロード: 30分ごと (meta refresh)
 
 ## セキュリティ考慮事項
 
