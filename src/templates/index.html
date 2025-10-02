@@ -13,35 +13,23 @@
 <body>
     <div class="container">
         <header>
-            <h1>天気情報</h1>
             <p class="update-time">最終更新: {{.UpdateTime}}</p>
         </header>
 
         <main>
             <section class="current-weather">
-                <div class="location">
-                    <h2>{{.Location}}</h2>
-                </div>
+                <div class="location">{{.Location}}</div>
 
                 <div class="weather-main">
                     <div class="temperature">{{.Temperature}}℃</div>
                     <div class="weather-desc">{{.Description}}</div>
-                </div>
-
-                <div class="weather-details">
-                    <div class="detail-item">
-                        <span class="label">体感温度:</span>
-                        <span class="value">{{.FeelsLike}}℃</span>
-                    </div>
+                    <div class="feels-like">体感 {{.FeelsLike}}℃</div>
                 </div>
             </section>
 
             <section class="forecast">
-                <h3>今後の予報</h3>
-
                 <!-- 気温変化グラフ -->
                 <div class="temperature-chart">
-                    <div class="chart-title">気温変化</div>
                     <svg class="line-chart" viewBox="0 0 800 150" preserveAspectRatio="xMidYMid meet">
                         <!-- グリッド線 -->
                         <line x1="0" y1="120" x2="800" y2="120" stroke="#000" stroke-width="1"/>
@@ -63,24 +51,24 @@
                     </svg>
                 </div>
 
-                <div class="forecast-grid">
+                <!-- 3時間ごとの天気予報 -->
+                <div class="hourly-forecast">
                     {{range .HourlyForecast}}
-                    <div class="forecast-item">
-                        <div class="time">{{.Time}}</div>
-                        <div class="temp">{{.Temp}}℃</div>
-                        <div class="desc">{{.Desc}}</div>
+                    <div class="hourly-item">
+                        <div class="hourly-time">{{.Time}}</div>
+                        <div class="hourly-weather">{{.Desc}}</div>
+                        <div class="hourly-temp">{{.Temp}}℃</div>
                     </div>
                     {{end}}
                 </div>
             </section>
 
             <section class="news">
-                <h3>NHKニュース</h3>
                 <div class="news-list">
                     {{range .News}}
                     <article class="news-item">
                         <div class="news-header">
-                            <h4 class="news-title">{{.Title}}</h4>
+                            <div class="news-title">{{.Title}}</div>
                             <span class="news-date">{{.PubDate}}</span>
                         </div>
                         <p class="news-description">{{.Description}}</p>
