@@ -12,22 +12,11 @@ body {
     line-height: 1.4;
     color: #000;
     background: #fff;
-    padding: clamp(8px, 2vw, 12px);
+    padding: clamp(4px, 1vw, 8px);
 }
 
 .container {
     padding: clamp(8px, 2vw, 10px);
-}
-
-/* ヘッダー */
-header {
-    text-align: right;
-    margin-bottom: 8px;
-}
-
-.update-time {
-    font-size: 10px;
-    color: #999;
 }
 
 /* メインコンテンツ */
@@ -259,9 +248,19 @@ footer {
     text-align: center;
     border-top: 1px solid #000;
     padding-top: 4px;
+    margin-top: 8px;
+}
+
+.update-time {
+    font-size: 10px;
+    color: #999;
+    margin: 0 0 4px 0;
+}
+
+.footer-credit {
     font-size: 8px;
     color: #666;
-    margin-top: 8px;
+    margin: 0;
 }
 
 /* 小さい画面用の最適化 */

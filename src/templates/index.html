@@ -12,10 +12,6 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <p class="update-time">最終更新: {{.UpdateTime}}</p>
-        </header>
-
         <main>
             <section class="weather-section">
                 <div class="today-weather">
@@ -128,7 +124,8 @@
         </main>
 
         <footer>
-            <p>Powered by 天気予報 API (weather.tsukumijima.net) / NHK ニュース RSS</p>
+            <p class="update-time">最終更新: {{.UpdateTime}}</p>
+            <p class="footer-credit">Powered by 天気予報 API (weather.tsukumijima.net) / NHK ニュース RSS</p>
         </footer>
     </div>
 </body>
