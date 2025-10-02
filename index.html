@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>天気ダッシュボード</title>
+    <link rel="stylesheet" href="styles/kindle.css">
+    <meta http-equiv="refresh" content="21600">
+</head>
+<body>
+    <div class="container">
+        <main>
+            <section class="weather-section">
+                <div class="today-weather">
+                    <h2 class="section-title">今日の天気</h2>
+                    <div class="weather-main">
+                        <div class="location">東京</div>
+                        <div class="weather-info">
+                            <div class="temperature">27℃</div>
+                            <div class="weather-details">
+                                <div class="weather-desc">晴のち曇</div>
+                                <div class="temp-range">最低0℃ / 最高27℃</div>
+                                <div class="feels-like">体感27℃</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="weather-extra">
+                        
+                        <div class="weather-extra-item">
+                            <span class="extra-label">風:</span>
+                            <span class="extra-value">南の風</span>
+                        </div>
+                        
+                        
+                        <div class="weather-extra-item">
+                            <span class="extra-label">降水確率:</span>
+                            <span class="extra-value">
+                                
+                                    
+                                    6-12時: --%
+                                
+                                     / 
+                                    12-18時: --%
+                                
+                                     / 
+                                    18-24時: 0%
+                                
+                            </span>
+                        </div>
+                        
+                    </div>
+
+                    <div class="temperature-chart">
+                        <svg class="line-chart" viewBox="0 0 800 120" preserveAspectRatio="xMidYMid meet">
+                            
+                            <line x1="0" y1="95" x2="800" y2="95" stroke="#000" stroke-width="1"/>
+
+                            
+                            <polyline
+                                fill="none"
+                                stroke="#000"
+                                stroke-width="2"
+                                points="0,18 50,75 100,75 150,-5 200,-5 250,18 300,18 350,53 400,53 450,75 500,75 550,-5 600,-5 650,18 700,18 750,53 800,53 850,75"
+                            />
+
+                            
+                            
+                            <circle cx="0" cy="18" r="3" fill="#000"/>
+                            <text x="0" y="8" text-anchor="middle" font-size="10" fill="#000">25℃</text>
+                            <text x="0" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
+                            
+                            <circle cx="50" cy="75" r="3" fill="#000"/>
+                            <text x="50" y="65" text-anchor="middle" font-size="10" fill="#000">20℃</text>
+                            <text x="50" y="110" text-anchor="middle" font-size="9" fill="#000">00:00</text>
+                            
+                            <circle cx="100" cy="75" r="3" fill="#000"/>
+                            <text x="100" y="65" text-anchor="middle" font-size="10" fill="#000">20℃</text>
+                            <text x="100" y="110" text-anchor="middle" font-size="9" fill="#000">03:00</text>
+                            
+                            <circle cx="150" cy="-5" r="3" fill="#000"/>
+                            <text x="150" y="-15" text-anchor="middle" font-size="10" fill="#000">27℃</text>
+                            <text x="150" y="110" text-anchor="middle" font-size="9" fill="#000">06:00</text>
+                            
+                            <circle cx="200" cy="-5" r="3" fill="#000"/>
+                            <text x="200" y="-15" text-anchor="middle" font-size="10" fill="#000">27℃</text>
+                            <text x="200" y="110" text-anchor="middle" font-size="9" fill="#000">09:00</text>
+                            
+                            <circle cx="250" cy="18" r="3" fill="#000"/>
+                            <text x="250" y="8" text-anchor="middle" font-size="10" fill="#000">25℃</text>
+                            <text x="250" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
+                            
+                            <circle cx="300" cy="18" r="3" fill="#000"/>
+                            <text x="300" y="8" text-anchor="middle" font-size="10" fill="#000">25℃</text>
+                            <text x="300" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
+                            
+                            <circle cx="350" cy="53" r="3" fill="#000"/>
+                            <text x="350" y="43" text-anchor="middle" font-size="10" fill="#000">22℃</text>
+                            <text x="350" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
+                            
+                            <circle cx="400" cy="53" r="3" fill="#000"/>
+                            <text x="400" y="43" text-anchor="middle" font-size="10" fill="#000">22℃</text>
+                            <text x="400" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
+                            
+                            <circle cx="450" cy="75" r="3" fill="#000"/>
+                            <text x="450" y="65" text-anchor="middle" font-size="10" fill="#000">20℃</text>
+                            <text x="450" y="110" text-anchor="middle" font-size="9" fill="#000">00:00</text>
+                            
+                            <circle cx="500" cy="75" r="3" fill="#000"/>
+                            <text x="500" y="65" text-anchor="middle" font-size="10" fill="#000">20℃</text>
+                            <text x="500" y="110" text-anchor="middle" font-size="9" fill="#000">03:00</text>
+                            
+                            <circle cx="550" cy="-5" r="3" fill="#000"/>
+                            <text x="550" y="-15" text-anchor="middle" font-size="10" fill="#000">27℃</text>
+                            <text x="550" y="110" text-anchor="middle" font-size="9" fill="#000">06:00</text>
+                            
+                            <circle cx="600" cy="-5" r="3" fill="#000"/>
+                            <text x="600" y="-15" text-anchor="middle" font-size="10" fill="#000">27℃</text>
+                            <text x="600" y="110" text-anchor="middle" font-size="9" fill="#000">09:00</text>
+                            
+                            <circle cx="650" cy="18" r="3" fill="#000"/>
+                            <text x="650" y="8" text-anchor="middle" font-size="10" fill="#000">25℃</text>
+                            <text x="650" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
+                            
+                            <circle cx="700" cy="18" r="3" fill="#000"/>
+                            <text x="700" y="8" text-anchor="middle" font-size="10" fill="#000">25℃</text>
+                            <text x="700" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
+                            
+                            <circle cx="750" cy="53" r="3" fill="#000"/>
+                            <text x="750" y="43" text-anchor="middle" font-size="10" fill="#000">22℃</text>
+                            <text x="750" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
+                            
+                            <circle cx="800" cy="53" r="3" fill="#000"/>
+                            <text x="800" y="43" text-anchor="middle" font-size="10" fill="#000">22℃</text>
+                            <text x="800" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
+                            
+                            <circle cx="850" cy="75" r="3" fill="#000"/>
+                            <text x="850" y="65" text-anchor="middle" font-size="10" fill="#000">20℃</text>
+                            <text x="850" y="110" text-anchor="middle" font-size="9" fill="#000">00:00</text>
+                            
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="forecast-weather">
+                    <h2 class="section-title">今後の天気</h2>
+                    <div class="hourly-forecast">
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">21:00</div>
+                            <div class="hourly-weather">晴のち曇</div>
+                            <div class="hourly-temp">25℃</div>
+                            
+                            <div class="hourly-rain">0%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">00:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">20℃</div>
+                            
+                            <div class="hourly-rain">0%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">03:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">20℃</div>
+                            
+                            <div class="hourly-rain">0%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">06:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">27℃</div>
+                            
+                            <div class="hourly-rain">0%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">09:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">27℃</div>
+                            
+                            <div class="hourly-rain">0%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">12:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">25℃</div>
+                            
+                            <div class="hourly-rain">10%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">15:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">25℃</div>
+                            
+                            <div class="hourly-rain">10%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">18:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">22℃</div>
+                            
+                            <div class="hourly-rain">20%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">21:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">22℃</div>
+                            
+                            <div class="hourly-rain">20%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">00:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">20℃</div>
+                            
+                            <div class="hourly-rain">0%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">03:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">20℃</div>
+                            
+                            <div class="hourly-rain">0%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">06:00</div>
+                            <div class="hourly-weather">曇時々晴</div>
+                            <div class="hourly-temp">27℃</div>
+                            
+                            <div class="hourly-rain">0%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+            </section>
+
+            <section class="news">
+                <div class="news-container">
+                    <div class="news-column">
+                        <h3 class="news-column-title">主要ニュース</h3>
+                        <div class="news-list">
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">自民党総裁選 最後の演説会 候補者が目指す社会や党の再生訴え</div>
+                                    <span class="news-date">10/02 19:08</span>
+                                </div>
+                                <p class="news-description">自民党総裁選挙は投開票が4日に迫る中、最後の演説会が開かれ、5人の候補者が目指す社会のあり方や党の再生に向けた決意などを訴えました。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">米政府機関が一部閉鎖 観光名所も トランプ政権は民主党に圧力</div>
+                                    <span class="news-date">10/02 17:40</span>
+                                </div>
+                                <p class="news-description">アメリカでは、連邦政府の資金を確保するための新たな予算案が成立せず、政府機関の一部が10月1日から閉鎖されました。トランプ政権は、野党・民主党の支持者が多い州の事業を対象に資金提供を打ち切る方針を示すなど、圧力を強め、妥協を迫っています。政府機関の一部閉鎖はおよそ7年ぶりで、国防や治安、医療などの業務は継続されていますが、首都ワシントンにある国立の観光施設が閉鎖されるなど、影響が出始めています。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">アサヒグループHD システム障害の影響で新商品発売を延期</div>
+                                    <span class="news-date">10/02 18:57</span>
+                                </div>
+                                <p class="news-description">「アサヒグループホールディングス」でサイバー攻撃によるシステム障害が起きて2日で4日目となります。詳しい原因の特定や復旧のメドは依然立っておらず、10月に予定していた新商品の発売も延期するなど、影響が広がっています。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">町田 女性刺殺事件 容疑者“刃物は自宅から持ち出した”</div>
+                                    <span class="news-date">10/02 18:39</span>
+                                </div>
+                                <p class="news-description">9月30日、東京 町田市のマンションで70代の女性が刃物で刺されて死亡した事件で、逮捕された40歳の容疑者が調べに対し「刃物は自宅から持ち出した」と供述していることが、捜査関係者への取材で分かりました。警視庁は、襲う相手を探しながら自宅から現場付近まで歩いた疑いがあるとみて調べています。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">リチウムイオン電池製品に関わる火災 リコール対象で100件超か</div>
+                                    <span class="news-date">10/02 18:50</span>
+                                </div>
+                                <p class="news-description">モバイルバッテリーなど、リチウムイオン電池を使った製品による火災が相次いでいますが、この3年余りの消費者庁のデータをNHKが分析したところ、電池の欠陥などですでにリコールの対象となっていた製品が原因とみられる火災が、100件以上起きていたことが分かりました。専門家は、リコール情報が十分に消費者に届いておらず、改善すべきだと指摘しています。</p>
+                            </article>
+                            
+                        </div>
+                    </div>
+                    <div class="news-column">
+                        <h3 class="news-column-title">経済ニュース</h3>
+                        <div class="news-list">
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">日銀副総裁 “追加利上げ 経済・物価情勢の改善に応じて検討”</div>
+                                    <span class="news-date">10/02 18:58</span>
+                                </div>
+                                <p class="news-description">日銀の内田眞一 副総裁は都内で開かれた証券業界の式典であいさつし、10月1日に公表された短観＝企業短期経済観測調査について、全体として良好な水準だったと評価したうえで、経済・物価情勢の改善に応じて追加の利上げを検討するという従来の考え方を改めて示しました。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">アサヒグループHD システム障害の影響で新商品発売を延期</div>
+                                    <span class="news-date">10/02 18:57</span>
+                                </div>
+                                <p class="news-description">「アサヒグループホールディングス」でサイバー攻撃によるシステム障害が起きて2日で4日目となります。詳しい原因の特定や復旧のメドは依然立っておらず、10月に予定していた新商品の発売も延期するなど、影響が広がっています。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">円相場 小幅な値動き</div>
+                                    <span class="news-date">10/02 18:41</span>
+                                </div>
+                                <p class="news-description">2日の東京外国為替市場、円相場は小幅な値動きとなりました。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">月面着陸目指すベンチャー企業 開発中の新型着陸船を公開</div>
+                                    <span class="news-date">10/02 18:11</span>
+                                </div>
+                                <p class="news-description">民間による月面着陸を目指す東京のベンチャー企業は、3年後の打ち上げに向けて開発中の新型の月着陸船を2日、報道陣に公開しました。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">小泉農相 ASEAN地域の農業や食料生産 支援する方針示す</div>
+                                    <span class="news-date">10/02 17:30</span>
+                                </div>
+                                <p class="news-description">日中韓3か国と、ASEAN＝東南アジア諸国連合の農相会合がフィリピンで開かれ、小泉農林水産大臣は、日本が技術協力を行い、ASEAN地域の農業や食料生産を支援していく方針を示しました。</p>
+                            </article>
+                            
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p class="update-time">最終更新: 2025/10/02 20:12</p>
+            <p class="footer-credit">Powered by 天気予報 API (weather.tsukumijima.net) / NHK ニュース RSS</p>
+        </footer>
+    </div>
+</body>
+</html>
