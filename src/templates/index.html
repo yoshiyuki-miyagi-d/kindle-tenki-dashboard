@@ -74,22 +74,23 @@
                 <div class="forecast-weather">
                     <h2 class="section-title">今後の天気</h2>
                     <div class="hourly-forecast">
-                        {{range .HourlyForecast}}
+                        {{range $index, $element := .HourlyForecast}}
+                        {{if lt $index 12}}
                         <div class="hourly-item">
-                            <div class="hourly-time">{{.Time}}</div>
-                            <div class="hourly-weather">{{.Desc}}</div>
-                            <div class="hourly-temp">{{.Temp}}℃</div>
-                            {{if .RainChance}}
-                            <div class="hourly-rain">{{.RainChance}}</div>
+                            <div class="hourly-time">{{$element.Time}}</div>
+                            <div class="hourly-weather">{{$element.Desc}}</div>
+                            <div class="hourly-temp">{{$element.Temp}}℃</div>
+                            {{if $element.RainChance}}
+                            <div class="hourly-rain">{{$element.RainChance}}</div>
                             {{end}}
                         </div>
+                        {{end}}
                         {{end}}
                     </div>
                 </div>
             </section>
 
             <section class="news">
-                <h2 class="section-title">ニュース</h2>
                 <div class="news-container">
                     <div class="news-column">
                         <h3 class="news-column-title">主要ニュース</h3>
