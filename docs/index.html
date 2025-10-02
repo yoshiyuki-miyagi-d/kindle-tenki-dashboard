@@ -13,208 +13,212 @@
 <body>
     <div class="container">
         <header>
-            <p class="update-time">最終更新: 2025/10/02 12:10</p>
+            <p class="update-time">最終更新: 2025/10/02 13:16</p>
         </header>
 
         <main>
-            <section class="current-weather">
-                <div class="location">東京</div>
+            <section class="weather-section">
+                <div class="today-weather">
+                    <h2 class="section-title">今日の天気</h2>
+                    <div class="weather-main">
+                        <div class="location">東京</div>
+                        <div class="weather-info">
+                            <div class="temperature">28℃</div>
+                            <div class="weather-details">
+                                <div class="weather-desc">晴のち曇</div>
+                                <div class="feels-like">体感28℃</div>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="weather-main">
-                    <div class="temperature">28℃</div>
-                    <div class="weather-desc">晴のち曇</div>
-                    <div class="feels-like">体感 28℃</div>
+                    <div class="temperature-chart">
+                        <svg class="line-chart" viewBox="0 0 800 150" preserveAspectRatio="xMidYMid meet">
+                            
+                            <line x1="0" y1="120" x2="800" y2="120" stroke="#000" stroke-width="1"/>
+
+                            
+                            <polyline
+                                fill="none"
+                                stroke="#000"
+                                stroke-width="2"
+                                points="0,20 50,40 100,60 150,100 200,100 250,30 300,30 350,30 400,50 450,80 500,80 550,100 600,100 650,30 700,30"
+                            />
+
+                            
+                            
+                            <circle cx="0" cy="20" r="3" fill="#000"/>
+                            <text x="0" y="10" text-anchor="middle" font-size="10" fill="#000">28℃</text>
+                            <text x="0" y="140" text-anchor="middle" font-size="9" fill="#000">15:00</text>
+                            
+                            <circle cx="50" cy="40" r="3" fill="#000"/>
+                            <text x="50" y="30" text-anchor="middle" font-size="10" fill="#000">26℃</text>
+                            <text x="50" y="140" text-anchor="middle" font-size="9" fill="#000">18:00</text>
+                            
+                            <circle cx="100" cy="60" r="3" fill="#000"/>
+                            <text x="100" y="50" text-anchor="middle" font-size="10" fill="#000">24℃</text>
+                            <text x="100" y="140" text-anchor="middle" font-size="9" fill="#000">21:00</text>
+                            
+                            <circle cx="150" cy="100" r="3" fill="#000"/>
+                            <text x="150" y="90" text-anchor="middle" font-size="10" fill="#000">20℃</text>
+                            <text x="150" y="140" text-anchor="middle" font-size="9" fill="#000">00:00</text>
+                            
+                            <circle cx="200" cy="100" r="3" fill="#000"/>
+                            <text x="200" y="90" text-anchor="middle" font-size="10" fill="#000">20℃</text>
+                            <text x="200" y="140" text-anchor="middle" font-size="9" fill="#000">03:00</text>
+                            
+                            <circle cx="250" cy="30" r="3" fill="#000"/>
+                            <text x="250" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
+                            <text x="250" y="140" text-anchor="middle" font-size="9" fill="#000">06:00</text>
+                            
+                            <circle cx="300" cy="30" r="3" fill="#000"/>
+                            <text x="300" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
+                            <text x="300" y="140" text-anchor="middle" font-size="9" fill="#000">09:00</text>
+                            
+                            <circle cx="350" cy="30" r="3" fill="#000"/>
+                            <text x="350" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
+                            <text x="350" y="140" text-anchor="middle" font-size="9" fill="#000">12:00</text>
+                            
+                            <circle cx="400" cy="50" r="3" fill="#000"/>
+                            <text x="400" y="40" text-anchor="middle" font-size="10" fill="#000">25℃</text>
+                            <text x="400" y="140" text-anchor="middle" font-size="9" fill="#000">15:00</text>
+                            
+                            <circle cx="450" cy="80" r="3" fill="#000"/>
+                            <text x="450" y="70" text-anchor="middle" font-size="10" fill="#000">22℃</text>
+                            <text x="450" y="140" text-anchor="middle" font-size="9" fill="#000">18:00</text>
+                            
+                            <circle cx="500" cy="80" r="3" fill="#000"/>
+                            <text x="500" y="70" text-anchor="middle" font-size="10" fill="#000">22℃</text>
+                            <text x="500" y="140" text-anchor="middle" font-size="9" fill="#000">21:00</text>
+                            
+                            <circle cx="550" cy="100" r="3" fill="#000"/>
+                            <text x="550" y="90" text-anchor="middle" font-size="10" fill="#000">20℃</text>
+                            <text x="550" y="140" text-anchor="middle" font-size="9" fill="#000">00:00</text>
+                            
+                            <circle cx="600" cy="100" r="3" fill="#000"/>
+                            <text x="600" y="90" text-anchor="middle" font-size="10" fill="#000">20℃</text>
+                            <text x="600" y="140" text-anchor="middle" font-size="9" fill="#000">03:00</text>
+                            
+                            <circle cx="650" cy="30" r="3" fill="#000"/>
+                            <text x="650" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
+                            <text x="650" y="140" text-anchor="middle" font-size="9" fill="#000">06:00</text>
+                            
+                            <circle cx="700" cy="30" r="3" fill="#000"/>
+                            <text x="700" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
+                            <text x="700" y="140" text-anchor="middle" font-size="9" fill="#000">09:00</text>
+                            
+                        </svg>
+                    </div>
                 </div>
-            </section>
 
-            <section class="forecast">
-                
-                <div class="temperature-chart">
-                    <svg class="line-chart" viewBox="0 0 800 150" preserveAspectRatio="xMidYMid meet">
+                <div class="forecast-weather">
+                    <h2 class="section-title">今後の天気</h2>
+                    <div class="hourly-forecast">
                         
-                        <line x1="0" y1="120" x2="800" y2="120" stroke="#000" stroke-width="1"/>
-
+                        <div class="hourly-item">
+                            <div class="hourly-time">15:00</div>
+                            <div class="hourly-weather">晴のち曇</div>
+                            <div class="hourly-temp">28℃</div>
+                        </div>
                         
-                        <polyline
-                            fill="none"
-                            stroke="#000"
-                            stroke-width="2"
-                            points="0,20 50,40 100,60 150,100 200,100 250,30 300,30 350,30 400,50 450,80 500,80 550,100 600,100 650,30 700,30 750,30"
-                        />
-
+                        <div class="hourly-item">
+                            <div class="hourly-time">18:00</div>
+                            <div class="hourly-weather">晴のち曇</div>
+                            <div class="hourly-temp">26℃</div>
+                        </div>
                         
+                        <div class="hourly-item">
+                            <div class="hourly-time">21:00</div>
+                            <div class="hourly-weather">晴のち曇</div>
+                            <div class="hourly-temp">24℃</div>
+                        </div>
                         
-                        <circle cx="0" cy="20" r="3" fill="#000"/>
-                        <text x="0" y="10" text-anchor="middle" font-size="10" fill="#000">28℃</text>
-                        <text x="0" y="140" text-anchor="middle" font-size="9" fill="#000">15:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">00:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">20℃</div>
+                        </div>
                         
-                        <circle cx="50" cy="40" r="3" fill="#000"/>
-                        <text x="50" y="30" text-anchor="middle" font-size="10" fill="#000">26℃</text>
-                        <text x="50" y="140" text-anchor="middle" font-size="9" fill="#000">18:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">03:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">20℃</div>
+                        </div>
                         
-                        <circle cx="100" cy="60" r="3" fill="#000"/>
-                        <text x="100" y="50" text-anchor="middle" font-size="10" fill="#000">24℃</text>
-                        <text x="100" y="140" text-anchor="middle" font-size="9" fill="#000">21:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">06:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">27℃</div>
+                        </div>
                         
-                        <circle cx="150" cy="100" r="3" fill="#000"/>
-                        <text x="150" y="90" text-anchor="middle" font-size="10" fill="#000">20℃</text>
-                        <text x="150" y="140" text-anchor="middle" font-size="9" fill="#000">00:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">09:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">27℃</div>
+                        </div>
                         
-                        <circle cx="200" cy="100" r="3" fill="#000"/>
-                        <text x="200" y="90" text-anchor="middle" font-size="10" fill="#000">20℃</text>
-                        <text x="200" y="140" text-anchor="middle" font-size="9" fill="#000">03:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">12:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">27℃</div>
+                        </div>
                         
-                        <circle cx="250" cy="30" r="3" fill="#000"/>
-                        <text x="250" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
-                        <text x="250" y="140" text-anchor="middle" font-size="9" fill="#000">06:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">15:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">25℃</div>
+                        </div>
                         
-                        <circle cx="300" cy="30" r="3" fill="#000"/>
-                        <text x="300" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
-                        <text x="300" y="140" text-anchor="middle" font-size="9" fill="#000">09:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">18:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">22℃</div>
+                        </div>
                         
-                        <circle cx="350" cy="30" r="3" fill="#000"/>
-                        <text x="350" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
-                        <text x="350" y="140" text-anchor="middle" font-size="9" fill="#000">12:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">21:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">22℃</div>
+                        </div>
                         
-                        <circle cx="400" cy="50" r="3" fill="#000"/>
-                        <text x="400" y="40" text-anchor="middle" font-size="10" fill="#000">25℃</text>
-                        <text x="400" y="140" text-anchor="middle" font-size="9" fill="#000">15:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">00:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">20℃</div>
+                        </div>
                         
-                        <circle cx="450" cy="80" r="3" fill="#000"/>
-                        <text x="450" y="70" text-anchor="middle" font-size="10" fill="#000">22℃</text>
-                        <text x="450" y="140" text-anchor="middle" font-size="9" fill="#000">18:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">03:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">20℃</div>
+                        </div>
                         
-                        <circle cx="500" cy="80" r="3" fill="#000"/>
-                        <text x="500" y="70" text-anchor="middle" font-size="10" fill="#000">22℃</text>
-                        <text x="500" y="140" text-anchor="middle" font-size="9" fill="#000">21:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">06:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">27℃</div>
+                        </div>
                         
-                        <circle cx="550" cy="100" r="3" fill="#000"/>
-                        <text x="550" y="90" text-anchor="middle" font-size="10" fill="#000">20℃</text>
-                        <text x="550" y="140" text-anchor="middle" font-size="9" fill="#000">00:00</text>
+                        <div class="hourly-item">
+                            <div class="hourly-time">09:00</div>
+                            <div class="hourly-weather">曇り</div>
+                            <div class="hourly-temp">27℃</div>
+                        </div>
                         
-                        <circle cx="600" cy="100" r="3" fill="#000"/>
-                        <text x="600" y="90" text-anchor="middle" font-size="10" fill="#000">20℃</text>
-                        <text x="600" y="140" text-anchor="middle" font-size="9" fill="#000">03:00</text>
-                        
-                        <circle cx="650" cy="30" r="3" fill="#000"/>
-                        <text x="650" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
-                        <text x="650" y="140" text-anchor="middle" font-size="9" fill="#000">06:00</text>
-                        
-                        <circle cx="700" cy="30" r="3" fill="#000"/>
-                        <text x="700" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
-                        <text x="700" y="140" text-anchor="middle" font-size="9" fill="#000">09:00</text>
-                        
-                        <circle cx="750" cy="30" r="3" fill="#000"/>
-                        <text x="750" y="20" text-anchor="middle" font-size="10" fill="#000">27℃</text>
-                        <text x="750" y="140" text-anchor="middle" font-size="9" fill="#000">12:00</text>
-                        
-                    </svg>
-                </div>
-
-                
-                <div class="hourly-forecast">
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">15:00</div>
-                        <div class="hourly-weather">晴のち曇</div>
-                        <div class="hourly-temp">28℃</div>
                     </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">18:00</div>
-                        <div class="hourly-weather">晴のち曇</div>
-                        <div class="hourly-temp">26℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">21:00</div>
-                        <div class="hourly-weather">晴のち曇</div>
-                        <div class="hourly-temp">24℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">00:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">20℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">03:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">20℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">06:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">27℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">09:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">27℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">12:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">27℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">15:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">25℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">18:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">22℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">21:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">22℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">00:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">20℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">03:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">20℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">06:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">27℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">09:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">27℃</div>
-                    </div>
-                    
-                    <div class="hourly-item">
-                        <div class="hourly-time">12:00</div>
-                        <div class="hourly-weather">曇り</div>
-                        <div class="hourly-temp">27℃</div>
-                    </div>
-                    
                 </div>
             </section>
 
             <section class="news">
+                <h2 class="section-title">ニュース</h2>
                 <div class="news-list">
+                    
+                    <article class="news-item">
+                        <div class="news-header">
+                            <div class="news-title">ドジャース 2連勝で地区シリーズ進出 佐々木がリリーフ登板</div>
+                            <span class="news-date">10/02 13:15</span>
+                        </div>
+                        <p class="news-description">ドジャースは、ナショナルリーグのワイルドカードシリーズ第2戦でレッズに8対4で勝ち、対戦成績を2勝0敗として地区シリーズ進出を決めました。9回からマウンドに上がった佐々木投手は、160キロを超えるストレートと決め球のスプリットがさえ、三振2つを奪う内容でした。</p>
+                    </article>
                     
                     <article class="news-item">
                         <div class="news-header">
@@ -234,26 +238,18 @@
                     
                     <article class="news-item">
                         <div class="news-header">
-                            <div class="news-title">ドジャース 先発 山本 大谷タイムリー ワイルドカードシリーズ</div>
-                            <span class="news-date">10/02 12:09</span>
+                            <div class="news-title">警察庁 佐賀県警のDNA鑑定不正を受け特別監察 実施へ</div>
+                            <span class="news-date">10/02 12:48</span>
                         </div>
-                        <p class="news-description">大リーグ、ドジャースの大谷翔平選手が1日、本拠地のドジャースタジアムで行われているレッズとのワイルドカードシリーズ第2戦に1番・指名打者で先発出場しています。NHKでは、レッズ対ドジャースをBSで中継しています。</p>
+                        <p class="news-description">佐賀県警察本部の科学捜査研究所の元職員によるDNA鑑定の不正を受けて、警察庁は監察官などを佐賀県警に派遣し、経緯などを検証する特別監察を来週から実施することを明らかにしました。</p>
                     </article>
                     
                     <article class="news-item">
                         <div class="news-header">
-                            <div class="news-title">米カリフォルニア州 AI開発会社に安全対策の公表など義務づけ</div>
-                            <span class="news-date">10/02 11:53</span>
+                            <div class="news-title">中国の海洋調査船 日本のEEZで調査か 政府は中国側に強く抗議</div>
+                            <span class="news-date">10/02 12:59</span>
                         </div>
-                        <p class="news-description">AI＝人工知能の開発会社が集中するアメリカ西部カリフォルニア州で安全対策の公表や、AIによって危険な事案が生じた場合に州政府に報告することなどを開発会社に義務づける法律が成立しました。</p>
-                    </article>
-                    
-                    <article class="news-item">
-                        <div class="news-header">
-                            <div class="news-title">トランプ大統領 習主席と会談 “大豆の輸出 重要議題の1つに”</div>
-                            <span class="news-date">10/02 10:15</span>
-                        </div>
-                        <p class="news-description">アメリカのトランプ大統領は、近く予定している中国の習近平国家主席との首脳会談について、大豆の輸出が重要な議題の1つになるという考えを示しました。中国に対して、アメリカの農産物の輸入拡大を迫るものとみられ、関税を含む交渉の行方が注目されます。</p>
+                        <p class="news-description">鹿児島県奄美大島沖の日本のEEZ＝排他的経済水域で10月1日も中国の海洋調査船が調査とみられる活動をしているのが確認され、政府は外交ルートを通じて中国側に強く抗議しました。</p>
                     </article>
                     
                 </div>

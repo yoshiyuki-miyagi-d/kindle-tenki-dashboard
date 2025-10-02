@@ -249,8 +249,8 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 					Desc: desc,
 				})
 
-				// 48時間後まで（最大16件程度）
-				if len(hourlyForecast) >= 16 {
+				// 48時間後まで（最大15件）
+				if len(hourlyForecast) >= 15 {
 					break
 				}
 			}

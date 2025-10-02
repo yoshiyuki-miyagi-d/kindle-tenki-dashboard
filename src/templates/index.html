@@ -17,53 +17,59 @@
         </header>
 
         <main>
-            <section class="current-weather">
-                <div class="location">{{.Location}}</div>
-
-                <div class="weather-main">
-                    <div class="temperature">{{.Temperature}}℃</div>
-                    <div class="weather-desc">{{.Description}}</div>
-                    <div class="feels-like">体感 {{.FeelsLike}}℃</div>
-                </div>
-            </section>
-
-            <section class="forecast">
-                <!-- 気温変化グラフ -->
-                <div class="temperature-chart">
-                    <svg class="line-chart" viewBox="0 0 800 150" preserveAspectRatio="xMidYMid meet">
-                        <!-- グリッド線 -->
-                        <line x1="0" y1="120" x2="800" y2="120" stroke="#000" stroke-width="1"/>
-
-                        <!-- 折れ線グラフ -->
-                        <polyline
-                            fill="none"
-                            stroke="#000"
-                            stroke-width="2"
-                            points="{{range $index, $element := .HourlyForecast}}{{if $index}} {{end}}{{mul $index 50}},{{sub 120 $element.ChartHeight}}{{end}}"
-                        />
-
-                        <!-- データポイント -->
-                        {{range $index, $element := .HourlyForecast}}
-                        <circle cx="{{mul $index 50}}" cy="{{sub 120 $element.ChartHeight}}" r="3" fill="#000"/>
-                        <text x="{{mul $index 50}}" y="{{sub 110 $element.ChartHeight}}" text-anchor="middle" font-size="10" fill="#000">{{$element.Temp}}℃</text>
-                        <text x="{{mul $index 50}}" y="140" text-anchor="middle" font-size="9" fill="#000">{{$element.Time}}</text>
-                        {{end}}
-                    </svg>
-                </div>
-
-                <!-- 3時間ごとの天気予報 -->
-                <div class="hourly-forecast">
-                    {{range .HourlyForecast}}
-                    <div class="hourly-item">
-                        <div class="hourly-time">{{.Time}}</div>
-                        <div class="hourly-weather">{{.Desc}}</div>
-                        <div class="hourly-temp">{{.Temp}}℃</div>
+            <section class="weather-section">
+                <div class="today-weather">
+                    <h2 class="section-title">今日の天気</h2>
+                    <div class="weather-main">
+                        <div class="location">{{.Location}}</div>
+                        <div class="weather-info">
+                            <div class="temperature">{{.Temperature}}℃</div>
+                            <div class="weather-details">
+                                <div class="weather-desc">{{.Description}}</div>
+                                <div class="feels-like">体感{{.FeelsLike}}℃</div>
+                            </div>
+                        </div>
                     </div>
-                    {{end}}
+
+                    <div class="temperature-chart">
+                        <svg class="line-chart" viewBox="0 0 800 150" preserveAspectRatio="xMidYMid meet">
+                            <!-- グリッド線 -->
+                            <line x1="0" y1="120" x2="800" y2="120" stroke="#000" stroke-width="1"/>
+
+                            <!-- 折れ線グラフ -->
+                            <polyline
+                                fill="none"
+                                stroke="#000"
+                                stroke-width="2"
+                                points="{{range $index, $element := .HourlyForecast}}{{if $index}} {{end}}{{mul $index 50}},{{sub 120 $element.ChartHeight}}{{end}}"
+                            />
+
+                            <!-- データポイント -->
+                            {{range $index, $element := .HourlyForecast}}
+                            <circle cx="{{mul $index 50}}" cy="{{sub 120 $element.ChartHeight}}" r="3" fill="#000"/>
+                            <text x="{{mul $index 50}}" y="{{sub 110 $element.ChartHeight}}" text-anchor="middle" font-size="10" fill="#000">{{$element.Temp}}℃</text>
+                            <text x="{{mul $index 50}}" y="140" text-anchor="middle" font-size="9" fill="#000">{{$element.Time}}</text>
+                            {{end}}
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="forecast-weather">
+                    <h2 class="section-title">今後の天気</h2>
+                    <div class="hourly-forecast">
+                        {{range .HourlyForecast}}
+                        <div class="hourly-item">
+                            <div class="hourly-time">{{.Time}}</div>
+                            <div class="hourly-weather">{{.Desc}}</div>
+                            <div class="hourly-temp">{{.Temp}}℃</div>
+                        </div>
+                        {{end}}
+                    </div>
                 </div>
             </section>
 
             <section class="news">
+                <h2 class="section-title">ニュース</h2>
                 <div class="news-list">
                     {{range .News}}
                     <article class="news-item">
