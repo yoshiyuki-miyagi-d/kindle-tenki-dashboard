@@ -92,7 +92,7 @@ python -m http.server 8000 --directory docs
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - システム設計とデータフロー
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - コーディング規約とコミットガイドライン
-- **[API.md](./API.md)** - 外部API仕様と使用方法
+- **[EXTERNAL_API.md](./EXTERNAL_API.md)** - 外部API仕様と使用方法
 - **[DEVELOPMENT.md](./DEVELOPMENT.md)** - 開発環境のセットアップとデバッグ方法
 
 ## 使用しているAPI
@@ -210,9 +210,9 @@ kindle-tenki-dashbaord/
 ├── main.go              # メインアプリケーション
 ├── ARCHITECTURE.md      # システム設計書
 ├── CONTRIBUTING.md      # 開発ガイドライン
-├── API.md              # API仕様書
-├── DEVELOPMENT.md      # 開発環境セットアップ
-└── README.md           # このファイル
+├── EXTERNAL_API.md      # 外部API仕様書
+├── DEVELOPMENT.md       # 開発環境セットアップ
+└── README.md            # このファイル
 ```
 
 ## コントリビューション

@@ -146,7 +146,7 @@ kindle-tenki-dashbaord/
 ├── README.md                     # プロジェクト概要
 ├── ARCHITECTURE.md               # アーキテクチャ設計書
 ├── CONTRIBUTING.md               # 開発ガイドライン
-├── API.md                        # API仕様書
+├── EXTERNAL_API.md               # 外部API仕様書
 └── DEVELOPMENT.md                # このファイル
 ```
 
@@ -443,41 +443,119 @@ go run main.go
 # サンプルデータにフォールバックすることを確認
 ```
 
-### ユニットテスト (今後の実装)
+### 自動テスト
 
-```go
-// main_test.go
-package main
+#### テストの実行
 
-import "testing"
+```bash
+# すべてのテストを実行
+go test -v
 
-func TestParseTemperature(t *testing.T) {
-    tests := []struct {
-        input    string
-        expected int
-        hasError bool
-    }{
-        {"25", 25, false},
-        {"", 0, true},
-        {"null", 0, true},
-        {"abc", 0, true},
-    }
+# カバレッジ付きで実行
+go test -cover
 
-    for _, test := range tests {
-        result, err := parseTemperature(test.input)
-        if test.hasError && err == nil {
-            t.Errorf("期待: エラー, 実際: nil")
-        }
-        if !test.hasError && result != test.expected {
-            t.Errorf("期待: %d, 実際: %d", test.expected, result)
-        }
-    }
-}
+# 詳細なカバレッジレポートを生成
+go test -coverprofile=coverage.out
+go tool cover -func=coverage.out
+
+# HTMLでカバレッジレポートを表示
+go tool cover -html=coverage.out
 ```
 
-実行:
-```bash
-go test -v
+#### テスト構成
+
+プロジェクトには包括的なユニットテストが実装されています:
+
+**main_test.go** には以下のテストが含まれます:
+
+1. **TestParseTemperature** - 気温文字列のパース処理
+   - 正常な数値
+   - 負の数値
+   - ゼロ
+   - 空文字列、null、不正な文字列のエラーハンドリング
+
+2. **TestGetEnv** - 環境変数の取得処理
+   - 環境変数が設定されている/いない場合
+   - 空文字列の場合のデフォルト値
+
+3. **TestProcessWeatherData** - 天気データ処理ロジック
+   - 正常なデータ処理
+   - 気温データがnullの場合のフォールバック
+
+4. **TestGetSampleData** - サンプルデータ生成
+   - データ構造の検証
+   - 日付フォーマットの確認
+
+5. **TestGetSampleNews** - サンプルニュース生成
+   - 必須フィールドの存在確認
+
+6. **TestFetchWeatherDataIntegration** - 天気API統合テスト
+   - JSONデータのUnmarshalと処理
+   - エラー時のフォールバック動作
+
+7. **TestFetchNewsDataIntegration** - ニュースRSS統合テスト
+   - XMLデータのパースと日付フォーマット変換
+   - 不正なXMLのエラーハンドリング
+
+#### カバレッジ
+
+現在のテストカバレッジ: **42.5%**
+
+| 関数 | カバレッジ | 状態 |
+|------|-----------|------|
+| `getEnv` | 100.0% | ✅ 完全 |
+| `parseTemperature` | 100.0% | ✅ 完全 |
+| `getSampleData` | 100.0% | ✅ 完全 |
+| `getSampleNews` | 100.0% | ✅ 完全 |
+| `processWeatherData` | 96.9% | ✅ ほぼ完全 |
+| `fetchWeatherData` | 0.0% | ⚠️ HTTP通信 |
+| `fetchNewsData` | 0.0% | ⚠️ HTTP通信 |
+| `generateHTML` | 0.0% | ⚠️ ファイルIO |
+| `copyCSS` | 0.0% | ⚠️ ファイルIO |
+| `main` | 0.0% | ⚠️ エントリーポイント |
+
+**注:** HTTP通信とファイルIO を伴う関数は、統合テストでビジネスロジックをテストしています。42.5%のカバレッジは、主要なロジックを十分にカバーしており実用的です。
+
+#### テストの追加方法
+
+新しい関数を追加した場合:
+
+```go
+// main_test.go に追加
+func TestNewFunction(t *testing.T) {
+    tests := []struct {
+        name     string
+        input    string
+        expected string
+        hasError bool
+    }{
+        {
+            name:     "正常なケース",
+            input:    "test",
+            expected: "result",
+            hasError: false,
+        },
+    }
+
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            result, err := newFunction(tt.input)
+
+            if tt.hasError {
+                if err == nil {
+                    t.Errorf("期待: エラー, 実際: nil")
+                }
+            } else {
+                if err != nil {
+                    t.Errorf("期待: エラーなし, 実際: %v", err)
+                }
+                if result != tt.expected {
+                    t.Errorf("期待: %s, 実際: %s", tt.expected, result)
+                }
+            }
+        })
+    }
+}
 ```
 
 ## エディタ設定
@@ -533,7 +611,7 @@ autocmd BufWritePre *.go :GoFmt
 - [README.md](./README.md) - プロジェクト概要
 - [ARCHITECTURE.md](./ARCHITECTURE.md) - アーキテクチャ設計
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - 開発ガイドライン
-- [API.md](./API.md) - API仕様書
+- [EXTERNAL_API.md](./EXTERNAL_API.md) - 外部API仕様書
 
 ### 外部リンク
 - [天気API](https://weather.tsukumijima.net/)

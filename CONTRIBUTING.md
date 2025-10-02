@@ -308,7 +308,7 @@ CITY_CODE=130010  # 東京
 
 ### 参考資料
 - [Go コーディング規約](https://go.dev/doc/effective_go)
-- [天気API仕様](./API.md)
+- [外部API仕様](./EXTERNAL_API.md)
 - [アーキテクチャ設計](./ARCHITECTURE.md)
 - [開発環境セットアップ](./DEVELOPMENT.md)
 
