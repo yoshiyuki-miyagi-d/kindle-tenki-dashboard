@@ -230,6 +230,11 @@ main {
     flex: 1;
 }
 
+.news-title a {
+    color: #000;
+    text-decoration: none;
+}
+
 .news-date {
     font-size: 11px;
     color: #999;
