@@ -94,16 +94,35 @@
 
             <section class="news">
                 <h2 class="section-title">ニュース</h2>
-                <div class="news-list">
-                    {{range .News}}
-                    <article class="news-item">
-                        <div class="news-header">
-                            <div class="news-title">{{.Title}}</div>
-                            <span class="news-date">{{.PubDate}}</span>
+                <div class="news-container">
+                    <div class="news-column">
+                        <h3 class="news-column-title">主要ニュース</h3>
+                        <div class="news-list">
+                            {{range .News}}
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">{{.Title}}</div>
+                                    <span class="news-date">{{.PubDate}}</span>
+                                </div>
+                                <p class="news-description">{{.Description}}</p>
+                            </article>
+                            {{end}}
                         </div>
-                        <p class="news-description">{{.Description}}</p>
-                    </article>
-                    {{end}}
+                    </div>
+                    <div class="news-column">
+                        <h3 class="news-column-title">経済ニュース</h3>
+                        <div class="news-list">
+                            {{range .EconomyNews}}
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title">{{.Title}}</div>
+                                    <span class="news-date">{{.PubDate}}</span>
+                                </div>
+                                <p class="news-description">{{.Description}}</p>
+                            </article>
+                            {{end}}
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>

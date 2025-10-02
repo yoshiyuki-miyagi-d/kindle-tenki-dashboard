@@ -26,6 +26,7 @@ type WeatherData struct {
 	UpdateTime     string           `json:"updateTime"`
 	HourlyForecast []HourlyForecast `json:"hourlyForecast"`
 	News           []NewsItem       `json:"news"`
+	EconomyNews    []NewsItem       `json:"economyNews"` // 経済ニュース
 }
 
 type HourlyForecast struct {
@@ -151,6 +152,16 @@ func fetchWeatherData() (*WeatherData, error) {
 		weatherData.News = getSampleNews()
 	} else {
 		weatherData.News = news
+	}
+
+	// 経済ニュースデータを取得して追加
+	economyNews, err := fetchEconomyNewsData()
+	if err != nil {
+		log.Printf("⚠️  経済ニュースデータの取得に失敗しました: %v", err)
+		log.Println("   サンプルの経済ニュースデータを使用します")
+		weatherData.EconomyNews = getSampleNews()
+	} else {
+		weatherData.EconomyNews = economyNews
 	}
 
 	return weatherData, nil
@@ -389,6 +400,57 @@ func fetchNewsData() ([]NewsItem, error) {
 
 	var news []NewsItem
 	maxItems := 5 // トップ5件のニュースを表示
+	if len(rss.Channel.Items) < maxItems {
+		maxItems = len(rss.Channel.Items)
+	}
+
+	for i := 0; i < maxItems; i++ {
+		item := rss.Channel.Items[i]
+		// 日付をパースして表示用にフォーマット
+		pubTime, err := time.Parse("Mon, 02 Jan 2006 15:04:05 -0700", item.PubDate)
+		var formattedDate string
+		if err != nil {
+			formattedDate = item.PubDate
+		} else {
+			formattedDate = pubTime.Format("01/02 15:04")
+		}
+
+		news = append(news, NewsItem{
+			Title:       item.Title,
+			Link:        item.Link,
+			Description: item.Description,
+			PubDate:     formattedDate,
+		})
+	}
+
+	return news, nil
+}
+
+func fetchEconomyNewsData() ([]NewsItem, error) {
+	url := "https://www3.nhk.or.jp/rss/news/cat5.xml" // 経済ニュースRSS
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("経済ニュースRSSの取得に失敗しました: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("経済ニュースRSS API Error: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("経済ニュースRSSの読み込みに失敗しました: %w", err)
+	}
+
+	var rss NHKNewsRSS
+	if err := xml.Unmarshal(body, &rss); err != nil {
+		return nil, fmt.Errorf("経済ニュースRSSのパースに失敗しました: %w", err)
+	}
+
+	var news []NewsItem
+	maxItems := 5 // トップ5件の経済ニュースを表示
 	if len(rss.Channel.Items) < maxItems {
 		maxItems = len(rss.Channel.Items)
 	}

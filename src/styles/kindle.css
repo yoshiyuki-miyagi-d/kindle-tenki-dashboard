@@ -186,6 +186,30 @@ main {
     margin-top: 12px;
 }
 
+.news-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media screen and (max-width: 600px) {
+    .news-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.news-column {
+    min-width: 0;
+}
+
+.news-column-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #999;
+}
+
 .news-list {
     display: flex;
     flex-direction: column;
