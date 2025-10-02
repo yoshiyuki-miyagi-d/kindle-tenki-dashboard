@@ -69,6 +69,11 @@ main {
     gap: 16px;
 }
 
+.weather-icon-large {
+    font-size: clamp(48px, 12vw, 64px);
+    line-height: 1;
+}
+
 .temperature {
     font-size: clamp(48px, 12vw, 64px);
     font-weight: bold;
@@ -154,8 +159,9 @@ main {
     margin-bottom: 4px;
 }
 
-.hourly-weather {
-    font-size: 13px;
+.hourly-icon {
+    font-size: 24px;
+    line-height: 1;
     margin-bottom: 4px;
 }
 

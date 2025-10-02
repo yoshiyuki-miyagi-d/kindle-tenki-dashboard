@@ -21,6 +21,7 @@ type WeatherData struct {
 	MaxTemp        int              `json:"maxTemp"`
 	FeelsLike      int              `json:"feelsLike"`
 	Description    string           `json:"description"`
+	WeatherIcon    string           `json:"weatherIcon"`    // 天気アイコン(絵文字)
 	Wind           string           `json:"wind"`
 	ChanceOfRain   []string         `json:"chanceOfRain"` // 6時間ごとの降水確率
 	UpdateTime     string           `json:"updateTime"`
@@ -33,6 +34,7 @@ type HourlyForecast struct {
 	Time        string `json:"time"`
 	Temp        int    `json:"temp"`
 	Desc        string `json:"desc"`
+	WeatherIcon string `json:"weatherIcon"` // 天気アイコン(絵文字)
 	RainChance  string `json:"rainChance"`  // 降水確率
 	ChartHeight int    `json:"chartHeight"` // グラフ表示用の高さ(%)
 }
@@ -107,6 +109,47 @@ func getEnv(key, defaultValue string) string {
 		return value
 	}
 	return defaultValue
+}
+
+// getWeatherIcon は天気の説明文から絵文字アイコンを返す
+func getWeatherIcon(description string) string {
+	// 天気の説明文に基づいて絵文字を返す
+	switch {
+	case containsAny(description, []string{"晴", "快晴"}):
+		return "☀️"
+	case containsAny(description, []string{"曇", "くもり"}):
+		return "☁️"
+	case containsAny(description, []string{"雨", "雨天", "大雨", "豪雨"}):
+		return "☔"
+	case containsAny(description, []string{"雪", "大雪"}):
+		return "⛄"
+	case containsAny(description, []string{"雷", "雷雨"}):
+		return "⚡"
+	case containsAny(description, []string{"霧"}):
+		return "🌫️"
+	case containsAny(description, []string{"晴れ時々曇り", "晴れのち曇り", "晴時々曇"}):
+		return "🌤️"
+	case containsAny(description, []string{"曇り時々晴れ", "曇りのち晴れ", "曇時々晴"}):
+		return "⛅"
+	case containsAny(description, []string{"曇り時々雨", "曇りのち雨", "曇時々雨"}):
+		return "🌧️"
+	default:
+		return "🌡️"
+	}
+}
+
+// containsAny は文字列に指定されたいずれかの部分文字列が含まれるかチェックする
+func containsAny(s string, substrs []string) bool {
+	for _, substr := range substrs {
+		if len(s) >= len(substr) {
+			for i := 0; i <= len(s)-len(substr); i++ {
+				if s[i:i+len(substr)] == substr {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
 
 func fetchWeatherData() (*WeatherData, error) {
@@ -294,10 +337,11 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 				}
 
 				hourlyForecast = append(hourlyForecast, HourlyForecast{
-					Time:       ft.label,
-					Temp:       temp,
-					Desc:       desc,
-					RainChance: rainChance,
+					Time:        ft.label,
+					Temp:        temp,
+					Desc:        desc,
+					WeatherIcon: getWeatherIcon(desc),
+					RainChance:  rainChance,
 				})
 
 				// 48時間後まで（最大20件）
@@ -340,6 +384,7 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 		MaxTemp:        maxTemp,
 		FeelsLike:      feelsLike,
 		Description:    todayForecast.Telop,
+		WeatherIcon:    getWeatherIcon(todayForecast.Telop),
 		Wind:           wind,
 		ChanceOfRain:   chanceOfRain,
 		UpdateTime:     now.Format("2006/01/02 15:04"),

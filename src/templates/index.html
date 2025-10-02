@@ -19,6 +19,7 @@
                     <div class="weather-main">
                         <div class="location">{{.Location}}</div>
                         <div class="weather-info">
+                            <div class="weather-icon-large">{{.WeatherIcon}}</div>
                             <div class="temperature">{{.Temperature}}℃</div>
                             <div class="weather-details">
                                 <div class="weather-desc">{{.Description}}</div>
@@ -78,7 +79,7 @@
                         {{if lt $index 12}}
                         <div class="hourly-item">
                             <div class="hourly-time">{{$element.Time}}</div>
-                            <div class="hourly-weather">{{$element.Desc}}</div>
+                            <div class="hourly-icon">{{$element.WeatherIcon}}</div>
                             <div class="hourly-temp">{{$element.Temp}}℃</div>
                             {{if $element.RainChance}}
                             <div class="hourly-rain">{{$element.RainChance}}</div>
