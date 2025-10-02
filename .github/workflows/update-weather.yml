@@ -27,9 +27,7 @@ jobs:
 
     - name: 天気データを取得してHTMLを生成
       env:
-        OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
-        CITY: ${{ vars.CITY || 'Tokyo' }}
-        COUNTRY_CODE: ${{ vars.COUNTRY_CODE || 'JP' }}
+        CITY_CODE: ${{ vars.CITY_CODE || '130010' }}
       run: go run main.go
 
     - name: 変更をコミット

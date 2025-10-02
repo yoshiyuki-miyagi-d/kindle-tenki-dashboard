@@ -15,16 +15,13 @@ import (
 )
 
 type WeatherData struct {
-	Location        string           `json:"location"`
-	Temperature     int              `json:"temperature"`
-	FeelsLike       int              `json:"feelsLike"`
-	Description     string           `json:"description"`
-	Humidity        int              `json:"humidity"`
-	Pressure        int              `json:"pressure"`
-	WindSpeed       float64          `json:"windSpeed"`
-	UpdateTime      string           `json:"updateTime"`
-	HourlyForecast  []HourlyForecast `json:"hourlyForecast"`
-	News            []NewsItem       `json:"news"`
+	Location       string           `json:"location"`
+	Temperature    int              `json:"temperature"`
+	FeelsLike      int              `json:"feelsLike"`
+	Description    string           `json:"description"`
+	UpdateTime     string           `json:"updateTime"`
+	HourlyForecast []HourlyForecast `json:"hourlyForecast"`
+	News           []NewsItem       `json:"news"`
 }
 
 type HourlyForecast struct {
@@ -290,9 +287,6 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 		Temperature:    temperature,
 		FeelsLike:      feelsLike,
 		Description:    todayForecast.Telop,
-		Humidity:       60, // 新しいAPIにはないため、固定値を使用
-		Pressure:       1013, // 新しいAPIにはないため、固定値を使用
-		WindSpeed:      2.5, // 新しいAPIにはないため、固定値を使用
 		UpdateTime:     now.Format("2006/01/02 15:04"),
 		HourlyForecast: hourlyForecast,
 		News:           []NewsItem{}, // 後で設定
@@ -316,9 +310,6 @@ func getSampleData() (*WeatherData, error) {
 		Temperature: 22,
 		FeelsLike:   25,
 		Description: "晴れ",
-		Humidity:    60,
-		Pressure:    1013,
-		WindSpeed:   2.5,
 		UpdateTime:  time.Now().Format("2006/01/02 15:04"),
 		HourlyForecast: []HourlyForecast{
 			{Time: "12:00", Temp: 23, Desc: "晴れ"},
