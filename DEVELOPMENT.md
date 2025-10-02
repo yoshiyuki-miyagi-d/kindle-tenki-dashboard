@@ -24,8 +24,8 @@
 ### 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/your-username/kindle-tenki-dashbaord.git
-cd kindle-tenki-dashbaord
+git clone https://github.com/your-username/kindle-tenki-dashboard.git
+cd kindle-tenki-dashboard
 ```
 
 ### 2. Go の環境確認
@@ -126,7 +126,7 @@ python -m SimpleHTTPServer 8000
 ## ディレクトリ構造
 
 ```
-kindle-tenki-dashbaord/
+kindle-tenki-dashboard/
 ├── .github/
 │   └── workflows/
 │       └── update-weather.yml    # GitHub Actions設定
@@ -252,7 +252,7 @@ cat docs/index.html
 
 2. **Kindleでアクセス**
    - 実験的ブラウザを起動
-   - `https://your-username.github.io/kindle-tenki-dashbaord/` にアクセス
+   - `https://your-username.github.io/kindle-tenki-dashboard/` にアクセス
 
 3. **表示確認**
    - レイアウトの崩れ
@@ -622,7 +622,7 @@ autocmd BufWritePre *.go :GoFmt
 ## サポート
 
 質問や問題がある場合:
-1. [Issues](https://github.com/your-username/kindle-tenki-dashbaord/issues) を検索
+1. [Issues](https://github.com/your-username/kindle-tenki-dashboard/issues) を検索
 2. 既存のIssueがなければ新規作成
 3. 以下の情報を含める:
    - Go のバージョン

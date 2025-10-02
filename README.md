@@ -70,8 +70,8 @@ Kindle Paperwhite (758x1024px) に最適化されたレスポンシブデザイ�
 
 ```bash
 # 1. リポジトリをクローン
-git clone https://github.com/your-username/kindle-tenki-dashbaord.git
-cd kindle-tenki-dashbaord
+git clone https://github.com/your-username/kindle-tenki-dashboard.git
+cd kindle-tenki-dashboard
 
 # 2. 環境変数を設定 (オプション)
 cp .env.example .env
@@ -201,7 +201,7 @@ go run main.go 2>&1
 ## プロジェクト構成
 
 ```
-kindle-tenki-dashbaord/
+kindle-tenki-dashboard/
 ├── .github/workflows/    # GitHub Actions設定
 ├── docs/                 # 生成されるHTML (GitHub Pages公開ディレクトリ)
 ├── src/
