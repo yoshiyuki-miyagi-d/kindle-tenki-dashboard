@@ -161,7 +161,8 @@ func fetchWeatherData() (*WeatherData, error) {
 		log.Println("   サンプルの経済ニュースデータを使用します")
 		weatherData.EconomyNews = getSampleNews()
 	} else {
-		weatherData.EconomyNews = economyNews
+		// 主要ニュースと重複する記事を経済ニュースから除外
+		weatherData.EconomyNews = filterDuplicateNews(economyNews, weatherData.News)
 	}
 
 	return weatherData, nil
@@ -450,7 +451,7 @@ func fetchEconomyNewsData() ([]NewsItem, error) {
 	}
 
 	var news []NewsItem
-	maxItems := 5 // トップ5件の経済ニュースを表示
+	maxItems := 10 // 重複を考慮して多めに取得(フィルタ後に5件確保)
 	if len(rss.Channel.Items) < maxItems {
 		maxItems = len(rss.Channel.Items)
 	}
@@ -475,6 +476,27 @@ func fetchEconomyNewsData() ([]NewsItem, error) {
 	}
 
 	return news, nil
+}
+
+func filterDuplicateNews(economyNews []NewsItem, mainNews []NewsItem) []NewsItem {
+	// 主要ニュースのタイトルをマップに格納
+	mainTitles := make(map[string]bool)
+	for _, item := range mainNews {
+		mainTitles[item.Title] = true
+	}
+
+	// 重複しない経済ニュースを抽出し、5件になるまで追加
+	var filtered []NewsItem
+	for _, item := range economyNews {
+		if !mainTitles[item.Title] {
+			filtered = append(filtered, item)
+			if len(filtered) >= 5 {
+				break
+			}
+		}
+	}
+
+	return filtered
 }
 
 func getSampleNews() []NewsItem {
