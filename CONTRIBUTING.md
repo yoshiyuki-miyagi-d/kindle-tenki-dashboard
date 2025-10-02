@@ -313,6 +313,5 @@ CITY_CODE=130010  # 東京
 - [開発環境セットアップ](./DEVELOPMENT.md)
 
 ### 外部リンク
-- [OpenWeatherMap API](https://openweathermap.org/api)
 - [天気API (Tsukumijima)](https://weather.tsukumijima.net/)
 - [NHK ニュースRSS](https://www.nhk.or.jp/toppage/rss/index.html)

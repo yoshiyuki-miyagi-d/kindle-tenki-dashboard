@@ -122,11 +122,12 @@ docs/
 type WeatherData struct {
     Location        string           // 都市名
     Temperature     int              // 現在の気温(℃)
+    MinTemp         int              // 最低気温(℃)
+    MaxTemp         int              // 最高気温(℃)
     FeelsLike       int              // 体感温度(℃)
     Description     string           // 天気概況
-    Humidity        int              // 湿度(%)
-    Pressure        int              // 気圧(hPa)
-    WindSpeed       float64          // 風速(m/s)
+    Wind            string           // 風の情報
+    ChanceOfRain    []string         // 6時間ごとの降水確率
     UpdateTime      string           // 更新時刻
     HourlyForecast  []HourlyForecast // 時間別予報
     News            []NewsItem       // ニュース
@@ -139,6 +140,7 @@ type HourlyForecast struct {
     Time        string // 時刻 (HH:MM)
     Temp        int    // 気温(℃)
     Desc        string // 天気
+    RainChance  string // 降水確率
     ChartHeight int    // グラフ高さ(%) 20-100
 }
 ```
