@@ -26,9 +26,30 @@
                             <div class="temperature">{{.Temperature}}℃</div>
                             <div class="weather-details">
                                 <div class="weather-desc">{{.Description}}</div>
+                                <div class="temp-range">最低{{.MinTemp}}℃ / 最高{{.MaxTemp}}℃</div>
                                 <div class="feels-like">体感{{.FeelsLike}}℃</div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="weather-extra">
+                        {{if .Wind}}
+                        <div class="weather-extra-item">
+                            <span class="extra-label">風:</span>
+                            <span class="extra-value">{{.Wind}}</span>
+                        </div>
+                        {{end}}
+                        {{if .ChanceOfRain}}
+                        <div class="weather-extra-item">
+                            <span class="extra-label">降水確率:</span>
+                            <span class="extra-value">
+                                {{range $index, $rain := .ChanceOfRain}}
+                                    {{if $index}} / {{end}}
+                                    {{if eq $index 0}}6-12時{{else if eq $index 1}}12-18時{{else}}18-24時{{end}}: {{$rain}}
+                                {{end}}
+                            </span>
+                        </div>
+                        {{end}}
                     </div>
 
                     <div class="temperature-chart">
@@ -62,6 +83,9 @@
                             <div class="hourly-time">{{.Time}}</div>
                             <div class="hourly-weather">{{.Desc}}</div>
                             <div class="hourly-temp">{{.Temp}}℃</div>
+                            {{if .RainChance}}
+                            <div class="hourly-rain">{{.RainChance}}</div>
+                            {{end}}
                         </div>
                         {{end}}
                     </div>

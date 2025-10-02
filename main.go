@@ -17,8 +17,12 @@ import (
 type WeatherData struct {
 	Location       string           `json:"location"`
 	Temperature    int              `json:"temperature"`
+	MinTemp        int              `json:"minTemp"`
+	MaxTemp        int              `json:"maxTemp"`
 	FeelsLike      int              `json:"feelsLike"`
 	Description    string           `json:"description"`
+	Wind           string           `json:"wind"`
+	ChanceOfRain   []string         `json:"chanceOfRain"` // 6時間ごとの降水確率
 	UpdateTime     string           `json:"updateTime"`
 	HourlyForecast []HourlyForecast `json:"hourlyForecast"`
 	News           []NewsItem       `json:"news"`
@@ -28,6 +32,7 @@ type HourlyForecast struct {
 	Time        string `json:"time"`
 	Temp        int    `json:"temp"`
 	Desc        string `json:"desc"`
+	RainChance  string `json:"rainChance"`  // 降水確率
 	ChartHeight int    `json:"chartHeight"` // グラフ表示用の高さ(%)
 }
 
@@ -160,18 +165,39 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 	// 温度の処理（文字列から数値に変換）
 	// 今日のデータがnullの場合は明日のデータを使用
 	temperature := 0
+	minTemp := 0
+	maxTemp := 0
 	feelsLike := 0
+
 	if todayForecast.Temperature.Max.Celsius != "" {
 		if temp, err := parseTemperature(todayForecast.Temperature.Max.Celsius); err == nil {
 			temperature = temp
+			maxTemp = temp
 			feelsLike = temp // 体感温度は最高気温で代用
 		}
 	} else if len(response.Forecasts) >= 2 && response.Forecasts[1].Temperature.Max.Celsius != "" {
 		// 今日のデータがない場合は明日の最高気温を使用
 		if temp, err := parseTemperature(response.Forecasts[1].Temperature.Max.Celsius); err == nil {
 			temperature = temp
+			maxTemp = temp
 			feelsLike = temp
 		}
+	}
+
+	if todayForecast.Temperature.Min.Celsius != "" {
+		if temp, err := parseTemperature(todayForecast.Temperature.Min.Celsius); err == nil {
+			minTemp = temp
+		}
+	}
+
+	// 風の情報
+	wind := todayForecast.Detail.Wind
+
+	// 降水確率（6時間ごと）
+	chanceOfRain := []string{
+		todayForecast.ChanceOfRain.T06_12,
+		todayForecast.ChanceOfRain.T12_18,
+		todayForecast.ChanceOfRain.T18_24,
 	}
 
 	// 時間別予報を生成（現在時刻以降の予報のみ表示）
@@ -215,6 +241,7 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 			if ft.hour > currentHour {
 				var temp int
 				var desc string
+				var rainChance string
 
 				// 24時以降は明日の予報
 				if ft.hour >= 24 {
@@ -222,31 +249,43 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 					hourInDay := ft.hour % 24
 					if hourInDay >= 0 && hourInDay < 6 {
 						temp = tomorrowMinTemp
-					} else if hourInDay >= 6 && hourInDay < 15 {
+						rainChance = tomorrowForecast.ChanceOfRain.T00_06
+					} else if hourInDay >= 6 && hourInDay < 12 {
 						temp = tomorrowMaxTemp
-					} else if hourInDay >= 15 && hourInDay < 18 {
+						rainChance = tomorrowForecast.ChanceOfRain.T06_12
+					} else if hourInDay >= 12 && hourInDay < 18 {
 						temp = tomorrowMaxTemp - 2
+						rainChance = tomorrowForecast.ChanceOfRain.T12_18
 					} else {
 						temp = tomorrowMinTemp + 2
+						rainChance = tomorrowForecast.ChanceOfRain.T18_24
 					}
 					desc = tomorrowForecast.Telop
 				} else {
 					// 今日の予報
-					// 時間帯によって気温を調整
-					if ft.hour <= 15 {
-						temp = temperature
-					} else if ft.hour <= 18 {
-						temp = temperature - 2
-					} else {
+					hourInDay := ft.hour
+					// 時間帯によって気温と降水確率を調整
+					if hourInDay >= 0 && hourInDay < 6 {
 						temp = temperature - 4
+						rainChance = todayForecast.ChanceOfRain.T00_06
+					} else if hourInDay >= 6 && hourInDay < 12 {
+						temp = temperature
+						rainChance = todayForecast.ChanceOfRain.T06_12
+					} else if hourInDay >= 12 && hourInDay < 18 {
+						temp = temperature
+						rainChance = todayForecast.ChanceOfRain.T12_18
+					} else {
+						temp = temperature - 2
+						rainChance = todayForecast.ChanceOfRain.T18_24
 					}
 					desc = todayForecast.Telop
 				}
 
 				hourlyForecast = append(hourlyForecast, HourlyForecast{
-					Time: ft.label,
-					Temp: temp,
-					Desc: desc,
+					Time:       ft.label,
+					Temp:       temp,
+					Desc:       desc,
+					RainChance: rainChance,
 				})
 
 				// 48時間後まで（最大15件）
@@ -285,8 +324,12 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 	return &WeatherData{
 		Location:       response.Location.City,
 		Temperature:    temperature,
+		MinTemp:        minTemp,
+		MaxTemp:        maxTemp,
 		FeelsLike:      feelsLike,
 		Description:    todayForecast.Telop,
+		Wind:           wind,
+		ChanceOfRain:   chanceOfRain,
 		UpdateTime:     now.Format("2006/01/02 15:04"),
 		HourlyForecast: hourlyForecast,
 		News:           []NewsItem{}, // 後で設定

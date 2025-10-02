@@ -96,9 +96,42 @@ main {
     font-size: 14px;
 }
 
+.temp-range {
+    font-size: 13px;
+    color: #333;
+    margin-top: 2px;
+}
+
 .feels-like {
     font-size: 12px;
     color: #666;
+    margin-top: 2px;
+}
+
+/* 追加の天気情報 */
+.weather-extra {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #ddd;
+}
+
+.weather-extra-item {
+    font-size: 13px;
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+.weather-extra-item:last-child {
+    margin-bottom: 0;
+}
+
+.extra-label {
+    font-weight: bold;
+    margin-right: 4px;
+}
+
+.extra-value {
+    color: #333;
 }
 
 
@@ -140,6 +173,12 @@ main {
 .hourly-temp {
     font-size: 14px;
     font-weight: bold;
+}
+
+.hourly-rain {
+    font-size: 11px;
+    color: #0066cc;
+    margin-top: 2px;
 }
 
 /* ニュースセクション */
