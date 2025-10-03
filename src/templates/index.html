@@ -11,6 +11,7 @@
     <meta http-equiv="refresh" content="1800">
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle" aria-label="ダークモード切り替え">🌙</button>
     <div class="container">
         <main>
             <section class="weather-section">
@@ -130,5 +131,61 @@
             <p class="footer-credit">Powered by 天気予報 API (weather.tsukumijima.net) / NHK ニュース RSS</p>
         </footer>
     </div>
+
+    <script>
+        // ダークモード切り替え機能
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        // ローカルストレージからテーマを取得
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+
+        // システムの設定でダークモードが有効な場合
+        if (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+
+        // ボタンクリックでテーマを切り替え
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // SVGの色をダークモードに対応させる
+        function updateSVGColors() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            const svgElements = document.querySelectorAll('.line-chart line, .line-chart polyline, .line-chart circle, .line-chart text');
+
+            svgElements.forEach(el => {
+                if (el.tagName.toLowerCase() === 'line' || el.tagName.toLowerCase() === 'polyline') {
+                    el.setAttribute('stroke', isDarkMode ? '#e0e0e0' : '#000');
+                } else if (el.tagName.toLowerCase() === 'circle') {
+                    el.setAttribute('fill', isDarkMode ? '#e0e0e0' : '#000');
+                } else if (el.tagName.toLowerCase() === 'text') {
+                    el.setAttribute('fill', isDarkMode ? '#e0e0e0' : '#000');
+                }
+            });
+        }
+
+        // 初期表示時にSVGの色を更新
+        updateSVGColors();
+
+        // テーマ切り替え時にSVGの色も更新
+        themeToggle.addEventListener('click', () => {
+            setTimeout(updateSVGColors, 50);
+        });
+    </script>
 </body>
 </html>
