@@ -365,14 +365,16 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 			}
 		}
 
-		// 最小気温を20%、最高気温を100%にマッピング
+		// SVGのY座標系に合わせて計算 (上が小さい値、下が大きい値)
+		// 最高気温を上部(y=20)、最低気温を下部(y=75)に配置
 		tempRange := maxTemp - minTemp
 		if tempRange == 0 {
 			tempRange = 1 // ゼロ除算を防ぐ
 		}
 
 		for i := range hourlyForecast {
-			heightPercent := 20 + ((hourlyForecast[i].Temp-minTemp)*80)/tempRange
+			// 最高気温 → heightPercent=20, 最低気温 → heightPercent=75
+			heightPercent := 20 + ((maxTemp-hourlyForecast[i].Temp)*55)/tempRange
 			hourlyForecast[i].ChartHeight = heightPercent
 		}
 	}
