@@ -11,6 +11,7 @@
     <meta http-equiv="refresh" content="1800">
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle" aria-label="ダークモード切り替え">🌙</button>
     <div class="container">
         <main>
             <section class="weather-section">
@@ -330,18 +331,18 @@
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20251003/k10014940161000.html">法隆寺の「釈迦三尊像」台座の一部とみられる銅の部材見つかる</a></div>
-                                    <span class="news-date">10/03 17:47</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20251003/k10014940221000.html">アサヒグループHDシステム障害“ランサムウエアの攻撃受けた”</a></div>
+                                    <span class="news-date">10/03 18:16</span>
                                 </div>
-                                <p class="news-description">国宝に指定されている法隆寺の「釈迦三尊像」のもともとの台座の一部とみられる銅の部材が見つかったと、古美術品の保存や公開を行う小田原文化財団が発表しました。調査にあたった専門家は「法隆寺釈迦三尊像がどのように作られたのかがうかがい知れる貴重な発見だ」としています。</p>
+                                <p class="news-description">サイバー攻撃によるシステム障害が起きている「アサヒグループホールディングス」は、身代金要求型のコンピューターウイルス＝ランサムウエアの攻撃を受けたと発表しました。調査の結果、情報が漏えいした可能性を示すあとが確認されたということで、その内容や範囲を調べています。</p>
                             </article>
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20251003/k10014940001000.html">スーパー コメ平均価格 5キロ 4211円 2週連続値下がり</a></div>
-                                    <span class="news-date">10/03 17:31</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20251003/k10014940201000.html">麻生最高顧問 複数の候補者や陣営幹部と会談重ねる</a></div>
+                                    <span class="news-date">10/03 18:18</span>
                                 </div>
-                                <p class="news-description">農林水産省によりますと、全国のスーパーで9月28日までの1週間に販売されたコメの平均価格は、5キロあたり税込みで4211円と、前の週より35円値下がりしました。値下がりは2週連続です。</p>
+                                <p class="news-description">党内で唯一の派閥を率いる麻生最高顧問は、3日は午前11時前に議員会館の事務所に入り複数の候補者や陣営の幹部と会談を重ねました。</p>
                             </article>
                             
                         </div>
@@ -349,14 +350,6 @@
                     <div class="news-column">
                         <h3 class="news-column-title">経済ニュース</h3>
                         <div class="news-list">
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20251003/k10014940221000.html">アサヒグループHDシステム障害“ランサムウエアの攻撃受けた”</a></div>
-                                    <span class="news-date">10/03 18:16</span>
-                                </div>
-                                <p class="news-description">サイバー攻撃によるシステム障害が起きている「アサヒグループホールディングス」は、身代金要求型のコンピューターウイルス＝ランサムウエアの攻撃を受けたと発表しました。調査の結果、情報が漏えいした可能性を示すあとが確認されたということで、その内容や範囲を調べています。</p>
-                            </article>
                             
                             <article class="news-item">
                                 <div class="news-header">
@@ -390,6 +383,14 @@
                                 <p class="news-description">日本とアメリカの経済界のトップが集まる「日米財界人会議」は3日、共同声明を採択し、閉幕しました。声明では、アメリカの関税措置を念頭に、透明性が高く予測可能な貿易や投資のシステムは、両国の経済的な繁栄と安全保障の基盤だと指摘しています。</p>
                             </article>
                             
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20251003/k10014940041000.html">武藤経産相 “日本企業への影響注視” 米追加関税の対象拡大で</a></div>
+                                    <span class="news-date">10/03 15:02</span>
+                                </div>
+                                <p class="news-description">アメリカによる鉄鋼製品やアルミニウムへの50％の追加関税について、課税対象が建設用や農業用の機械などにも拡大していることから、武藤経済産業大臣は日本企業への影響を注視するとともに、販路拡大などの支援に取り組む考えを示しました。</p>
+                            </article>
+                            
                         </div>
                     </div>
                 </div>
@@ -397,9 +398,65 @@
         </main>
 
         <footer>
-            <p class="update-time">最終更新: 2025/10/03 18:22</p>
+            <p class="update-time">最終更新: 2025/10/03 18:23</p>
             <p class="footer-credit">Powered by 天気予報 API (weather.tsukumijima.net) / NHK ニュース RSS</p>
         </footer>
     </div>
+
+    <script>
+        
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+
+        
+        if (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            body.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        
+        function updateSVGColors() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            const svgElements = document.querySelectorAll('.line-chart line, .line-chart polyline, .line-chart circle, .line-chart text');
+
+            svgElements.forEach(el => {
+                if (el.tagName.toLowerCase() === 'line' || el.tagName.toLowerCase() === 'polyline') {
+                    el.setAttribute('stroke', isDarkMode ? '#e0e0e0' : '#000');
+                } else if (el.tagName.toLowerCase() === 'circle') {
+                    el.setAttribute('fill', isDarkMode ? '#e0e0e0' : '#000');
+                } else if (el.tagName.toLowerCase() === 'text') {
+                    el.setAttribute('fill', isDarkMode ? '#e0e0e0' : '#000');
+                }
+            });
+        }
+
+        
+        updateSVGColors();
+
+        
+        themeToggle.addEventListener('click', () => {
+            setTimeout(updateSVGColors, 50);
+        });
+    </script>
 </body>
 </html>
