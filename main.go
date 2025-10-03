@@ -373,8 +373,9 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 		}
 
 		for i := range hourlyForecast {
-			// 最高気温 → heightPercent=20, 最低気温 → heightPercent=75
-			heightPercent := 20 + ((maxTemp-hourlyForecast[i].Temp)*55)/tempRange
+			// 最低気温 → heightPercent=75(下部), 最高気温 → heightPercent=20(上部)
+			// Y座標は上が小さいので、温度が高いほど小さいY値にする
+			heightPercent := 75 - ((hourlyForecast[i].Temp-minTemp)*55)/tempRange
 			hourlyForecast[i].ChartHeight = heightPercent
 		}
 	}

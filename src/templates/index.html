@@ -60,13 +60,13 @@
                                 fill="none"
                                 stroke="#000"
                                 stroke-width="2"
-                                points="{{range $index, $element := .HourlyForecast}}{{if $index}} {{end}}{{mul $index 50}},{{sub 95 $element.ChartHeight}}{{end}}"
+                                points="{{range $index, $element := .HourlyForecast}}{{if $index}} {{end}}{{mul $index 50}},{{$element.ChartHeight}}{{end}}"
                             />
 
                             <!-- データポイント -->
                             {{range $index, $element := .HourlyForecast}}
-                            <circle cx="{{mul $index 50}}" cy="{{sub 95 $element.ChartHeight}}" r="3" fill="#000"/>
-                            <text x="{{mul $index 50}}" y="{{sub 85 $element.ChartHeight}}" text-anchor="middle" font-size="10" fill="#000">{{$element.Temp}}℃</text>
+                            <circle cx="{{mul $index 50}}" cy="{{$element.ChartHeight}}" r="3" fill="#000"/>
+                            <text x="{{mul $index 50}}" y="{{sub $element.ChartHeight 10}}" text-anchor="middle" font-size="10" fill="#000">{{$element.Temp}}℃</text>
                             <text x="{{mul $index 50}}" y="110" text-anchor="middle" font-size="9" fill="#000">{{$element.Time}}</text>
                             {{end}}
                         </svg>
