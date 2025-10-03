@@ -23,7 +23,7 @@
                             <div class="temperature">{{.Temperature}}℃</div>
                             <div class="weather-details">
                                 <div class="weather-desc">{{.Description}}</div>
-                                <div class="temp-range">最低{{.MinTemp}}℃ / 最高{{.MaxTemp}}℃</div>
+                                <div class="temp-range">{{if gt .MinTemp 0}}最低{{.MinTemp}}℃ / {{end}}最高{{.MaxTemp}}℃</div>
                                 <div class="feels-like">体感{{.FeelsLike}}℃</div>
                             </div>
                         </div>
