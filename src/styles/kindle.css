@@ -463,6 +463,17 @@ body.dark-mode .theme-toggle:hover {
     background: #ddd;
 }
 
+/* アクセシビリティ: フォーカススタイル */
+a:focus, button:focus {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+}
+
+body.dark-mode a:focus,
+body.dark-mode button:focus {
+    outline-color: #e0e0e0;
+}
+
 /* 印刷時の最適化 */
 @media print {
     body {

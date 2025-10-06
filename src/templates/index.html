@@ -56,7 +56,8 @@
                     </div>
 
                     <div class="temperature-chart">
-                        <svg class="line-chart" viewBox="0 0 800 120" preserveAspectRatio="xMidYMid meet">
+                        <svg class="line-chart" viewBox="0 0 800 120" preserveAspectRatio="xMidYMid meet" role="img" aria-label="48時間の気温変化グラフ">
+                            <title>48時間の気温変化</title>
                             <!-- グリッド線 -->
                             <line x1="0" y1="95" x2="800" y2="95" stroke="#000" stroke-width="1"/>
 
@@ -119,7 +120,7 @@
                             {{range .News}}
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="{{.Link}}">{{.Title}}</a></div>
+                                    <div class="news-title"><a href="{{.Link}}" target="_blank" rel="noopener noreferrer">{{.Title}}</a></div>
                                     <span class="news-date">{{.PubDate}}</span>
                                 </div>
                                 <p class="news-description">{{.Description}}</p>
@@ -133,7 +134,7 @@
                             {{range .EconomyNews}}
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="{{.Link}}">{{.Title}}</a></div>
+                                    <div class="news-title"><a href="{{.Link}}" target="_blank" rel="noopener noreferrer">{{.Title}}</a></div>
                                     <span class="news-date">{{.PubDate}}</span>
                                 </div>
                                 <p class="news-description">{{.Description}}</p>
