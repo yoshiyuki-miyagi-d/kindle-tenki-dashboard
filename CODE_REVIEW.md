@@ -71,12 +71,12 @@ const (
 ```
 
 #### 1.3 ゼロ除算のチェック ✅ 対応済み
-**場所**: main.go:399-411
+**場所**: main.go:395-408
 
 **対応状況**: 2025-10-06に修正完了。全ての予報が同じ気温の場合、グラフの中央(Y=47)に配置するように改善した。
 
 #### 1.4 時間帯による気温調整の精度
-**場所**: main.go:314-346
+**場所**: main.go:326-361
 
 **問題点**: 固定値での気温調整(±2℃, ±4℃)は実際の気温変化と乖離する可能性がある。
 
@@ -85,7 +85,7 @@ const (
 - より正確な気温予測を提供
 
 #### 1.5 HTTPクライアントのタイムアウト設定 ✅ 対応済み
-**場所**: main.go:170, 484, 535
+**場所**: main.go:177-179, 513-516, 569-572
 
 **問題点**: `http.Get`にタイムアウトが設定されていない。外部APIが応答しない場合、長時間待機する可能性がある。
 
@@ -117,37 +117,29 @@ const (
 
 ### 改善提案
 
-#### 2.1 フォールバックフォントの順序
-**場所**: kindle.css:10
-```css
-font-family: "游ゴシック体", "Yu Gothic", YuGothic, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, "MS Pゴシック", sans-serif;
-```
+#### 2.1 印刷スタイルの不足
+**場所**: kindle.css(印刷用メディアクエリがない)
 
-**問題点**: Kindle Paperwhiteはこれらのフォントをサポートしていない可能性がある。
+**問題点**: 印刷時に不要な要素(テーマ切り替えボタン、絵文字アイコンなど)が表示され、紙面を無駄にする。
 
 **改善案**:
-```css
-font-family: sans-serif;
-```
-または、Kindleでサポートされているフォントを優先する。
-
-#### 2.2 印刷スタイルの拡充
-**場所**: kindle.css:449-458
-
-**改善案**:
-印刷時に不要な要素(グラフ、アイコンなど)を非表示にし、紙面を節約する。
 ```css
 @media print {
-    .theme-toggle,
+    .theme-toggle {
+        display: none;
+    }
     .weather-icon-large,
     .hourly-icon,
     .daily-icon {
-        display: none;
+        font-size: 0;
+    }
+    .warning-banner {
+        border: 1px solid #000;
     }
 }
 ```
 
-#### 2.3 アクセシビリティの向上 ✅ 対応済み
+#### 2.2 アクセシビリティの向上 ✅ 対応済み
 **場所**: kindle.css全体
 
 **対応状況**: 2025-10-06に修正完了。リンクとボタンに2pxのフォーカススタイルを追加し、ダークモード対応も実装した。キーボードナビゲーションが使いやすくなった。
@@ -225,19 +217,60 @@ themeToggle.addEventListener('click', () => {
 ### 改善提案
 
 #### 4.1 統合テストの拡充
-**問題点**: HTTPリクエストを実際に行うテストがない(モックのみ)。
+**問題点**: HTTPリクエストを実際に行うテストがない。`httptest`パッケージを使用したモックサーバーのテストも不足している。
 
 **改善案**:
-- `httptest`パッケージを使用したHTTPサーバーのモック
-- 外部API障害時のリトライロジックのテスト
+- `httptest.NewServer`を使用して、実際のHTTPリクエスト/レスポンスをテスト
+- API障害時のタイムアウトとフォールバック動作のテスト
+- 並行リクエスト時の動作テスト
 
 #### 4.2 グラフ計算のテスト
-**問題点**: `ChartHeight`計算のテストがない。
+**問題点**: `ChartHeight`計算のユニットテストがない。特にエッジケース(全て同じ気温、極端な気温差など)のテストが不足。
 
 **改善案**:
 ```go
 func TestChartHeightCalculation(t *testing.T) {
-    // 最低気温10℃、最高気温20℃の場合の高さ計算をテスト
+    tests := []struct {
+        name      string
+        forecasts []HourlyForecast
+        expected  map[int]int // index -> expected ChartHeight
+    }{
+        {
+            name: "通常の気温差",
+            forecasts: []HourlyForecast{
+                {Temp: 10}, {Temp: 15}, {Temp: 20},
+            },
+            expected: map[int]int{0: 75, 1: 47, 2: 20},
+        },
+        {
+            name: "全て同じ気温",
+            forecasts: []HourlyForecast{
+                {Temp: 15}, {Temp: 15}, {Temp: 15},
+            },
+            expected: map[int]int{0: 47, 1: 47, 2: 47},
+        },
+    }
+    // テスト実装...
+}
+```
+
+#### 4.3 containsAny関数のテスト
+**問題点**: `containsAny`関数のユニットテストがない。
+
+**改善案**:
+```go
+func TestContainsAny(t *testing.T) {
+    tests := []struct {
+        name     string
+        s        string
+        substrs  []string
+        expected bool
+    }{
+        {"部分文字列あり", "晴れ時々曇り", []string{"晴", "雨"}, true},
+        {"部分文字列なし", "晴れ", []string{"雨", "雪"}, false},
+        {"空配列", "晴れ", []string{}, false},
+    }
+    // テスト実装...
 }
 ```
 
@@ -254,12 +287,17 @@ func TestChartHeightCalculation(t *testing.T) {
 
 #### 改善提案
 - スクリーンショットを追加すると、ユーザーが完成形をイメージしやすい
+- パフォーマンス最適化に関する情報(CSSの最小化、キャッシュ戦略など)を追加
 
 ### ARCHITECTURE.md, CONTRIBUTING.md, EXTERNAL_API.md, DEVELOPMENT.md
 
 #### 良い点
 - ドキュメントが充実している
 - 開発者向けの情報が体系的に整理されている
+
+#### 改善提案
+- テスト戦略とカバレッジ目標を明記
+- デプロイメント手順の詳細化(GitHub Actionsのワークフロー説明など)
 
 ---
 
@@ -288,20 +326,59 @@ func TestChartHeightCalculation(t *testing.T) {
 
 ### 改善提案
 
-#### 7.1 画像の遅延読み込み
-**問題点**: 現在は画像を使用していないが、将来的に天気アイコン画像を使用する場合。
+#### 7.1 CSSの最小化
+**場所**: src/styles/kindle.css(現在489行)
+
+**問題点**: CSSファイルが最小化されていないため、ファイルサイズが大きい。E-ink端末での読み込みが遅延する可能性がある。
+
+**改善案**:
+- ビルド時にCSSを最小化(minify)する
+- `cssnano`や`clean-css`などのツールを使用
+- GitHub Actionsのワークフローに最小化ステップを追加
+
+```go
+// main.goのcopyCSS関数に最小化処理を追加
+import "github.com/tdewolff/minify/v2"
+import "github.com/tdewolff/minify/v2/css"
+
+func copyCSS() error {
+    // CSS読み込み
+    cssContent, err := os.ReadFile(srcPath)
+    if err != nil {
+        return err
+    }
+
+    // 最小化
+    m := minify.New()
+    m.AddFunc("text/css", css.Minify)
+    minified, err := m.String("text/css", string(cssContent))
+    if err != nil {
+        return err
+    }
+
+    // 書き込み
+    return os.WriteFile(destPath, []byte(minified), 0644)
+}
+```
+
+#### 7.2 画像の遅延読み込み
+**場所**: 将来的な拡張
+
+**問題点**: 現在は画像を使用していないが、将来的に天気アイコン画像を使用する場合、パフォーマンスに影響する。
 
 **改善案**:
 ```html
 <img src="icon.png" loading="lazy" alt="天気アイコン">
 ```
 
-#### 7.2 CSSの最小化
-**場所**: src/styles/kindle.css
+#### 7.3 HTMLの最小化
+**場所**: docs/index.html
+
+**問題点**: 生成されるHTMLが最小化されていない。
 
 **改善案**:
-- ビルド時にCSSを最小化(minify)する
-- GitHub Actionsのワークフローに最小化ステップを追加
+- テンプレート実行後にHTMLを最小化
+- `html-minifier`や`minify`パッケージを使用
 
 ---
 
@@ -335,15 +412,35 @@ func TestChartHeightCalculation(t *testing.T) {
 - ✅ ~~マジックナンバーの定数化~~ - 対応済み (2025-10-06)
 - ✅ ~~ゼロ除算チェックの改善~~ - 対応済み (2025-10-06)
 - ✅ ~~containsAny関数の最適化~~ - 対応済み (2025-10-06)
+1. 印刷スタイルの追加 (kindle.css)
+2. containsAny関数のユニットテスト追加 (main_test.go)
 
 ### 低優先度 (将来的に対応)
-1. 時間帯による気温調整の精度向上
-2. グラフ計算のテスト追加
-3. CSSの最小化
-4. 印刷スタイルの拡充
+1. 時間帯による気温調整の精度向上 (main.go:326-361)
+2. グラフ計算のユニットテスト追加 (main_test.go)
+3. CSSの最小化 (ビルド時処理)
+4. HTMLの最小化 (ビルド時処理)
+5. 統合テストの拡充 (httptestを使用)
+6. ドキュメントの拡充 (README.mdにスクリーンショット追加など)
 
 ---
 
 ## まとめ
 
-全体として、コードの品質は高く、実用的なアプリケーションとして十分に機能する。特にE-ink端末向けの最適化やエラーハンドリングが優れている。上記の改善提案を適用することで、さらに堅牢で保守性の高いコードになると考える。
+全体として、コードの品質は非常に高く、実用的なアプリケーションとして十分に機能している。
+
+### 特に優れている点
+1. **エラーハンドリング**: API障害時のフォールバック処理が完璧に実装されている
+2. **定数管理**: マジックナンバーが適切に定数化され、保守性が高い
+3. **テストカバレッジ**: 主要な関数に対してテーブル駆動テストが実装されている
+4. **E-ink最適化**: Kindle Paperwhite向けのデザインが徹底されている
+5. **アクセシビリティ**: SVGのaria-label、フォーカススタイル、外部リンクのセキュリティ対策が実装されている
+6. **ユーザー体験**: ダークモード、エラー状態表示、データ重複排除など、細部まで配慮されている
+
+### 残された改善点
+1. **テスト**: グラフ計算、containsAny関数、HTTPモックなど、一部のテストが不足
+2. **パフォーマンス**: CSS/HTMLの最小化により、さらなる高速化が可能
+3. **印刷対応**: 印刷用スタイルを追加すれば、紙媒体でも利用可能
+4. **気温予測精度**: 固定値ではなく補間を使用すれば、より正確な予測が可能
+
+これらの改善は優先度が低く、現状でも十分に実用的なアプリケーションとして機能している。上記の改善提案を適用することで、さらに堅牢で高性能なコードになると考える。
