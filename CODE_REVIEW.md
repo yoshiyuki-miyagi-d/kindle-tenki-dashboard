@@ -57,42 +57,23 @@ if rc != "" && rc != "-" && rc > maxRainChance {
 
 **対応状況**: 2025-10-06に修正完了。%記号を除去してstrconv.Atoiで数値比較するように変更した。
 
-#### 1.2 マジックナンバーの定数化
-**場所**: main.go:358, 505, 556
+#### 1.2 マジックナンバーの定数化 ✅ 対応済み
+**場所**: main.go:19-24
 
-以下の数値は定数として定義すべき:
+**対応状況**: 2025-10-06に修正完了。以下の定数を追加し、全ての箇所で定数を使用するように変更した。
 ```go
 const (
-    MaxHourlyForecastItems = 20  // main.go:358
-    MaxNewsItems           = 5   // main.go:505
-    MaxEconomyNewsItems    = 10  // main.go:556
+    MaxHourlyForecastItems = 20  // 時間別予報の最大表示数
+    MaxNewsItems           = 5   // 主要ニュースの最大表示数
+    MaxEconomyNewsItems    = 10  // 経済ニュースの最大取得数(重複除外前)
+    HTTPClientTimeout      = 10 * time.Second
 )
 ```
 
-**理由**:
-- 可読性の向上
-- 変更時の影響範囲を限定
+#### 1.3 ゼロ除算のチェック ✅ 対応済み
+**場所**: main.go:399-411
 
-#### 1.3 ゼロ除算のチェック
-**場所**: main.go:381-383
-```go
-if tempRange == 0 {
-    tempRange = 1 // ゼロ除算を防ぐ
-}
-```
-
-**問題点**: 全ての予報が同じ気温の場合、グラフが誤った位置に表示される。
-
-**改善案**:
-```go
-if tempRange == 0 {
-    // 全て同じ気温の場合は中央に配置
-    for i := range hourlyForecast {
-        hourlyForecast[i].ChartHeight = 47 // (75 + 20) / 2
-    }
-    continue  // 通常の計算をスキップ
-}
-```
+**対応状況**: 2025-10-06に修正完了。全ての予報が同じ気温の場合、グラフの中央(Y=47)に配置するように改善した。
 
 #### 1.4 時間帯による気温調整の精度
 **場所**: main.go:314-346
@@ -110,22 +91,10 @@ if tempRange == 0 {
 
 **対応状況**: 2025-10-06に修正完了。3箇所の外部API呼び出し全てに10秒のタイムアウトを設定した。
 
-#### 1.6 containsAny関数の改善
-**場所**: main.go:152-163
+#### 1.6 containsAny関数の改善 ✅ 対応済み
+**場所**: main.go:163-170
 
-**問題点**: 文字列検索のアルゴリズムが非効率。標準ライブラリの`strings.Contains`を使用すべき。
-
-**改善案**:
-```go
-func containsAny(s string, substrs []string) bool {
-    for _, substr := range substrs {
-        if strings.Contains(s, substr) {
-            return true
-        }
-    }
-    return false
-}
-```
+**対応状況**: 2025-10-06に修正完了。標準ライブラリの`strings.Contains`を使用するように最適化した。
 
 ---
 
@@ -363,10 +332,9 @@ func TestChartHeightCalculation(t *testing.T) {
 - ✅ ~~HTTPクライアントのタイムアウト設定 (main.go:170, 484, 535)~~ - 対応済み (2025-10-06)
 
 ### 中優先度 (次のリリースで対応)
-1. マジックナンバーの定数化
-2. ゼロ除算チェックの改善
-3. containsAny関数の最適化
-4. 外部リンクのセキュリティ対策
+- ✅ ~~マジックナンバーの定数化~~ - 対応済み (2025-10-06)
+- ✅ ~~ゼロ除算チェックの改善~~ - 対応済み (2025-10-06)
+- ✅ ~~containsAny関数の最適化~~ - 対応済み (2025-10-06)
 
 ### 低優先度 (将来的に対応)
 1. 時間帯による気温調整の精度向上

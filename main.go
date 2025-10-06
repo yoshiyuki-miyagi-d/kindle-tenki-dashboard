@@ -11,7 +11,16 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
+)
+
+// 定数定義
+const (
+	MaxHourlyForecastItems = 20 // 時間別予報の最大表示数
+	MaxNewsItems           = 5  // 主要ニュースの最大表示数
+	MaxEconomyNewsItems    = 10 // 経済ニュースの最大取得数(重複除外前)
+	HTTPClientTimeout      = 10 * time.Second
 )
 
 type WeatherData struct {
@@ -153,12 +162,8 @@ func getWeatherIcon(description string) string {
 // containsAny は文字列に指定されたいずれかの部分文字列が含まれるかチェックする
 func containsAny(s string, substrs []string) bool {
 	for _, substr := range substrs {
-		if len(s) >= len(substr) {
-			for i := 0; i <= len(s)-len(substr); i++ {
-				if s[i:i+len(substr)] == substr {
-					return true
-				}
-			}
+		if strings.Contains(s, substr) {
+			return true
 		}
 	}
 	return false
@@ -170,7 +175,7 @@ func fetchWeatherData() (*WeatherData, error) {
 
 	// HTTPクライアントにタイムアウトを設定
 	client := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: HTTPClientTimeout,
 	}
 
 	// 天気データを取得
@@ -363,8 +368,8 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 					RainChance:  rainChance,
 				})
 
-				// 48時間後まで（最大20件）
-				if len(hourlyForecast) >= 20 {
+				// 48時間後まで（最大件数）
+				if len(hourlyForecast) >= MaxHourlyForecastItems {
 					break
 				}
 			}
@@ -388,14 +393,17 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 		// 最高気温を上部(y=20)、最低気温を下部(y=75)に配置
 		tempRange := maxTemp - minTemp
 		if tempRange == 0 {
-			tempRange = 1 // ゼロ除算を防ぐ
-		}
-
-		for i := range hourlyForecast {
-			// 最低気温 → heightPercent=75(下部), 最高気温 → heightPercent=20(上部)
-			// Y座標は上が小さいので、温度が高いほど小さいY値にする
-			heightPercent := 75 - ((hourlyForecast[i].Temp-minTemp)*55)/tempRange
-			hourlyForecast[i].ChartHeight = heightPercent
+			// 全て同じ気温の場合は中央に配置
+			for i := range hourlyForecast {
+				hourlyForecast[i].ChartHeight = 47 // (75 + 20) / 2
+			}
+		} else {
+			for i := range hourlyForecast {
+				// 最低気温 → heightPercent=75(下部), 最高気温 → heightPercent=20(上部)
+				// Y座標は上が小さいので、温度が高いほど小さいY値にする
+				heightPercent := 75 - ((hourlyForecast[i].Temp-minTemp)*55)/tempRange
+				hourlyForecast[i].ChartHeight = heightPercent
+			}
 		}
 	}
 
@@ -504,7 +512,7 @@ func fetchNewsData() ([]NewsItem, error) {
 
 	// HTTPクライアントにタイムアウトを設定
 	client := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: HTTPClientTimeout,
 	}
 
 	resp, err := client.Get(url)
@@ -528,7 +536,7 @@ func fetchNewsData() ([]NewsItem, error) {
 	}
 
 	var news []NewsItem
-	maxItems := 5 // トップ5件のニュースを表示
+	maxItems := MaxNewsItems
 	if len(rss.Channel.Items) < maxItems {
 		maxItems = len(rss.Channel.Items)
 	}
@@ -560,7 +568,7 @@ func fetchEconomyNewsData() ([]NewsItem, error) {
 
 	// HTTPクライアントにタイムアウトを設定
 	client := &http.Client{
-		Timeout: 10 * time.Second,
+		Timeout: HTTPClientTimeout,
 	}
 
 	resp, err := client.Get(url)
@@ -584,7 +592,7 @@ func fetchEconomyNewsData() ([]NewsItem, error) {
 	}
 
 	var news []NewsItem
-	maxItems := 10 // 重複を考慮して多めに取得(フィルタ後に5件確保)
+	maxItems := MaxEconomyNewsItems
 	if len(rss.Channel.Items) < maxItems {
 		maxItems = len(rss.Channel.Items)
 	}
@@ -618,12 +626,12 @@ func filterDuplicateNews(economyNews []NewsItem, mainNews []NewsItem) []NewsItem
 		mainTitles[item.Title] = true
 	}
 
-	// 重複しない経済ニュースを抽出し、5件になるまで追加
+	// 重複しない経済ニュースを抽出し、最大件数になるまで追加
 	var filtered []NewsItem
 	for _, item := range economyNews {
 		if !mainTitles[item.Title] {
 			filtered = append(filtered, item)
-			if len(filtered) >= 5 {
+			if len(filtered) >= MaxNewsItems {
 				break
 			}
 		}
