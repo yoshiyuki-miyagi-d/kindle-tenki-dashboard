@@ -26,6 +26,24 @@ body.dark-mode {
     padding: clamp(8px, 2vw, 10px);
 }
 
+/* 警告バナー */
+.warning-banner {
+    background: #fff3cd;
+    color: #856404;
+    border: 2px solid #ffc107;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+body.dark-mode .warning-banner {
+    background: #4a3f1f;
+    color: #ffc107;
+    border-color: #856404;
+}
+
 /* メインコンテンツ */
 main {
     margin-bottom: 8px;
@@ -443,6 +461,31 @@ body.dark-mode .theme-toggle {
 
 body.dark-mode .theme-toggle:hover {
     background: #ddd;
+}
+
+/* アクセシビリティ: フォーカススタイル */
+a:focus, button:focus {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+}
+
+body.dark-mode a:focus,
+body.dark-mode button:focus {
+    outline-color: #e0e0e0;
+}
+
+/* リンクのホバースタイル */
+a:hover {
+    text-decoration: underline;
+    opacity: 0.7;
+}
+
+.news-title a:hover {
+    color: #333;
+}
+
+body.dark-mode .news-title a:hover {
+    color: #fff;
 }
 
 /* 印刷時の最適化 */
