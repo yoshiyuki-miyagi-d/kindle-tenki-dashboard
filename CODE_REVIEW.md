@@ -178,22 +178,10 @@ font-family: sans-serif;
 }
 ```
 
-#### 2.3 アクセシビリティの向上
+#### 2.3 アクセシビリティの向上 ✅ 対応済み
 **場所**: kindle.css全体
 
-**改善案**:
-- フォーカススタイルを追加(キーボードナビゲーション対応)
-```css
-a:focus, button:focus {
-    outline: 2px solid #000;
-    outline-offset: 2px;
-}
-
-body.dark-mode a:focus,
-body.dark-mode button:focus {
-    outline-color: #e0e0e0;
-}
-```
+**対応状況**: 2025-10-06に修正完了。リンクとボタンに2pxのフォーカススタイルを追加し、ダークモード対応も実装した。キーボードナビゲーションが使いやすくなった。
 
 ---
 
@@ -217,18 +205,12 @@ body.dark-mode button:focus {
 
 ### 改善提案
 
-#### 3.1 SVG要素のアクセシビリティ
+#### 3.1 SVG要素のアクセシビリティ ✅ 対応済み
 **場所**: index.html:54-73
 
 **問題点**: SVGグラフに代替テキストがない。
 
-**改善案**:
-```html
-<svg class="line-chart" viewBox="0 0 800 120" role="img" aria-label="48時間の気温変化グラフ">
-    <title>48時間の気温変化</title>
-    <!-- グラフ要素 -->
-</svg>
-```
+**対応状況**: 2025-10-06に修正完了。SVGにrole="img"、aria-label、<title>要素を追加し、スクリーンリーダー対応を強化した。
 
 #### 3.2 エラー状態の表示 ✅ 対応済み
 **問題点**: データ取得失敗時の表示がない(サンプルデータが表示されるが、ユーザーには区別できない)。
@@ -320,16 +302,12 @@ func TestChartHeightCalculation(t *testing.T) {
 
 ### 改善提案
 
-#### 6.1 外部リンクのセキュリティ
+#### 6.1 外部リンクのセキュリティ ✅ 対応済み
 **場所**: index.html:117, 131
 
 **問題点**: `target="_blank"`がないため、同じタブでリンクが開く。
 
-**改善案**:
-```html
-<a href="{{.Link}}" target="_blank" rel="noopener noreferrer">{{.Title}}</a>
-```
-- `rel="noopener noreferrer"`: タブナッピング攻撃を防ぐ
+**対応状況**: 2025-10-06に修正完了。外部リンクにtarget="_blank"とrel="noopener noreferrer"を追加し、タブナッピング攻撃を防ぐようにした。主要ニュースと経済ニュースの両方に適用。
 
 ---
 
