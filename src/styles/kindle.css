@@ -26,6 +26,24 @@ body.dark-mode {
     padding: clamp(8px, 2vw, 10px);
 }
 
+/* 警告バナー */
+.warning-banner {
+    background: #fff3cd;
+    color: #856404;
+    border: 2px solid #ffc107;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+body.dark-mode .warning-banner {
+    background: #4a3f1f;
+    color: #ffc107;
+    border-color: #856404;
+}
+
 /* メインコンテンツ */
 main {
     margin-bottom: 8px;

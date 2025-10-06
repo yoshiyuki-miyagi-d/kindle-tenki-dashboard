@@ -15,20 +15,22 @@ import (
 )
 
 type WeatherData struct {
-	Location        string           `json:"location"`
-	Temperature     int              `json:"temperature"`
-	MinTemp         int              `json:"minTemp"`
-	MaxTemp         int              `json:"maxTemp"`
-	FeelsLike       int              `json:"feelsLike"`
-	Description     string           `json:"description"`
-	WeatherIcon     string           `json:"weatherIcon"`    // 天気アイコン(絵文字)
-	Wind            string           `json:"wind"`
-	ChanceOfRain    []string         `json:"chanceOfRain"` // 6時間ごとの降水確率
-	UpdateTime      string           `json:"updateTime"`
-	HourlyForecast  []HourlyForecast `json:"hourlyForecast"`
-	News            []NewsItem       `json:"news"`
-	EconomyNews     []NewsItem       `json:"economyNews"`   // 経済ニュース
-	DailyForecasts  []DailyForecast  `json:"dailyForecasts"` // 3日間の予報
+	Location            string           `json:"location"`
+	Temperature         int              `json:"temperature"`
+	MinTemp             int              `json:"minTemp"`
+	MaxTemp             int              `json:"maxTemp"`
+	FeelsLike           int              `json:"feelsLike"`
+	Description         string           `json:"description"`
+	WeatherIcon         string           `json:"weatherIcon"`    // 天気アイコン(絵文字)
+	Wind                string           `json:"wind"`
+	ChanceOfRain        []string         `json:"chanceOfRain"` // 6時間ごとの降水確率
+	UpdateTime          string           `json:"updateTime"`
+	HourlyForecast      []HourlyForecast `json:"hourlyForecast"`
+	News                []NewsItem       `json:"news"`
+	EconomyNews         []NewsItem       `json:"economyNews"`        // 経済ニュース
+	DailyForecasts      []DailyForecast  `json:"dailyForecasts"`     // 3日間の予報
+	IsUsingFallbackData bool             `json:"isUsingFallbackData"` // フォールバックデータを使用しているか
+	HasMinTemp          bool             `json:"hasMinTemp"`          // 最低気温データが有効かどうか
 }
 
 type DailyForecast struct {
@@ -238,6 +240,7 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 	minTemp := 0
 	maxTemp := 0
 	feelsLike := 0
+	hasMinTemp := false
 
 	if todayForecast.Temperature.Max.Celsius != "" {
 		if temp, err := parseTemperature(todayForecast.Temperature.Max.Celsius); err == nil {
@@ -257,6 +260,7 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 	if todayForecast.Temperature.Min.Celsius != "" {
 		if temp, err := parseTemperature(todayForecast.Temperature.Min.Celsius); err == nil {
 			minTemp = temp
+			hasMinTemp = true // 最低気温データが有効
 		}
 	}
 
@@ -462,6 +466,7 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 		HourlyForecast: hourlyForecast,
 		News:           []NewsItem{}, // 後で設定
 		DailyForecasts: dailyForecasts,
+		HasMinTemp:     hasMinTemp,
 	}
 }
 
@@ -478,18 +483,19 @@ func parseTemperature(tempStr string) (int, error) {
 
 func getSampleData() (*WeatherData, error) {
 	return &WeatherData{
-		Location:    "東京",
-		Temperature: 22,
-		FeelsLike:   25,
-		Description: "晴れ",
-		UpdateTime:  time.Now().Format("2006/01/02 15:04"),
+		Location:            "東京",
+		Temperature:         22,
+		FeelsLike:           25,
+		Description:         "晴れ",
+		UpdateTime:          time.Now().Format("2006/01/02 15:04"),
 		HourlyForecast: []HourlyForecast{
 			{Time: "12:00", Temp: 23, Desc: "晴れ"},
 			{Time: "15:00", Temp: 25, Desc: "晴れ"},
 			{Time: "18:00", Temp: 21, Desc: "曇り"},
 			{Time: "21:00", Temp: 19, Desc: "曇り"},
 		},
-		News: getSampleNews(),
+		News:                getSampleNews(),
+		IsUsingFallbackData: true, // フォールバックデータを使用していることを示す
 	}, nil
 }
 

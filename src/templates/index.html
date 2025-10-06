@@ -13,6 +13,11 @@
 <body>
     <button class="theme-toggle" id="themeToggle" aria-label="ダークモード切り替え">🌙</button>
     <div class="container">
+        {{if .IsUsingFallbackData}}
+        <div class="warning-banner">
+            ⚠️ 最新データの取得に失敗しました。サンプルデータを表示しています。
+        </div>
+        {{end}}
         <main>
             <section class="weather-section">
                 <div class="today-weather">
@@ -24,7 +29,7 @@
                             <div class="temperature">{{.Temperature}}℃</div>
                             <div class="weather-details">
                                 <div class="weather-desc">{{.Description}}</div>
-                                <div class="temp-range">{{if ne .MinTemp 0}}最低{{.MinTemp}}℃ / {{end}}最高{{.MaxTemp}}℃</div>
+                                <div class="temp-range">{{if .HasMinTemp}}最低{{.MinTemp}}℃ / {{end}}最高{{.MaxTemp}}℃</div>
                                 <div class="feels-like">体感{{.FeelsLike}}℃</div>
                             </div>
                         </div>
