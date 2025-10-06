@@ -24,7 +24,7 @@
                             <div class="temperature">{{.Temperature}}℃</div>
                             <div class="weather-details">
                                 <div class="weather-desc">{{.Description}}</div>
-                                <div class="temp-range">{{if gt .MinTemp 0}}最低{{.MinTemp}}℃ / {{end}}最高{{.MaxTemp}}℃</div>
+                                <div class="temp-range">{{if ne .MinTemp 0}}最低{{.MinTemp}}℃ / {{end}}最高{{.MaxTemp}}℃</div>
                                 <div class="feels-like">体感{{.FeelsLike}}℃</div>
                             </div>
                         </div>
@@ -164,19 +164,6 @@
             themeToggle.textContent = '☀️';
         }
 
-        // ボタンクリックでテーマを切り替え
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-
-            if (body.classList.contains('dark-mode')) {
-                themeToggle.textContent = '☀️';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                themeToggle.textContent = '🌙';
-                localStorage.setItem('theme', 'light');
-            }
-        });
-
         // SVGの色をダークモードに対応させる
         function updateSVGColors() {
             const isDarkMode = body.classList.contains('dark-mode');
@@ -196,9 +183,20 @@
         // 初期表示時にSVGの色を更新
         updateSVGColors();
 
-        // テーマ切り替え時にSVGの色も更新
+        // ボタンクリックでテーマを切り替え
         themeToggle.addEventListener('click', () => {
-            setTimeout(updateSVGColors, 50);
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+
+            // SVGの色も更新
+            updateSVGColors();
         });
     </script>
 </body>

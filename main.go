@@ -166,8 +166,13 @@ func fetchWeatherData() (*WeatherData, error) {
 	cityCode := getEnv("CITY_CODE", "130010") // 東京のデフォルト
 	weatherURL := fmt.Sprintf("https://weather.tsukumijima.net/api/forecast/city/%s", cityCode)
 
+	// HTTPクライアントにタイムアウトを設定
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
 	// 天気データを取得
-	resp, err := http.Get(weatherURL)
+	resp, err := client.Get(weatherURL)
 	if err != nil {
 		log.Printf("⚠️  天気APIの取得に失敗しました: %v", err)
 		log.Println("   サンプルデータを使用します")
@@ -417,9 +422,19 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 			forecast.ChanceOfRain.T18_24,
 		}
 		maxRainChance := "0%"
+		maxPercent := 0
 		for _, rc := range rainChances {
-			if rc != "" && rc != "-" && rc > maxRainChance {
-				maxRainChance = rc
+			if rc != "" && rc != "-" {
+				// %を除去して数値として比較
+				percentStr := rc
+				if len(rc) > 0 && rc[len(rc)-1] == '%' {
+					percentStr = rc[:len(rc)-1]
+				}
+				currentPercent, err := strconv.Atoi(percentStr)
+				if err == nil && currentPercent > maxPercent {
+					maxPercent = currentPercent
+					maxRainChance = rc
+				}
 			}
 		}
 
@@ -481,7 +496,12 @@ func getSampleData() (*WeatherData, error) {
 func fetchNewsData() ([]NewsItem, error) {
 	url := "https://www3.nhk.or.jp/rss/news/cat0.xml"
 
-	resp, err := http.Get(url)
+	// HTTPクライアントにタイムアウトを設定
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("ニュースRSSの取得に失敗しました: %w", err)
 	}
@@ -532,7 +552,12 @@ func fetchNewsData() ([]NewsItem, error) {
 func fetchEconomyNewsData() ([]NewsItem, error) {
 	url := "https://www3.nhk.or.jp/rss/news/cat5.xml" // 経済ニュースRSS
 
-	resp, err := http.Get(url)
+	// HTTPクライアントにタイムアウトを設定
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
+
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("経済ニュースRSSの取得に失敗しました: %w", err)
 	}
