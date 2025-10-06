@@ -215,6 +215,59 @@ body.dark-mode .hourly-rain {
     color: #5b9bd5;
 }
 
+/* 3日間の予報カード (省スペース版) */
+.daily-forecast {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.daily-cards {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.daily-card {
+    text-align: center;
+    padding: 8px 12px;
+    border: 1px solid #000;
+    background: #f9f9f9;
+    flex: 0 1 auto;
+    min-width: 80px;
+}
+
+body.dark-mode .daily-card {
+    border-color: #666;
+    background: #2a2a2a;
+}
+
+.daily-date {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.daily-icon {
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.daily-temp {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.daily-rain {
+    font-size: 10px;
+    color: #0066cc;
+}
+
+body.dark-mode .daily-rain {
+    color: #5b9bd5;
+}
+
 /* ニュースセクション */
 .news {
     margin-top: 12px;

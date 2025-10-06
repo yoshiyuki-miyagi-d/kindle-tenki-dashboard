@@ -15,19 +15,29 @@ import (
 )
 
 type WeatherData struct {
-	Location       string           `json:"location"`
-	Temperature    int              `json:"temperature"`
-	MinTemp        int              `json:"minTemp"`
-	MaxTemp        int              `json:"maxTemp"`
-	FeelsLike      int              `json:"feelsLike"`
-	Description    string           `json:"description"`
-	WeatherIcon    string           `json:"weatherIcon"`    // 天気アイコン(絵文字)
-	Wind           string           `json:"wind"`
-	ChanceOfRain   []string         `json:"chanceOfRain"` // 6時間ごとの降水確率
-	UpdateTime     string           `json:"updateTime"`
-	HourlyForecast []HourlyForecast `json:"hourlyForecast"`
-	News           []NewsItem       `json:"news"`
-	EconomyNews    []NewsItem       `json:"economyNews"` // 経済ニュース
+	Location        string           `json:"location"`
+	Temperature     int              `json:"temperature"`
+	MinTemp         int              `json:"minTemp"`
+	MaxTemp         int              `json:"maxTemp"`
+	FeelsLike       int              `json:"feelsLike"`
+	Description     string           `json:"description"`
+	WeatherIcon     string           `json:"weatherIcon"`    // 天気アイコン(絵文字)
+	Wind            string           `json:"wind"`
+	ChanceOfRain    []string         `json:"chanceOfRain"` // 6時間ごとの降水確率
+	UpdateTime      string           `json:"updateTime"`
+	HourlyForecast  []HourlyForecast `json:"hourlyForecast"`
+	News            []NewsItem       `json:"news"`
+	EconomyNews     []NewsItem       `json:"economyNews"`   // 経済ニュース
+	DailyForecasts  []DailyForecast  `json:"dailyForecasts"` // 3日間の予報
+}
+
+type DailyForecast struct {
+	Date        string `json:"date"`        // 日付ラベル(今日/明日/明後日)
+	WeatherIcon string `json:"weatherIcon"` // 天気アイコン(絵文字)
+	Description string `json:"description"` // 天気概況
+	MaxTemp     int    `json:"maxTemp"`     // 最高気温
+	MinTemp     int    `json:"minTemp"`     // 最低気温
+	RainChance  string `json:"rainChance"`  // 降水確率(最大値)
 }
 
 type HourlyForecast struct {
@@ -380,6 +390,49 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 		}
 	}
 
+	// 3日間の予報を生成
+	var dailyForecasts []DailyForecast
+	dateLabels := []string{"今日", "明日", "明後日"}
+	for i := 0; i < 3 && i < len(response.Forecasts); i++ {
+		forecast := response.Forecasts[i]
+
+		// 最高気温と最低気温を取得
+		var dailyMaxTemp, dailyMinTemp int
+		if forecast.Temperature.Max.Celsius != "" {
+			if temp, err := parseTemperature(forecast.Temperature.Max.Celsius); err == nil {
+				dailyMaxTemp = temp
+			}
+		}
+		if forecast.Temperature.Min.Celsius != "" {
+			if temp, err := parseTemperature(forecast.Temperature.Min.Celsius); err == nil {
+				dailyMinTemp = temp
+			}
+		}
+
+		// 降水確率の最大値を取得
+		rainChances := []string{
+			forecast.ChanceOfRain.T00_06,
+			forecast.ChanceOfRain.T06_12,
+			forecast.ChanceOfRain.T12_18,
+			forecast.ChanceOfRain.T18_24,
+		}
+		maxRainChance := "0%"
+		for _, rc := range rainChances {
+			if rc != "" && rc != "-" && rc > maxRainChance {
+				maxRainChance = rc
+			}
+		}
+
+		dailyForecasts = append(dailyForecasts, DailyForecast{
+			Date:        dateLabels[i],
+			WeatherIcon: getWeatherIcon(forecast.Telop),
+			Description: forecast.Telop,
+			MaxTemp:     dailyMaxTemp,
+			MinTemp:     dailyMinTemp,
+			RainChance:  maxRainChance,
+		})
+	}
+
 	return &WeatherData{
 		Location:       response.Location.City,
 		Temperature:    temperature,
@@ -393,6 +446,7 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 		UpdateTime:     now.Format("2006/01/02 15:04"),
 		HourlyForecast: hourlyForecast,
 		News:           []NewsItem{}, // 後で設定
+		DailyForecasts: dailyForecasts,
 	}
 }
 

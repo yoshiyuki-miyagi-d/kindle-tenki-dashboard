@@ -89,6 +89,20 @@
                         {{end}}
                         {{end}}
                     </div>
+
+                    <div class="daily-forecast">
+                        <h2 class="section-title">3日間の予報</h2>
+                        <div class="daily-cards">
+                            {{range .DailyForecasts}}
+                            <div class="daily-card">
+                                <div class="daily-date">{{.Date}}</div>
+                                <div class="daily-icon">{{.WeatherIcon}}</div>
+                                <div class="daily-temp">{{.MaxTemp}}℃</div>
+                                <div class="daily-rain">{{.RainChance}}</div>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
                 </div>
             </section>
 
