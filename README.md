@@ -233,3 +233,4 @@ MIT License
 - [NHK ニュースRSS](https://www.nhk.or.jp/toppage/rss/index.html)
 - [GitHub Actions ドキュメント](https://docs.github.com/ja/actions)
 - [Kindle Paperwhite](https://www.amazon.co.jp/kindle-paperwhite)
+
