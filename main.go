@@ -680,14 +680,14 @@ func generateHTML(data *WeatherData) error {
 		return fmt.Errorf("テンプレートのパースに失敗しました: %w", err)
 	}
 
-	// docsディレクトリを作成
-	docsDir := "docs"
-	if err := os.MkdirAll(docsDir, 0755); err != nil {
-		return fmt.Errorf("docsディレクトリの作成に失敗しました: %w", err)
+	// distディレクトリを作成
+	distDir := "dist"
+	if err := os.MkdirAll(distDir, 0755); err != nil {
+		return fmt.Errorf("distディレクトリの作成に失敗しました: %w", err)
 	}
 
 	// HTMLファイルを生成
-	outputPath := filepath.Join(docsDir, "index.html")
+	outputPath := filepath.Join(distDir, "index.html")
 	outputFile, err := os.Create(outputPath)
 	if err != nil {
 		return fmt.Errorf("出力ファイルの作成に失敗しました: %w", err)
@@ -711,7 +711,7 @@ func generateHTML(data *WeatherData) error {
 
 func copyCSS() error {
 	srcPath := filepath.Join("src", "styles", "kindle.css")
-	destDir := filepath.Join("docs", "styles")
+	destDir := filepath.Join("dist", "styles")
 	destPath := filepath.Join(destDir, "kindle.css")
 
 	// stylesディレクトリを作成

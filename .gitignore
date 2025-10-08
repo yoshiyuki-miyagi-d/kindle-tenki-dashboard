@@ -5,5 +5,9 @@ npm-debug.log*
 .DS_Store
 *.log
 
+# ビルド成果物
+kindle-weather-dashboard
+coverage.out
+
 # 生成ファイル (GitHub Actionsで生成)
-docs/
+dist/

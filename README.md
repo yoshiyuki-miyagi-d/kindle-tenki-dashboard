@@ -83,7 +83,7 @@ cp .env.example .env
 go run main.go
 
 # 4. ローカルサーバーで確認
-python -m http.server 8000 --directory docs
+python -m http.server 8000 --directory dist
 
 # 5. ブラウザで http://localhost:8000 にアクセス
 ```
@@ -92,10 +92,10 @@ python -m http.server 8000 --directory docs
 
 詳細なドキュメントを用意しています:
 
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - システム設計とデータフロー
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)** - コーディング規約とコミットガイドライン
-- **[EXTERNAL_API.md](./EXTERNAL_API.md)** - 外部API仕様と使用方法
-- **[DEVELOPMENT.md](./DEVELOPMENT.md)** - 開発環境のセットアップとデバッグ方法
+- **[ARCHITECTURE.md](./docs/ARCHITECTURE.md)** - システム設計とデータフロー
+- **[CONTRIBUTING.md](./docs/CONTRIBUTING.md)** - コーディング規約とコミットガイドライン
+- **[EXTERNAL_API.md](./docs/EXTERNAL_API.md)** - 外部API仕様と使用方法
+- **[DEVELOPMENT.md](./docs/DEVELOPMENT.md)** - 開発環境のセットアップとデバッグ方法
 
 ## 使用しているAPI
 
@@ -138,7 +138,7 @@ vi src/templates/index.html
 
 # ビルドして確認
 go run main.go
-python -m http.server 8000 --directory docs
+python -m http.server 8000 --directory dist
 ```
 
 ### データ処理ロジックの変更
@@ -188,7 +188,7 @@ go run main.go 2>&1
 - カスタムデバイスサイズ: 758x1024 (Kindle Paperwhite)
 - Kindleブラウザは機能が制限されているため、シンプルなCSSを使用
 
-詳細は [DEVELOPMENT.md](./DEVELOPMENT.md) の「よくある問題と解決方法」を参照。
+詳細は [DEVELOPMENT.md](./docs/DEVELOPMENT.md) の「よくある問題と解決方法」を参照。
 
 ## 技術スタック
 
@@ -205,15 +205,18 @@ go run main.go 2>&1
 ```
 kindle-tenki-dashboard/
 ├── .github/workflows/    # GitHub Actions設定
-├── docs/                 # 生成されるHTML (GitHub Pages公開ディレクトリ)
+├── dist/                 # ビルド成果物 (GitHub Pages公開ディレクトリ)
+├── docs/                 # プロジェクトドキュメント
+│   ├── ARCHITECTURE.md  # システム設計書
+│   ├── CONTRIBUTING.md  # 開発ガイドライン
+│   ├── EXTERNAL_API.md  # 外部API仕様書
+│   ├── DEVELOPMENT.md   # 開発環境セットアップ
+│   ├── CODE_REVIEW.md   # コードレビュー
+│   └── FEATURE_IDEAS.md # 機能アイデア
 ├── src/
 │   ├── templates/       # HTMLテンプレート
 │   └── styles/          # CSSソースファイル
 ├── main.go              # メインアプリケーション
-├── ARCHITECTURE.md      # システム設計書
-├── CONTRIBUTING.md      # 開発ガイドライン
-├── EXTERNAL_API.md      # 外部API仕様書
-├── DEVELOPMENT.md       # 開発環境セットアップ
 └── README.md            # このファイル
 ```
 
@@ -221,7 +224,7 @@ kindle-tenki-dashboard/
 
 プルリクエストを歓迎します。大きな変更の場合は、まずIssueで議論してください。
 
-コントリビューション前に [CONTRIBUTING.md](./CONTRIBUTING.md) をお読みください。
+コントリビューション前に [CONTRIBUTING.md](./docs/CONTRIBUTING.md) をお読みください。
 
 ## ライセンス
 
