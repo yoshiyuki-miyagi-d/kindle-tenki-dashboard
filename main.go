@@ -20,6 +20,7 @@ const (
 	MaxHourlyForecastItems = 20 // 時間別予報の最大表示数
 	MaxNewsItems           = 5  // 主要ニュースの最大表示数
 	MaxEconomyNewsItems    = 10 // 経済ニュースの最大取得数(重複除外前)
+	MaxHatenaItems         = 5  // はてなブックマークの最大表示数
 	HTTPClientTimeout      = 10 * time.Second
 )
 
@@ -37,6 +38,7 @@ type WeatherData struct {
 	HourlyForecast      []HourlyForecast `json:"hourlyForecast"`
 	News                []NewsItem       `json:"news"`
 	EconomyNews         []NewsItem       `json:"economyNews"`        // 経済ニュース
+	HatenaEntries       []HatenaEntry    `json:"hatenaEntries"`      // はてなブックマーク
 	DailyForecasts      []DailyForecast  `json:"dailyForecasts"`     // 3日間の予報
 	IsUsingFallbackData bool             `json:"isUsingFallbackData"` // フォールバックデータを使用しているか
 	HasMinTemp          bool             `json:"hasMinTemp"`          // 最低気温データが有効かどうか
@@ -67,6 +69,14 @@ type NewsItem struct {
 	PubDate     string `json:"pubDate"`
 }
 
+type HatenaEntry struct {
+	Title       string `json:"title"`
+	Link        string `json:"link"`
+	Description string `json:"description"`
+	PubDate     string `json:"pubDate"`
+	Category    string `json:"category"` // カテゴリ(学び、テクノロジーなど)
+}
+
 type NHKNewsRSS struct {
 	XMLName xml.Name `xml:"rss"`
 	Channel struct {
@@ -82,6 +92,19 @@ type RSSItem struct {
 	Link        string `xml:"link"`
 	Description string `xml:"description"`
 	PubDate     string `xml:"pubDate"`
+}
+
+type HatenaBookmarkRSS struct {
+	XMLName xml.Name `xml:"RDF"`
+	Items   []HatenaRSSItem `xml:"item"`
+}
+
+type HatenaRSSItem struct {
+	Title       string   `xml:"title"`
+	Link        string   `xml:"link"`
+	Description string   `xml:"description"`
+	Date        string   `xml:"date"`
+	Subjects    []string `xml:"subject"`
 }
 
 type TsukumijimaWeatherResponse struct {
@@ -228,6 +251,16 @@ func fetchWeatherData() (*WeatherData, error) {
 	} else {
 		// 主要ニュースと重複する記事を経済ニュースから除外
 		weatherData.EconomyNews = filterDuplicateNews(economyNews, weatherData.News)
+	}
+
+	// はてなブックマークデータを取得して追加
+	hatenaEntries, err := fetchHatenaBookmarks()
+	if err != nil {
+		log.Printf("⚠️  はてなブックマークデータの取得に失敗しました: %v", err)
+		log.Println("   サンプルのはてなブックマークデータを使用します")
+		weatherData.HatenaEntries = getSampleHatenaBookmarks()
+	} else {
+		weatherData.HatenaEntries = hatenaEntries
 	}
 
 	return weatherData, nil
@@ -617,6 +650,97 @@ func fetchEconomyNewsData() ([]NewsItem, error) {
 	}
 
 	return news, nil
+}
+
+// fetchHatenaBookmarks はてなブックマークの人気エントリーを取得する
+func fetchHatenaBookmarks() ([]HatenaEntry, error) {
+	url := "https://b.hatena.ne.jp/hotentry/all.rss"
+
+	// HTTPクライアントにタイムアウトを設定
+	client := &http.Client{
+		Timeout: HTTPClientTimeout,
+	}
+
+	resp, err := client.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("はてなブックマークRSSの取得に失敗しました: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("はてなブックマークRSS API Error: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("はてなブックマークRSSの読み込みに失敗しました: %w", err)
+	}
+
+	var rss HatenaBookmarkRSS
+	if err := xml.Unmarshal(body, &rss); err != nil {
+		return nil, fmt.Errorf("はてなブックマークRSSのパースに失敗しました: %w", err)
+	}
+
+	var entries []HatenaEntry
+	maxItems := MaxHatenaItems
+	if len(rss.Items) < maxItems {
+		maxItems = len(rss.Items)
+	}
+
+	for i := 0; i < maxItems; i++ {
+		item := rss.Items[i]
+		// 日付をパースして表示用にフォーマット
+		// はてなブックマークの日付形式: 2025-10-30T16:24:16Z
+		pubTime, err := time.Parse("2006-01-02T15:04:05Z", item.Date)
+		var formattedDate string
+		if err != nil {
+			formattedDate = item.Date
+		} else {
+			formattedDate = pubTime.Format("01/02 15:04")
+		}
+
+		// カテゴリを取得 (最初のSubjectを使用)
+		category := ""
+		if len(item.Subjects) > 0 {
+			category = item.Subjects[0]
+		}
+
+		entries = append(entries, HatenaEntry{
+			Title:       item.Title,
+			Link:        item.Link,
+			Description: item.Description,
+			PubDate:     formattedDate,
+			Category:    category,
+		})
+	}
+
+	return entries, nil
+}
+
+func getSampleHatenaBookmarks() []HatenaEntry {
+	return []HatenaEntry{
+		{
+			Title:       "Affinity | プロフェッショナル クリエイティブ ソフトウェア、無料で万人のために",
+			Link:        "https://www.affinity.studio/ja_jp",
+			Description: "ブラウザを更新してください 古いバージョンまたはサポート対象外のブラウザをお使いの可能性があります。",
+			PubDate:     "10/30 16:24",
+			Category:    "学び",
+		},
+		{
+			Title:       "記憶喪失のモヒカン〜意識が戻ってからの記録〜",
+			Link:        "https://ameblo.jp/amnesiac-mohawk/",
+			Description: "9/2に報道された記憶喪失のモヒカン【田中 一(仮)】です",
+			PubDate:     "10/30 15:20",
+			Category:    "暮らし",
+		},
+		{
+			Title:       "石破内閣、続投に意欲 所信表明演説で丁寧な政権運営を訴え",
+			Link:        "https://www.tokyo-np.co.jp/article/446032",
+			Description: "第214臨時国会が31日召集され、衆院本会議で石破茂首相が所信表明演説を行った。",
+			PubDate:     "10/31 08:00",
+			Category:    "政治と経済",
+		},
+	}
 }
 
 func filterDuplicateNews(economyNews []NewsItem, mainNews []NewsItem) []NewsItem {
