@@ -389,6 +389,34 @@ body.dark-mode .news-description {
     margin-top: 12px;
 }
 
+.hatena-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media screen and (max-width: 600px) {
+    .hatena-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.hatena-column {
+    min-width: 0;
+}
+
+.hatena-column-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #999;
+}
+
+body.dark-mode .hatena-column-title {
+    border-bottom-color: #555;
+}
+
 .hatena-list {
     display: flex;
     flex-direction: column;

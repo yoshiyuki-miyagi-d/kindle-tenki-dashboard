@@ -35,13 +35,14 @@ type WeatherData struct {
 	Wind                string           `json:"wind"`
 	ChanceOfRain        []string         `json:"chanceOfRain"` // 6時間ごとの降水確率
 	UpdateTime          string           `json:"updateTime"`
-	HourlyForecast      []HourlyForecast `json:"hourlyForecast"`
-	News                []NewsItem       `json:"news"`
-	EconomyNews         []NewsItem       `json:"economyNews"`        // 経済ニュース
-	HatenaEntries       []HatenaEntry    `json:"hatenaEntries"`      // はてなブックマーク
-	DailyForecasts      []DailyForecast  `json:"dailyForecasts"`     // 3日間の予報
-	IsUsingFallbackData bool             `json:"isUsingFallbackData"` // フォールバックデータを使用しているか
-	HasMinTemp          bool             `json:"hasMinTemp"`          // 最低気温データが有効かどうか
+	HourlyForecast         []HourlyForecast `json:"hourlyForecast"`
+	News                   []NewsItem       `json:"news"`
+	EconomyNews            []NewsItem       `json:"economyNews"`           // 経済ニュース
+	HatenaEntries          []HatenaEntry    `json:"hatenaEntries"`         // はてなブックマーク(総合)
+	KnowledgeHatenaEntries []HatenaEntry    `json:"knowledgeHatenaEntries"` // はてなブックマーク(学び)
+	DailyForecasts         []DailyForecast  `json:"dailyForecasts"`        // 3日間の予報
+	IsUsingFallbackData    bool             `json:"isUsingFallbackData"`    // フォールバックデータを使用しているか
+	HasMinTemp             bool             `json:"hasMinTemp"`             // 最低気温データが有効かどうか
 }
 
 type DailyForecast struct {
@@ -253,14 +254,25 @@ func fetchWeatherData() (*WeatherData, error) {
 		weatherData.EconomyNews = filterDuplicateNews(economyNews, weatherData.News)
 	}
 
-	// はてなブックマークデータを取得して追加
+	// はてなブックマーク(総合)データを取得して追加
 	hatenaEntries, err := fetchHatenaBookmarks()
 	if err != nil {
-		log.Printf("⚠️  はてなブックマークデータの取得に失敗しました: %v", err)
+		log.Printf("⚠️  はてなブックマーク(総合)データの取得に失敗しました: %v", err)
 		log.Println("   サンプルのはてなブックマークデータを使用します")
 		weatherData.HatenaEntries = getSampleHatenaBookmarks()
 	} else {
 		weatherData.HatenaEntries = hatenaEntries
+	}
+
+	// はてなブックマーク(学び)データを取得して追加
+	knowledgeHatenaEntries, err := fetchKnowledgeHatenaBookmarks()
+	if err != nil {
+		log.Printf("⚠️  はてなブックマーク(学び)データの取得に失敗しました: %v", err)
+		log.Println("   サンプルのはてなブックマーク(学び)データを使用します")
+		weatherData.KnowledgeHatenaEntries = getSampleKnowledgeHatenaBookmarks()
+	} else {
+		// 総合はてなブックマークと重複するエントリーを学びから除外
+		weatherData.KnowledgeHatenaEntries = filterDuplicateHatenaEntries(knowledgeHatenaEntries, weatherData.HatenaEntries)
 	}
 
 	return weatherData, nil
@@ -717,6 +729,70 @@ func fetchHatenaBookmarks() ([]HatenaEntry, error) {
 	return entries, nil
 }
 
+// fetchKnowledgeHatenaBookmarks はてなブックマークの学びカテゴリの人気エントリーを取得する
+func fetchKnowledgeHatenaBookmarks() ([]HatenaEntry, error) {
+	url := "https://b.hatena.ne.jp/hotentry/knowledge.rss"
+
+	// HTTPクライアントにタイムアウトを設定
+	client := &http.Client{
+		Timeout: HTTPClientTimeout,
+	}
+
+	resp, err := client.Get(url)
+	if err != nil {
+		return nil, fmt.Errorf("はてなブックマーク(学び)RSSの取得に失敗しました: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("はてなブックマーク(学び)RSS API Error: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("はてなブックマーク(学び)RSSの読み込みに失敗しました: %w", err)
+	}
+
+	var rss HatenaBookmarkRSS
+	if err := xml.Unmarshal(body, &rss); err != nil {
+		return nil, fmt.Errorf("はてなブックマーク(学び)RSSのパースに失敗しました: %w", err)
+	}
+
+	var entries []HatenaEntry
+	maxItems := MaxHatenaItems
+	if len(rss.Items) < maxItems {
+		maxItems = len(rss.Items)
+	}
+
+	for i := 0; i < maxItems; i++ {
+		item := rss.Items[i]
+		// 日付をパースして表示用にフォーマット
+		pubTime, err := time.Parse("2006-01-02T15:04:05Z", item.Date)
+		var formattedDate string
+		if err != nil {
+			formattedDate = item.Date
+		} else {
+			formattedDate = pubTime.Format("01/02 15:04")
+		}
+
+		// カテゴリを取得 (最初のSubjectを使用)
+		category := ""
+		if len(item.Subjects) > 0 {
+			category = item.Subjects[0]
+		}
+
+		entries = append(entries, HatenaEntry{
+			Title:       item.Title,
+			Link:        item.Link,
+			Description: item.Description,
+			PubDate:     formattedDate,
+			Category:    category,
+		})
+	}
+
+	return entries, nil
+}
+
 func getSampleHatenaBookmarks() []HatenaEntry {
 	return []HatenaEntry{
 		{
@@ -743,6 +819,32 @@ func getSampleHatenaBookmarks() []HatenaEntry {
 	}
 }
 
+func getSampleKnowledgeHatenaBookmarks() []HatenaEntry {
+	return []HatenaEntry{
+		{
+			Title:       "プログラミング言語の歴史と進化について",
+			Link:        "https://example.com/programming-history",
+			Description: "プログラミング言語がどのように発展してきたかを解説します。",
+			PubDate:     "10/30 14:00",
+			Category:    "テクノロジー",
+		},
+		{
+			Title:       "量子コンピュータの基礎知識",
+			Link:        "https://example.com/quantum-computing",
+			Description: "量子コンピュータの仕組みと応用分野について学びます。",
+			PubDate:     "10/30 12:30",
+			Category:    "学び",
+		},
+		{
+			Title:       "効果的な学習方法とは",
+			Link:        "https://example.com/learning-methods",
+			Description: "科学的に証明された効果的な学習テクニックを紹介します。",
+			PubDate:     "10/29 18:00",
+			Category:    "学び",
+		},
+	}
+}
+
 func filterDuplicateNews(economyNews []NewsItem, mainNews []NewsItem) []NewsItem {
 	// 主要ニュースのタイトルをマップに格納
 	mainTitles := make(map[string]bool)
@@ -756,6 +858,27 @@ func filterDuplicateNews(economyNews []NewsItem, mainNews []NewsItem) []NewsItem
 		if !mainTitles[item.Title] {
 			filtered = append(filtered, item)
 			if len(filtered) >= MaxNewsItems {
+				break
+			}
+		}
+	}
+
+	return filtered
+}
+
+func filterDuplicateHatenaEntries(knowledgeEntries []HatenaEntry, generalEntries []HatenaEntry) []HatenaEntry {
+	// 総合はてなブックマークのタイトルをマップに格納
+	generalTitles := make(map[string]bool)
+	for _, item := range generalEntries {
+		generalTitles[item.Title] = true
+	}
+
+	// 重複しない学びはてなブックマークを抽出し、最大件数になるまで追加
+	var filtered []HatenaEntry
+	for _, item := range knowledgeEntries {
+		if !generalTitles[item.Title] {
+			filtered = append(filtered, item)
+			if len(filtered) >= MaxHatenaItems {
 				break
 			}
 		}
