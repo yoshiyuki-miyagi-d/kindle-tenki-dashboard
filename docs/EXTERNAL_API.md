@@ -6,6 +6,7 @@
 
 1. **天気予報API** - weather.tsukumijima.net
 2. **ニュースRSS** - NHKニュース
+3. **はてなブックマークRSS** - はてなブックマーク
 
 ---
 
@@ -533,9 +534,177 @@ curl -s https://www3.nhk.or.jp/rss/news/cat2.xml | xmllint --format -
 
 ---
 
+## 3. はてなブックマークRSS
+
+### 基本情報
+
+| 項目 | 内容 |
+|------|------|
+| **提供元** | はてなブックマーク |
+| **認証** | 不要 |
+| **料金** | 無料 |
+| **レート制限** | 明記なし (過度な使用は控える) |
+| **データ形式** | RDF/RSS 1.0 (XML) |
+| **文字エンコーディング** | UTF-8 |
+
+### エンドポイント
+
+#### 総合カテゴリ
+```
+GET https://b.hatena.ne.jp/hotentry/all.rss
+```
+
+#### 学びカテゴリ
+```
+GET https://b.hatena.ne.jp/hotentry/knowledge.rss
+```
+
+#### その他の主要カテゴリ
+
+| カテゴリ | URL |
+|----------|-----|
+| 総合 | `https://b.hatena.ne.jp/hotentry/all.rss` |
+| テクノロジー | `https://b.hatena.ne.jp/hotentry/it.rss` |
+| 学び | `https://b.hatena.ne.jp/hotentry/knowledge.rss` |
+| 暮らし | `https://b.hatena.ne.jp/hotentry/life.rss` |
+| エンタメ | `https://b.hatena.ne.jp/hotentry/entertainment.rss` |
+| おもしろ | `https://b.hatena.ne.jp/hotentry/fun.rss` |
+| 政治と経済 | `https://b.hatena.ne.jp/hotentry/economics.rss` |
+
+### リクエスト例
+
+```bash
+curl https://b.hatena.ne.jp/hotentry/all.rss
+```
+
+### レスポンス構造
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns="http://purl.org/rss/1.0/"
+         xmlns:dc="http://purl.org/dc/elements/1.1/"
+         xmlns:hatena="http://www.hatena.ne.jp/info/xmlns#">
+
+  <channel rdf:about="https://b.hatena.ne.jp/hotentry/all">
+    <title>はてなブックマーク - 人気エントリー - 総合</title>
+    <link>https://b.hatena.ne.jp/hotentry/all</link>
+    <description>最近の人気エントリー</description>
+  </channel>
+
+  <item rdf:about="https://example.com/article">
+    <title>記事のタイトル</title>
+    <link>https://example.com/article</link>
+    <description>記事の概要</description>
+    <dc:date>2025-10-30T16:24:16Z</dc:date>
+    <dc:subject>学び</dc:subject>
+    <dc:subject>テクノロジー</dc:subject>
+  </item>
+
+  <!-- 以下、複数のitem要素が続く -->
+</rdf:RDF>
+```
+
+### レスポンスフィールド説明
+
+#### channel レベル
+
+| フィールド | 型 | 説明 |
+|-----------|-----|------|
+| `title` | string | チャンネルタイトル |
+| `link` | string | チャンネルURL |
+| `description` | string | チャンネル説明 |
+
+#### item 要素
+
+| フィールド | 型 | 説明 |
+|-----------|-----|------|
+| `title` | string | エントリータイトル |
+| `link` | string | エントリーURL |
+| `description` | string | エントリー概要 |
+| `dc:date` | string | ブックマーク日時 (ISO 8601形式) |
+| `dc:subject` | string | カテゴリタグ (複数可) |
+
+### 日付フォーマット
+
+**入力形式 (ISO 8601):**
+```
+2025-10-30T16:24:16Z
+```
+
+**変換後 (表示用):**
+```
+10/30 16:24
+```
+
+### プロジェクトでの使用方法
+
+#### データ取得
+
+```go
+// 総合カテゴリの人気エントリーを取得
+func fetchHatenaBookmarks() ([]HatenaEntry, error) {
+    url := "https://b.hatena.ne.jp/hotentry/all.rss"
+    client := &http.Client{Timeout: 10 * time.Second}
+    resp, err := client.Get(url)
+    // ... エラーハンドリング ...
+}
+
+// 学びカテゴリの人気エントリーを取得
+func fetchKnowledgeHatenaBookmarks() ([]HatenaEntry, error) {
+    url := "https://b.hatena.ne.jp/hotentry/knowledge.rss"
+    client := &http.Client{Timeout: 10 * time.Second}
+    resp, err := client.Get(url)
+    // ... エラーハンドリング ...
+}
+```
+
+#### 重複除外
+
+総合と学びで重複するエントリーは学びカラムから除外:
+
+```go
+func filterDuplicateHatenaEntries(knowledgeEntries []HatenaEntry, generalEntries []HatenaEntry) []HatenaEntry {
+    generalTitles := make(map[string]bool)
+    for _, item := range generalEntries {
+        generalTitles[item.Title] = true
+    }
+
+    var filtered []HatenaEntry
+    for _, item := range knowledgeEntries {
+        if !generalTitles[item.Title] {
+            filtered = append(filtered, item)
+            if len(filtered) >= MaxHatenaItems {
+                break
+            }
+        }
+    }
+    return filtered
+}
+```
+
+### 注意事項
+
+1. **RDF形式**
+   - はてなブックマークはRDF/RSS 1.0形式を使用
+   - 標準的なRSS 2.0とは構造が異なる
+   - 名前空間の処理が必要
+
+2. **レート制限**
+   - 明示的な制限はないが、過度なリクエストは控える
+   - プロジェクトでは3時間ごとに更新
+
+3. **カテゴリタグ**
+   - 複数の`dc:subject`要素が存在する場合がある
+   - プロジェクトでは最初のカテゴリのみを使用
+
+---
+
 ## 参考リンク
 
 - [天気API (Tsukumijima)](https://weather.tsukumijima.net/)
 - [NHK ニュースRSS一覧](https://www.nhk.or.jp/toppage/rss/index.html)
+- [はてなブックマーク](https://b.hatena.ne.jp/)
 - [気象庁](https://www.jma.go.jp/)
 - [RFC 822 (日付フォーマット)](https://www.ietf.org/rfc/rfc822.txt)
+- [ISO 8601 (日付フォーマット)](https://www.iso.org/iso-8601-date-and-time-format.html)

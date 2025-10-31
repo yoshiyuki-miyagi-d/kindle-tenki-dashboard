@@ -52,8 +52,10 @@ GitHub Actions (3時間ごと)
   └→ main.go 実行
       ├→ 天気API呼び出し (weather.tsukumijima.net)
       │   └→ processWeatherData() → WeatherData
-      ├→ ニュースRSS呼び出し (NHK RSS)
-      │   └→ []NewsItem
+      ├→ ニュースRSS呼び出し (NHK RSS 主要・経済)
+      │   └→ []NewsItem (重複除外)
+      ├→ はてなブックマークRSS呼び出し (総合・学び)
+      │   └→ []HatenaEntry (重複除外)
       └→ HTMLテンプレート + データ
           └→ dist/index.html 生成
           └→ dist/styles/kindle.css コピー
@@ -64,7 +66,12 @@ GitHub Actions (3時間ごと)
 **main.go** - 単一ファイルで完結する構成
 - `fetchWeatherData()` - 天気APIからデータ取得、失敗時はサンプルデータ使用
 - `processWeatherData()` - 48時間分の時間別予報を生成、気温グラフ用の高さ計算
-- `fetchNewsData()` - ニュースRSSから最新5件取得
+- `fetchNewsData()` - 主要ニュースRSSから最新5件取得
+- `fetchEconomyNewsData()` - 経済ニュースRSSから最新10件取得
+- `fetchHatenaBookmarks()` - はてなブックマーク(総合)から最新5件取得
+- `fetchKnowledgeHatenaBookmarks()` - はてなブックマーク(学び)から最新5件取得
+- `filterDuplicateNews()` - ニュースの重複除外
+- `filterDuplicateHatenaEntries()` - はてなブックマークの重複除外
 - `generateHTML()` - html/templateを使用してHTML生成
 - `parseTemperature()` - 気温文字列を整数に変換、null/空文字列のハンドリング
 - `getWeatherIcon()` - 天気説明からUnicode絵文字を返す
@@ -81,15 +88,18 @@ GitHub Actions (3時間ごと)
 
 ```go
 type WeatherData struct {
-    Location        string           // 都市名
-    Temperature     int              // 現在の気温(℃)
-    MinTemp         int              // 最低気温(℃)
-    MaxTemp         int              // 最高気温(℃)
-    Description     string           // 天気概況
-    WeatherIcon     string           // 天気アイコン(絵文字)
-    ChanceOfRain    []string         // 6時間ごとの降水確率
-    HourlyForecast  []HourlyForecast // 時間別予報
-    News            []NewsItem       // ニュース
+    Location               string           // 都市名
+    Temperature            int              // 現在の気温(℃)
+    MinTemp                int              // 最低気温(℃)
+    MaxTemp                int              // 最高気温(℃)
+    Description            string           // 天気概況
+    WeatherIcon            string           // 天気アイコン(絵文字)
+    ChanceOfRain           []string         // 6時間ごとの降水確率
+    HourlyForecast         []HourlyForecast // 時間別予報
+    News                   []NewsItem       // ニュース(主要)
+    EconomyNews            []NewsItem       // ニュース(経済)
+    HatenaEntries          []HatenaEntry    // はてなブックマーク(総合)
+    KnowledgeHatenaEntries []HatenaEntry    // はてなブックマーク(学び)
 }
 
 type HourlyForecast struct {
@@ -97,6 +107,14 @@ type HourlyForecast struct {
     Temp        int    // 気温(℃)
     WeatherIcon string // 天気アイコン(絵文字)
     ChartHeight int    // グラフ高さ(%) 20-100にマッピング
+}
+
+type HatenaEntry struct {
+    Title       string // タイトル
+    Link        string // URL
+    Description string // 概要
+    PubDate     string // 公開日時
+    Category    string // カテゴリ
 }
 ```
 

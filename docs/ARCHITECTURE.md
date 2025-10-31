@@ -13,11 +13,12 @@ Kindle Paperwhiteで表示するための天気情報ダッシュボード。E-i
 └────────┬────────┘
          │
          v
-┌─────────────────┐     ┌──────────────────┐
-│   main.go       │────>│  外部API         │
-│  (データ取得    │     │ - 天気API        │
-│   & HTML生成)   │     │ - ニュースRSS    │
-└────────┬────────┘     └──────────────────┘
+┌─────────────────┐     ┌──────────────────────┐
+│   main.go       │────>│  外部API             │
+│  (データ取得    │     │ - 天気API            │
+│   & HTML生成)   │     │ - ニュースRSS        │
+└────────┬────────┘     │ - はてなブックマーク │
+                        └──────────────────────┘
          │
          v
 ┌─────────────────┐
@@ -44,11 +45,19 @@ Kindle Paperwhiteで表示するための天気情報ダッシュボード。E-i
 - **フォールバック**: API失敗時はサンプルデータを使用
 - **データ構造**: `TsukumijimaWeatherResponse` -> `WeatherData`
 
-#### 1.2 ニュースデータ取得 (`fetchNewsData`)
+#### 1.2 ニュースデータ取得 (`fetchNewsData`, `fetchEconomyNewsData`)
 - **API**: NHK ニュースRSS (XML)
-- **機能**: 最新ニュース5件を取得
+- **機能**: 主要ニュース5件、経済ニュース10件を取得
 - **フォールバック**: API失敗時はサンプルニュースを使用
 - **データ構造**: `NHKNewsRSS` -> `[]NewsItem`
+- **重複除外**: `filterDuplicateNews()`で主要と経済の重複を除外
+
+#### 1.3 はてなブックマークデータ取得 (`fetchHatenaBookmarks`, `fetchKnowledgeHatenaBookmarks`)
+- **API**: はてなブックマークRSS (RDF/XML)
+- **機能**: 総合5件、学び5件の人気エントリーを取得
+- **フォールバック**: API失敗時はサンプルデータを使用
+- **データ構造**: `HatenaBookmarkRSS` -> `[]HatenaEntry`
+- **重複除外**: `filterDuplicateHatenaEntries()`で総合と学びの重複を除外
 
 ### 2. データ処理層
 
@@ -95,7 +104,7 @@ docs/
 ## データフロー
 
 ```
-1. GitHub Actions (cron: 6時間ごと)
+1. GitHub Actions (cron: 3時間ごと)
    └─> main.go 実行
 
 2. データ取得
@@ -104,14 +113,20 @@ docs/
    │       └─> processWeatherData()
    │           └─> WeatherData 生成
    │
-   └─> ニュースRSS呼び出し
-       └─> NHKNewsRSS 取得
-           └─> []NewsItem 生成
+   ├─> ニュースRSS呼び出し (主要・経済)
+   │   └─> NHKNewsRSS 取得
+   │       └─> []NewsItem 生成
+   │       └─> filterDuplicateNews() (重複除外)
+   │
+   └─> はてなブックマークRSS呼び出し (総合・学び)
+       └─> HatenaBookmarkRSS 取得
+           └─> []HatenaEntry 生成
+           └─> filterDuplicateHatenaEntries() (重複除外)
 
 3. HTML生成
    └─> テンプレート + WeatherData
-       └─> docs/index.html 生成
-       └─> docs/styles/kindle.css コピー
+       └─> dist/index.html 生成
+       └─> dist/styles/kindle.css コピー
 
 4. GitHub Pages デプロイ
    └─> 静的ファイル公開
@@ -125,18 +140,21 @@ docs/
 ### WeatherData
 ```go
 type WeatherData struct {
-    Location        string           // 都市名
-    Temperature     int              // 現在の気温(℃)
-    MinTemp         int              // 最低気温(℃)
-    MaxTemp         int              // 最高気温(℃)
-    FeelsLike       int              // 体感温度(℃)
-    Description     string           // 天気概況
-    WeatherIcon     string           // 天気アイコン(絵文字)
-    Wind            string           // 風の情報
-    ChanceOfRain    []string         // 6時間ごとの降水確率
-    UpdateTime      string           // 更新時刻
-    HourlyForecast  []HourlyForecast // 時間別予報
-    News            []NewsItem       // ニュース
+    Location               string           // 都市名
+    Temperature            int              // 現在の気温(℃)
+    MinTemp                int              // 最低気温(℃)
+    MaxTemp                int              // 最高気温(℃)
+    FeelsLike              int              // 体感温度(℃)
+    Description            string           // 天気概況
+    WeatherIcon            string           // 天気アイコン(絵文字)
+    Wind                   string           // 風の情報
+    ChanceOfRain           []string         // 6時間ごとの降水確率
+    UpdateTime             string           // 更新時刻
+    HourlyForecast         []HourlyForecast // 時間別予報
+    News                   []NewsItem       // ニュース(主要)
+    EconomyNews            []NewsItem       // ニュース(経済)
+    HatenaEntries          []HatenaEntry    // はてなブックマーク(総合)
+    KnowledgeHatenaEntries []HatenaEntry    // はてなブックマーク(学び)
 }
 ```
 
@@ -159,6 +177,17 @@ type NewsItem struct {
     Link        string // URL
     Description string // 概要
     PubDate     string // 公開日時
+}
+```
+
+### HatenaEntry
+```go
+type HatenaEntry struct {
+    Title       string // エントリータイトル
+    Link        string // URL
+    Description string // 概要
+    PubDate     string // 公開日時
+    Category    string // カテゴリ(学び、テクノロジーなど)
 }
 ```
 
