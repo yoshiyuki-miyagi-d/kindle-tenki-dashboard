@@ -28,9 +28,14 @@ const (
 var httpClient = &http.Client{
 	Timeout: HTTPClientTimeout,
 	Transport: &http.Transport{
-		MaxIdleConns:        10,
-		MaxIdleConnsPerHost: 10,
-		IdleConnTimeout:     30 * time.Second,
+		MaxIdleConns:          100,              // アイドル接続数を増やす
+		MaxIdleConnsPerHost:   10,               // ホストごとのアイドル接続数
+		IdleConnTimeout:       90 * time.Second, // アイドル接続のタイムアウト
+		TLSHandshakeTimeout:   5 * time.Second,  // TLSハンドシェイクのタイムアウト
+		ExpectContinueTimeout: 1 * time.Second,  // 100-continueレスポンスの待機時間
+		DisableKeepAlives:     false,            // Keep-Aliveを有効化
+		DisableCompression:    false,            // 圧縮を有効化
+		ForceAttemptHTTP2:     true,             // HTTP/2を強制的に試行
 	},
 }
 
