@@ -233,46 +233,86 @@ func fetchWeatherData() (*WeatherData, error) {
 
 	weatherData := processWeatherData(weatherResponse)
 
-	// ニュースデータを取得して追加
-	news, err := fetchNewsData()
-	if err != nil {
-		log.Printf("⚠️  ニュースデータの取得に失敗しました: %v", err)
+	// === API呼び出しを並列化 ===
+	// 結果を受け取るための構造体
+	type newsResult struct {
+		news []NewsItem
+		err  error
+	}
+	type hatenaResult struct {
+		entries []HatenaEntry
+		err     error
+	}
+
+	// チャネルを作成
+	newsCh := make(chan newsResult, 1)
+	economyNewsCh := make(chan newsResult, 1)
+	hatenaCh := make(chan hatenaResult, 1)
+	knowledgeHatenaCh := make(chan hatenaResult, 1)
+
+	// 4つのAPIを並列で呼び出し
+	go func() {
+		news, err := fetchNewsData()
+		newsCh <- newsResult{news: news, err: err}
+	}()
+
+	go func() {
+		economyNews, err := fetchEconomyNewsData()
+		economyNewsCh <- newsResult{news: economyNews, err: err}
+	}()
+
+	go func() {
+		hatena, err := fetchHatenaBookmarks()
+		hatenaCh <- hatenaResult{entries: hatena, err: err}
+	}()
+
+	go func() {
+		knowledgeHatena, err := fetchKnowledgeHatenaBookmarks()
+		knowledgeHatenaCh <- hatenaResult{entries: knowledgeHatena, err: err}
+	}()
+
+	// 結果を受け取る
+	newsRes := <-newsCh
+	economyNewsRes := <-economyNewsCh
+	hatenaRes := <-hatenaCh
+	knowledgeHatenaRes := <-knowledgeHatenaCh
+
+	// ニュースデータの処理
+	if newsRes.err != nil {
+		log.Printf("⚠️  ニュースデータの取得に失敗しました: %v", newsRes.err)
 		log.Println("   サンプルのニュースデータを使用します")
 		weatherData.News = getSampleNews()
 	} else {
-		weatherData.News = news
+		weatherData.News = newsRes.news
 	}
 
-	// 経済ニュースデータを取得して追加
-	economyNews, err := fetchEconomyNewsData()
-	if err != nil {
-		log.Printf("⚠️  経済ニュースデータの取得に失敗しました: %v", err)
+	// 経済ニュースデータの処理
+	if economyNewsRes.err != nil {
+		log.Printf("⚠️  経済ニュースデータの取得に失敗しました: %v", economyNewsRes.err)
 		log.Println("   サンプルの経済ニュースデータを使用します")
 		weatherData.EconomyNews = getSampleNews()
 	} else {
 		// 主要ニュースと重複する記事を経済ニュースから除外
-		weatherData.EconomyNews = filterDuplicateNews(economyNews, weatherData.News)
+		weatherData.EconomyNews = filterDuplicateNews(economyNewsRes.news, weatherData.News)
 	}
 
-	// はてなブックマーク(総合)データを取得して追加
-	hatenaEntries, err := fetchHatenaBookmarks()
-	if err != nil {
-		log.Printf("⚠️  はてなブックマーク(総合)データの取得に失敗しました: %v", err)
+	// はてなブックマーク(総合)データの処理
+	if hatenaRes.err != nil {
+		log.Printf("⚠️  はてなブックマーク(総合)データの取得に失敗しました: %v", hatenaRes.err)
 		log.Println("   サンプルのはてなブックマークデータを使用します")
 		weatherData.HatenaEntries = getSampleHatenaBookmarks()
 	} else {
-		weatherData.HatenaEntries = hatenaEntries
+		weatherData.HatenaEntries = hatenaRes.entries
 	}
 
-	// はてなブックマーク(学び)データを取得して追加
-	knowledgeHatenaEntries, err := fetchKnowledgeHatenaBookmarks()
-	if err != nil {
-		log.Printf("⚠️  はてなブックマーク(学び)データの取得に失敗しました: %v", err)
+	// はてなブックマーク(学び)データの処理
+	if knowledgeHatenaRes.err != nil {
+		log.Printf("⚠️  はてなブックマーク(学び)データの取得に失敗しました: %v", knowledgeHatenaRes.err)
 		log.Println("   サンプルのはてなブックマーク(学び)データを使用します")
 		weatherData.KnowledgeHatenaEntries = getSampleKnowledgeHatenaBookmarks()
 	} else {
 		// 総合はてなブックマークと重複するエントリーを学びから除外
-		weatherData.KnowledgeHatenaEntries = filterDuplicateHatenaEntries(knowledgeHatenaEntries, weatherData.HatenaEntries)
+		weatherData.KnowledgeHatenaEntries = filterDuplicateHatenaEntries(knowledgeHatenaRes.entries, weatherData.HatenaEntries)
 	}
 
 	return weatherData, nil

@@ -462,6 +462,40 @@ go tool cover -func=coverage.out
 go tool cover -html=coverage.out
 ```
 
+#### Lintツールの実行
+
+コードの品質を保つため、以下のlintツールを使用してください:
+
+```bash
+# go vetで基本的なチェック
+go vet ./...
+
+# go fmtでフォーマットチェック (変更されたファイルが出力される)
+go fmt ./...
+
+# staticcheckで詳細な静的解析 (推奨)
+staticcheck ./...
+
+# すべてのチェックを一度に実行
+go vet ./... && staticcheck ./... && echo "✅ All lint checks passed"
+```
+
+**staticcheckのインストール** (必要な場合):
+```bash
+# Go 1.21以上
+go install honnef.co/go/tools/cmd/staticcheck@latest
+
+# PATHに追加されていることを確認
+which staticcheck
+```
+
+**主なlintチェック項目**:
+- 変数のshadowing (変数の隠蔽)
+- 未使用の変数/インポート
+- エラーハンドリングの漏れ
+- 非効率なコード
+- 潜在的なバグ
+
 #### テスト構成
 
 プロジェクトには包括的なユニットテストが実装されています:
