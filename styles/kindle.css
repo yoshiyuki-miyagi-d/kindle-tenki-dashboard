@@ -417,6 +417,24 @@ body.dark-mode .hatena-column-title {
     border-bottom-color: #555;
 }
 
+.hatena-column-title a {
+    color: #000;
+    text-decoration: none;
+}
+
+body.dark-mode .hatena-column-title a {
+    color: #e0e0e0;
+}
+
+.hatena-column-title a:hover {
+    color: #333;
+    text-decoration: underline;
+}
+
+body.dark-mode .hatena-column-title a:hover {
+    color: #fff;
+}
+
 .hatena-list {
     display: flex;
     flex-direction: column;
