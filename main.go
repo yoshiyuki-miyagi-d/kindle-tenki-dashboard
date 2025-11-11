@@ -24,6 +24,16 @@ const (
 	HTTPClientTimeout      = 10 * time.Second
 )
 
+// グローバルHTTPクライアント (Keep-Alive接続を再利用)
+var httpClient = &http.Client{
+	Timeout: HTTPClientTimeout,
+	Transport: &http.Transport{
+		MaxIdleConns:        10,
+		MaxIdleConnsPerHost: 10,
+		IdleConnTimeout:     30 * time.Second,
+	},
+}
+
 type WeatherData struct {
 	Location            string           `json:"location"`
 	Temperature         int              `json:"temperature"`
@@ -197,13 +207,8 @@ func fetchWeatherData() (*WeatherData, error) {
 	cityCode := getEnv("CITY_CODE", "130010") // 東京のデフォルト
 	weatherURL := fmt.Sprintf("https://weather.tsukumijima.net/api/forecast/city/%s", cityCode)
 
-	// HTTPクライアントにタイムアウトを設定
-	client := &http.Client{
-		Timeout: HTTPClientTimeout,
-	}
-
 	// 天気データを取得
-	resp, err := client.Get(weatherURL)
+	resp, err := httpClient.Get(weatherURL)
 	if err != nil {
 		log.Printf("⚠️  天気APIの取得に失敗しました: %v", err)
 		log.Println("   サンプルデータを使用します")
@@ -595,12 +600,7 @@ func getSampleData() (*WeatherData, error) {
 func fetchNewsData() ([]NewsItem, error) {
 	url := "https://www3.nhk.or.jp/rss/news/cat0.xml"
 
-	// HTTPクライアントにタイムアウトを設定
-	client := &http.Client{
-		Timeout: HTTPClientTimeout,
-	}
-
-	resp, err := client.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("ニュースRSSの取得に失敗しました: %w", err)
 	}
@@ -651,12 +651,7 @@ func fetchNewsData() ([]NewsItem, error) {
 func fetchEconomyNewsData() ([]NewsItem, error) {
 	url := "https://www3.nhk.or.jp/rss/news/cat5.xml" // 経済ニュースRSS
 
-	// HTTPクライアントにタイムアウトを設定
-	client := &http.Client{
-		Timeout: HTTPClientTimeout,
-	}
-
-	resp, err := client.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("経済ニュースRSSの取得に失敗しました: %w", err)
 	}
@@ -708,12 +703,7 @@ func fetchEconomyNewsData() ([]NewsItem, error) {
 func fetchHatenaBookmarks() ([]HatenaEntry, error) {
 	url := "https://b.hatena.ne.jp/hotentry/all.rss"
 
-	// HTTPクライアントにタイムアウトを設定
-	client := &http.Client{
-		Timeout: HTTPClientTimeout,
-	}
-
-	resp, err := client.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("はてなブックマークRSSの取得に失敗しました: %w", err)
 	}
@@ -773,12 +763,7 @@ func fetchHatenaBookmarks() ([]HatenaEntry, error) {
 func fetchKnowledgeHatenaBookmarks() ([]HatenaEntry, error) {
 	url := "https://b.hatena.ne.jp/hotentry/knowledge.rss"
 
-	// HTTPクライアントにタイムアウトを設定
-	client := &http.Client{
-		Timeout: HTTPClientTimeout,
-	}
-
-	resp, err := client.Get(url)
+	resp, err := httpClient.Get(url)
 	if err != nil {
 		return nil, fmt.Errorf("はてなブックマーク(学び)RSSの取得に失敗しました: %w", err)
 	}
