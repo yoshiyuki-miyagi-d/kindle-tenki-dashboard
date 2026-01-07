@@ -18,6 +18,9 @@ body {
     overflow-wrap: anywhere;
     word-break: normal;
     line-break: strict;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 /* ダークモード */
@@ -356,6 +359,7 @@ body.dark-mode .news-item {
     font-weight: bold;
     line-height: 1.4;
     flex: 1;
+    letter-spacing: 0.02em;
 }
 
 .news-title a {
@@ -382,6 +386,7 @@ body.dark-mode .news-date {
     line-height: 1.5;
     color: #333;
     margin: 0;
+    letter-spacing: 0.02em;
 }
 
 body.dark-mode .news-description {
@@ -468,6 +473,7 @@ body.dark-mode .hatena-item {
     font-weight: bold;
     line-height: 1.4;
     margin-bottom: 4px;
+    letter-spacing: 0.02em;
 }
 
 .hatena-title a {
@@ -522,6 +528,7 @@ body.dark-mode .hatena-date {
     line-height: 1.5;
     color: #333;
     margin: 0;
+    letter-spacing: 0.02em;
 }
 
 body.dark-mode .hatena-description {
