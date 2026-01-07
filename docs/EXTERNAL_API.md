@@ -203,9 +203,18 @@ curl https://weather.tsukumijima.net/api/forecast/city/130010
 ### 注意事項
 
 1. **null値の処理**
-   - `temperature.min.celsius` や `temperature.max.celsius` がnullの場合がある
+   - `temperature.min.celsius` や `temperature.max.celsius` がnullまたは空文字列の場合がある
    - 特に当日の夜間など、既に過ぎた時刻のデータはnullになる
    - 必ずnullチェックを実装する
+
+   **最低気温データがnullになるケース:**
+   - 当日の午後〜夜間: 最低気温は朝に記録されるため、既に過ぎた場合はデータがない
+   - 今日の天気情報を夕方以降に取得すると、`min.celsius`が空文字列やnullになる
+
+   **対処方法:**
+   - プロジェクトでは`HasMinTemp`フラグを使用して最低気温データの有効性を追跡
+   - 今日の最低気温がnullの場合、明日の最低気温を使用するフォールバック処理を実装
+   - nullの場合は0を返すのではなく、適切なデフォルト値または代替データを使用
 
 2. **データの更新頻度**
    - 1日3回程度更新される (気象庁の発表タイミングに依存)
@@ -219,11 +228,22 @@ curl https://weather.tsukumijima.net/api/forecast/city/130010
 ### 実装例 (Go)
 
 ```go
+// グローバルHTTPクライアント (Keep-Alive接続を再利用)
+var httpClient = &http.Client{
+    Timeout: 10 * time.Second,
+    Transport: &http.Transport{
+        MaxIdleConns:        100,
+        MaxIdleConnsPerHost: 10,
+        IdleConnTimeout:     90 * time.Second,
+        ForceAttemptHTTP2:   true,
+    },
+}
+
 func fetchWeatherData() (*WeatherData, error) {
     cityCode := getEnv("CITY_CODE", "130010")
     url := fmt.Sprintf("https://weather.tsukumijima.net/api/forecast/city/%s", cityCode)
 
-    resp, err := http.Get(url)
+    resp, err := httpClient.Get(url)
     if err != nil {
         return nil, fmt.Errorf("API呼び出しエラー: %w", err)
     }
@@ -244,6 +264,18 @@ func fetchWeatherData() (*WeatherData, error) {
     }
 
     return processWeatherData(weatherResponse), nil
+}
+
+// 気温パース処理 (null値のハンドリング)
+func parseTemperature(tempStr string) (int, error) {
+    if tempStr == "" || tempStr == "null" {
+        return 0, fmt.Errorf("empty temperature")
+    }
+    temp, err := strconv.Atoi(tempStr)
+    if err != nil {
+        return 0, err
+    }
+    return temp, nil
 }
 ```
 
@@ -435,19 +467,31 @@ func fetchNewsData() ([]NewsItem, error) {
 
 ### 共通のエラー処理
 
-1. **タイムアウト設定**
+1. **HTTPクライアントの最適化**
    ```go
-   client := &http.Client{
+   // グローバルHTTPクライアントで接続を再利用
+   var httpClient = &http.Client{
        Timeout: 10 * time.Second,
+       Transport: &http.Transport{
+           MaxIdleConns:          100,
+           MaxIdleConnsPerHost:   10,
+           IdleConnTimeout:       90 * time.Second,
+           TLSHandshakeTimeout:   5 * time.Second,
+           ExpectContinueTimeout: 1 * time.Second,
+           DisableKeepAlives:     false,
+           ForceAttemptHTTP2:     true,
+       },
    }
    ```
 
-2. **リトライロジック**
-   - 3回までリトライ
-   - 指数バックオフ (1秒、2秒、4秒)
+2. **並列API呼び出し**
+   - goroutineとchannelを使用して複数のAPIを同時に呼び出し
+   - 各API呼び出しは独立してエラーハンドリングを実行
+   - 実行時間を最大75%短縮
 
 3. **フォールバック**
    - API失敗時はサンプルデータを使用
+   - `IsUsingFallbackData`フラグでフォールバックの使用を追跡
    - ユーザーには必ず表示可能なコンテンツを提供
 
 4. **ログ記録**

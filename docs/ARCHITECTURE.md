@@ -63,8 +63,16 @@ Kindle Paperwhiteで表示するための天気情報ダッシュボード。E-i
 
 #### 2.1 天気データ処理 (`processWeatherData`)
 - 今日と明日の予報から48時間分の時間別予報を生成
-- 気温グラフ用の高さ計算 (20%〜100%にマッピング)
+- 気温グラフ用の高さ計算:
+  - SVG座標系(上が小さい値、下が大きい値)に対応
+  - 最高気温を上部(y=20)、最低気温を下部(y=75)に配置
+  - 気温範囲を55ポイント(75-20)にマッピング
+  - 全て同じ気温の場合は中央(y=47)に配置
 - 時間帯による気温の推定ロジック
+- 3日間の日別予報を生成:
+  - 今日/明日/明後日の最高・最低気温
+  - 各日の降水確率の最大値を計算
+  - 天気アイコンと概況を設定
 
 #### 2.2 温度パース (`parseTemperature`)
 - 文字列の気温データを整数に変換
@@ -125,7 +133,14 @@ docs/
            └─> []HatenaEntry 生成
            └─> filterDuplicateHatenaEntries() (重複除外)
 
+       ※ 並列化の実装方法:
+         - 各API呼び出しを個別のgoroutineで実行
+         - channelを使用して結果を受け取る(バッファサイズ1)
+         - 結果構造体(newsResult, hatenaResult)でエラーとデータを返す
+         - 全てのchannelから結果を受信後、エラーハンドリングを実行
+
        ※ 並列化により実行時間が最大75%短縮 (直列40-50秒 → 並列10-15秒)
+       ※ HTTPクライアントの再利用により、さらに接続オーバーヘッドが削減
 
 3. HTML生成
    └─> テンプレート + WeatherData
@@ -159,6 +174,9 @@ type WeatherData struct {
     EconomyNews            []NewsItem       // ニュース(経済)
     HatenaEntries          []HatenaEntry    // はてなブックマーク(総合)
     KnowledgeHatenaEntries []HatenaEntry    // はてなブックマーク(学び)
+    DailyForecasts         []DailyForecast  // 3日間の予報
+    IsUsingFallbackData    bool             // フォールバックデータを使用しているか
+    HasMinTemp             bool             // 最低気温データが有効かどうか
 }
 ```
 
@@ -195,6 +213,18 @@ type HatenaEntry struct {
 }
 ```
 
+### DailyForecast
+```go
+type DailyForecast struct {
+    Date        string // 日付ラベル(今日/明日/明後日)
+    WeatherIcon string // 天気アイコン(絵文字)
+    Description string // 天気概況
+    MaxTemp     int    // 最高気温(℃)
+    MinTemp     int    // 最低気温(℃)
+    RainChance  string // 降水確率(最大値)
+}
+```
+
 ## 環境変数
 
 | 変数名 | デフォルト値 | 説明 |
@@ -221,13 +251,25 @@ type HatenaEntry struct {
 - サーバーサイド処理なし
 - CDN配信による高速ロード
 
-### 2. E-ink最適化
+### 2. HTTPクライアントの最適化
+- **グローバルHTTPクライアントの再利用**: Keep-Alive接続を有効化し、複数のAPI呼び出しで接続を再利用
+- **接続プールのチューニング**:
+  - MaxIdleConns: 100 (アイドル接続数)
+  - MaxIdleConnsPerHost: 10 (ホストごとのアイドル接続数)
+  - IdleConnTimeout: 90秒 (アイドル接続のタイムアウト)
+- **HTTP/2の強制試行**: ForceAttemptHTTP2を有効化してプロトコル最適化
+- **タイムアウト設定**: 各種タイムアウトを適切に設定 (TLSハンドシェイク: 5秒、ExpectContinue: 1秒)
+- **圧縮の有効化**: DisableCompressionをfalseに設定してデータ転送を最適化
+
+これらの最適化により、API呼び出しのオーバーヘッドが大幅に削減され、実行時間が短縮される。
+
+### 3. E-ink最適化
 - 最小限のCSS
 - JavaScriptなし
 - 画像なし (Unicode絵文字のみ使用)
 
-### 3. バッテリー節約
-- サーバー側更新頻度: 6時間ごと
+### 4. バッテリー節約
+- サーバー側更新頻度: 3時間ごと
 - ページ自動リロード: 30分ごと (meta refresh)
 
 ## セキュリティ考慮事項

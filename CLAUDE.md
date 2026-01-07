@@ -49,32 +49,35 @@ cat dist/index.html
 ### データフロー
 ```
 GitHub Actions (3時間ごと)
-  └→ main.go 実行
+  └→ main.go 実行 (グローバルHTTPクライアントで接続を再利用)
       ├→ 天気API呼び出し (weather.tsukumijima.net)
-      │   └→ processWeatherData() → WeatherData
-      ├→ ニュースRSS呼び出し (NHK RSS 主要・経済)
-      │   └→ []NewsItem (重複除外)
-      ├→ はてなブックマークRSS呼び出し (総合・学び)
-      │   └→ []HatenaEntry (重複除外)
+      │   └→ processWeatherData() → WeatherData (3日間予報 + 48時間グラフデータ生成)
+      ├→ 【並列実行】4つのAPI呼び出し (goroutine + channel)
+      │   ├→ ニュースRSS (主要) → []NewsItem
+      │   ├→ ニュースRSS (経済) → []NewsItem → filterDuplicateNews() (重複除外)
+      │   ├→ はてなブックマークRSS (総合) → []HatenaEntry
+      │   └→ はてなブックマークRSS (学び) → []HatenaEntry → filterDuplicateHatenaEntries()
       └→ HTMLテンプレート + データ
-          └→ dist/index.html 生成
+          ├→ dist/index.html 生成
           └→ dist/styles/kindle.css コピー
 ```
 
 ### 主要コンポーネント
 
 **main.go** - 単一ファイルで完結する構成
-- `fetchWeatherData()` - 天気APIからデータ取得、失敗時はサンプルデータ使用
-- `processWeatherData()` - 48時間分の時間別予報を生成、気温グラフ用の高さ計算
+- `httpClient` - グローバルHTTPクライアント (Keep-Alive接続の再利用、HTTP/2対応)
+- `fetchWeatherData()` - 天気APIからデータ取得、4つのRSS APIを並列呼び出し、失敗時はサンプルデータ使用
+- `processWeatherData()` - 3日間の日別予報と48時間分の時間別予報を生成、気温グラフ用の高さ計算 (SVG座標系対応)
 - `fetchNewsData()` - 主要ニュースRSSから最新5件取得
 - `fetchEconomyNewsData()` - 経済ニュースRSSから最新10件取得
 - `fetchHatenaBookmarks()` - はてなブックマーク(総合)から最新5件取得
 - `fetchKnowledgeHatenaBookmarks()` - はてなブックマーク(学び)から最新5件取得
-- `filterDuplicateNews()` - ニュースの重複除外
-- `filterDuplicateHatenaEntries()` - はてなブックマークの重複除外
+- `filterDuplicateNews()` - ニュースの重複除外 (主要と経済で重複するタイトルを除外)
+- `filterDuplicateHatenaEntries()` - はてなブックマークの重複除外 (総合と学びで重複するタイトルを除外)
 - `generateHTML()` - html/templateを使用してHTML生成
 - `parseTemperature()` - 気温文字列を整数に変換、null/空文字列のハンドリング
 - `getWeatherIcon()` - 天気説明からUnicode絵文字を返す
+- `containsAny()` - 文字列に指定されたいずれかの部分文字列が含まれるかチェック
 
 **src/templates/index.html** - HTMLテンプレート
 - カスタム関数: `mul`, `sub` (算術演算)
@@ -92,28 +95,52 @@ type WeatherData struct {
     Temperature            int              // 現在の気温(℃)
     MinTemp                int              // 最低気温(℃)
     MaxTemp                int              // 最高気温(℃)
+    FeelsLike              int              // 体感温度(℃)
     Description            string           // 天気概況
     WeatherIcon            string           // 天気アイコン(絵文字)
+    Wind                   string           // 風の情報
     ChanceOfRain           []string         // 6時間ごとの降水確率
-    HourlyForecast         []HourlyForecast // 時間別予報
+    UpdateTime             string           // 更新時刻
+    HourlyForecast         []HourlyForecast // 時間別予報 (最大20件)
     News                   []NewsItem       // ニュース(主要)
     EconomyNews            []NewsItem       // ニュース(経済)
     HatenaEntries          []HatenaEntry    // はてなブックマーク(総合)
     KnowledgeHatenaEntries []HatenaEntry    // はてなブックマーク(学び)
+    DailyForecasts         []DailyForecast  // 3日間の予報
+    IsUsingFallbackData    bool             // フォールバックデータを使用しているか
+    HasMinTemp             bool             // 最低気温データが有効かどうか (夜間でデータがない場合false)
 }
 
 type HourlyForecast struct {
     Time        string // 時刻 (HH:MM)
     Temp        int    // 気温(℃)
+    Desc        string // 天気
     WeatherIcon string // 天気アイコン(絵文字)
-    ChartHeight int    // グラフ高さ(%) 20-100にマッピング
+    RainChance  string // 降水確率
+    ChartHeight int    // グラフ高さ(%) SVG座標系: 最高気温=20、最低気温=75
+}
+
+type DailyForecast struct {
+    Date        string // 日付ラベル(今日/明日/明後日)
+    WeatherIcon string // 天気アイコン(絵文字)
+    Description string // 天気概況
+    MaxTemp     int    // 最高気温(℃)
+    MinTemp     int    // 最低気温(℃)
+    RainChance  string // 降水確率(最大値)
+}
+
+type NewsItem struct {
+    Title       string // タイトル
+    Link        string // URL
+    Description string // 概要
+    PubDate     string // 公開日時 (MM/DD HH:MM形式)
 }
 
 type HatenaEntry struct {
     Title       string // タイトル
     Link        string // URL
     Description string // 概要
-    PubDate     string // 公開日時
+    PubDate     string // 公開日時 (MM/DD HH:MM形式)
     Category    string // カテゴリ
 }
 ```
