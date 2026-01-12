@@ -14,6 +14,10 @@
     <button class="theme-toggle" id="themeToggle" aria-label="ダークモード切り替え">🌙</button>
     <div class="container">
         
+        <div class="warning-banner">
+            ⚠️ 最新データの取得に失敗しました。サンプルデータを表示しています。
+        </div>
+        
         <main>
             <section class="weather-section">
                 <div class="today-weather">
@@ -21,39 +25,18 @@
                     <div class="weather-main">
                         <div class="location">東京</div>
                         <div class="weather-info">
-                            <div class="weather-icon-large">☀️</div>
-                            <div class="temperature">15℃</div>
+                            <div class="weather-icon-large"></div>
+                            <div class="temperature">22℃</div>
                             <div class="weather-details">
                                 <div class="weather-desc">晴れ</div>
-                                <div class="temp-range">最低1℃ / 最高15℃</div>
-                                <div class="feels-like">体感15℃</div>
+                                <div class="temp-range">最高0℃</div>
+                                <div class="feels-like">体感25℃</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="weather-extra">
                         
-                        <div class="weather-extra-item">
-                            <span class="extra-label">風:</span>
-                            <span class="extra-value">南西の風　日中　やや強く　２３区西部　では　南西の風　強く</span>
-                        </div>
-                        
-                        
-                        <div class="weather-extra-item">
-                            <span class="extra-label">降水確率:</span>
-                            <span class="extra-value">
-                                
-                                    
-                                    6-12時: 0%
-                                
-                                     / 
-                                    12-18時: 10%
-                                
-                                     / 
-                                    18-24時: 0%
-                                
-                            </span>
-                        </div>
                         
                     </div>
 
@@ -68,90 +51,26 @@
                                 fill="none"
                                 stroke="#000"
                                 stroke-width="2"
-                                points="0,39 50,20 100,20 150,20 200,20 250,30 300,30 350,75 400,75 450,34 500,34 550,43 600,43 650,66 700,66 750,75 800,75 850,34 900,34 950,43"
+                                points="0,0 50,0 100,0 150,0"
                             />
 
                             
                             
-                            <circle cx="0" cy="39" r="3" fill="#000"/>
-                            <text x="0" y="29" text-anchor="middle" font-size="10" fill="#000">11℃</text>
-                            <text x="0" y="110" text-anchor="middle" font-size="9" fill="#000">03:00</text>
+                            <circle cx="0" cy="0" r="3" fill="#000"/>
+                            <text x="0" y="-10" text-anchor="middle" font-size="10" fill="#000">23℃</text>
+                            <text x="0" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
                             
-                            <circle cx="50" cy="20" r="3" fill="#000"/>
-                            <text x="50" y="10" text-anchor="middle" font-size="10" fill="#000">15℃</text>
-                            <text x="50" y="110" text-anchor="middle" font-size="9" fill="#000">06:00</text>
+                            <circle cx="50" cy="0" r="3" fill="#000"/>
+                            <text x="50" y="-10" text-anchor="middle" font-size="10" fill="#000">25℃</text>
+                            <text x="50" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
                             
-                            <circle cx="100" cy="20" r="3" fill="#000"/>
-                            <text x="100" y="10" text-anchor="middle" font-size="10" fill="#000">15℃</text>
-                            <text x="100" y="110" text-anchor="middle" font-size="9" fill="#000">09:00</text>
+                            <circle cx="100" cy="0" r="3" fill="#000"/>
+                            <text x="100" y="-10" text-anchor="middle" font-size="10" fill="#000">21℃</text>
+                            <text x="100" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
                             
-                            <circle cx="150" cy="20" r="3" fill="#000"/>
-                            <text x="150" y="10" text-anchor="middle" font-size="10" fill="#000">15℃</text>
-                            <text x="150" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
-                            
-                            <circle cx="200" cy="20" r="3" fill="#000"/>
-                            <text x="200" y="10" text-anchor="middle" font-size="10" fill="#000">15℃</text>
-                            <text x="200" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
-                            
-                            <circle cx="250" cy="30" r="3" fill="#000"/>
-                            <text x="250" y="20" text-anchor="middle" font-size="10" fill="#000">13℃</text>
-                            <text x="250" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
-                            
-                            <circle cx="300" cy="30" r="3" fill="#000"/>
-                            <text x="300" y="20" text-anchor="middle" font-size="10" fill="#000">13℃</text>
-                            <text x="300" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
-                            
-                            <circle cx="350" cy="75" r="3" fill="#000"/>
-                            <text x="350" y="65" text-anchor="middle" font-size="10" fill="#000">3℃</text>
-                            <text x="350" y="110" text-anchor="middle" font-size="9" fill="#000">00:00</text>
-                            
-                            <circle cx="400" cy="75" r="3" fill="#000"/>
-                            <text x="400" y="65" text-anchor="middle" font-size="10" fill="#000">3℃</text>
-                            <text x="400" y="110" text-anchor="middle" font-size="9" fill="#000">03:00</text>
-                            
-                            <circle cx="450" cy="34" r="3" fill="#000"/>
-                            <text x="450" y="24" text-anchor="middle" font-size="10" fill="#000">12℃</text>
-                            <text x="450" y="110" text-anchor="middle" font-size="9" fill="#000">06:00</text>
-                            
-                            <circle cx="500" cy="34" r="3" fill="#000"/>
-                            <text x="500" y="24" text-anchor="middle" font-size="10" fill="#000">12℃</text>
-                            <text x="500" y="110" text-anchor="middle" font-size="9" fill="#000">09:00</text>
-                            
-                            <circle cx="550" cy="43" r="3" fill="#000"/>
-                            <text x="550" y="33" text-anchor="middle" font-size="10" fill="#000">10℃</text>
-                            <text x="550" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
-                            
-                            <circle cx="600" cy="43" r="3" fill="#000"/>
-                            <text x="600" y="33" text-anchor="middle" font-size="10" fill="#000">10℃</text>
-                            <text x="600" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
-                            
-                            <circle cx="650" cy="66" r="3" fill="#000"/>
-                            <text x="650" y="56" text-anchor="middle" font-size="10" fill="#000">5℃</text>
-                            <text x="650" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
-                            
-                            <circle cx="700" cy="66" r="3" fill="#000"/>
-                            <text x="700" y="56" text-anchor="middle" font-size="10" fill="#000">5℃</text>
-                            <text x="700" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
-                            
-                            <circle cx="750" cy="75" r="3" fill="#000"/>
-                            <text x="750" y="65" text-anchor="middle" font-size="10" fill="#000">3℃</text>
-                            <text x="750" y="110" text-anchor="middle" font-size="9" fill="#000">00:00</text>
-                            
-                            <circle cx="800" cy="75" r="3" fill="#000"/>
-                            <text x="800" y="65" text-anchor="middle" font-size="10" fill="#000">3℃</text>
-                            <text x="800" y="110" text-anchor="middle" font-size="9" fill="#000">03:00</text>
-                            
-                            <circle cx="850" cy="34" r="3" fill="#000"/>
-                            <text x="850" y="24" text-anchor="middle" font-size="10" fill="#000">12℃</text>
-                            <text x="850" y="110" text-anchor="middle" font-size="9" fill="#000">06:00</text>
-                            
-                            <circle cx="900" cy="34" r="3" fill="#000"/>
-                            <text x="900" y="24" text-anchor="middle" font-size="10" fill="#000">12℃</text>
-                            <text x="900" y="110" text-anchor="middle" font-size="9" fill="#000">09:00</text>
-                            
-                            <circle cx="950" cy="43" r="3" fill="#000"/>
-                            <text x="950" y="33" text-anchor="middle" font-size="10" fill="#000">10℃</text>
-                            <text x="950" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
+                            <circle cx="150" cy="0" r="3" fill="#000"/>
+                            <text x="150" y="-10" text-anchor="middle" font-size="10" fill="#000">19℃</text>
+                            <text x="150" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
                             
                         </svg>
                     </div>
@@ -163,44 +82,9 @@
                         
                         
                         <div class="hourly-item">
-                            <div class="hourly-time">03:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">11℃</div>
-                            
-                            <div class="hourly-rain">0%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">06:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">15℃</div>
-                            
-                            <div class="hourly-rain">0%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">09:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">15℃</div>
-                            
-                            <div class="hourly-rain">0%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
                             <div class="hourly-time">12:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">15℃</div>
-                            
-                            <div class="hourly-rain">10%</div>
+                            <div class="hourly-icon"></div>
+                            <div class="hourly-temp">23℃</div>
                             
                         </div>
                         
@@ -208,10 +92,8 @@
                         
                         <div class="hourly-item">
                             <div class="hourly-time">15:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">15℃</div>
-                            
-                            <div class="hourly-rain">10%</div>
+                            <div class="hourly-icon"></div>
+                            <div class="hourly-temp">25℃</div>
                             
                         </div>
                         
@@ -219,10 +101,8 @@
                         
                         <div class="hourly-item">
                             <div class="hourly-time">18:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">13℃</div>
-                            
-                            <div class="hourly-rain">0%</div>
+                            <div class="hourly-icon"></div>
+                            <div class="hourly-temp">21℃</div>
                             
                         </div>
                         
@@ -230,83 +110,10 @@
                         
                         <div class="hourly-item">
                             <div class="hourly-time">21:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">13℃</div>
-                            
-                            <div class="hourly-rain">0%</div>
+                            <div class="hourly-icon"></div>
+                            <div class="hourly-temp">19℃</div>
                             
                         </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">00:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">3℃</div>
-                            
-                            <div class="hourly-rain">10%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">03:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">3℃</div>
-                            
-                            <div class="hourly-rain">10%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">06:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">12℃</div>
-                            
-                            <div class="hourly-rain">10%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">09:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">12℃</div>
-                            
-                            <div class="hourly-rain">10%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">12:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">10℃</div>
-                            
-                            <div class="hourly-rain">10%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
                         
                         
                     </div>
@@ -314,27 +121,6 @@
                     <div class="daily-forecast">
                         <h2 class="section-title">3日間の予報</h2>
                         <div class="daily-cards">
-                            
-                            <div class="daily-card">
-                                <div class="daily-date">今日</div>
-                                <div class="daily-icon">☀️</div>
-                                <div class="daily-temp">15℃</div>
-                                <div class="daily-rain">10%</div>
-                            </div>
-                            
-                            <div class="daily-card">
-                                <div class="daily-date">明日</div>
-                                <div class="daily-icon">☀️</div>
-                                <div class="daily-temp">12℃</div>
-                                <div class="daily-rain">10%</div>
-                            </div>
-                            
-                            <div class="daily-card">
-                                <div class="daily-date">明後日</div>
-                                <div class="daily-icon">☀️</div>
-                                <div class="daily-temp">12℃</div>
-                                <div class="daily-rain">20%</div>
-                            </div>
                             
                         </div>
                     </div>
@@ -349,42 +135,26 @@
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260112/k10015020111000.html" target="_blank" rel="noopener noreferrer">前橋市長選 小川晶前市長が当選 ホテル問題で辞職も続投へ</a></div>
-                                    <span class="news-date">01/12 23:14</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20250930/k10014936121000.html" target="_blank" rel="noopener noreferrer">新浪氏の処遇 経済同友会が協議 審査会は&#34;辞任勧告が相当&#34;</a></div>
+                                    <span class="news-date">09/30 12:19</span>
                                 </div>
-                                <p class="news-description">12日投票が行われた前橋市長選挙は、部下の既婚男性とホテルに通っていた問題で辞職した前市長の小川晶氏が2回目の当選を果たしました。</p>
+                                <p class="news-description">経済同友会は、サプリメントをめぐる警察の捜査を受けて活動を自粛している、新浪剛史代表幹事の処遇について30日、理事会を開いて協議しています。</p>
                             </article>
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260113/k10015024801000.html" target="_blank" rel="noopener noreferrer">衆院解散へ動きが活発に 高市首相 外交日程など踏まえ最終判断</a></div>
-                                    <span class="news-date">01/13 00:23</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20250930/k10014935951000.html" target="_blank" rel="noopener noreferrer">10月 値上げの食品 半年ぶり3000品目超 7割が「酒類・飲料」</a></div>
+                                    <span class="news-date">09/30 11:26</span>
                                 </div>
-                                <p class="news-description">通常国会の冒頭で高市総理大臣が衆議院の解散に踏み切るのではないかという見方が広がる中、立憲民主党が公明党に選挙協力を呼びかけるなど動きが活発になっています。政府は、来週23日に通常国会を召集する方針を13日、衆参両院に伝えることにしていて高市総理大臣は、一連の外交日程なども踏まえ、最終的に判断するものとみられます。</p>
+                                <p class="news-description">10月に値上げされる食品は3000品目を超え、ことし4月以来、半年ぶりの高い水準になることが民間の調査でわかりました。</p>
                             </article>
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260112/k10015024311000.html" target="_blank" rel="noopener noreferrer">山梨 上野原の山林火災 延焼続く 焼失面積は約105ヘクタールに</a></div>
-                                    <span class="news-date">01/12 18:44</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20250930/k10014936281000.html" target="_blank" rel="noopener noreferrer">首都高発注の道路清掃入札で談合か 4社に立ち入り検査 公取委</a></div>
+                                    <span class="news-date">09/30 11:46</span>
                                 </div>
-                                <p class="news-description">発生から5日目となった山梨県上野原市の山林火災は12日も延焼が続き、焼失した面積はおよそ105ヘクタールにおよんでいます。現場付近では今後1週間ほどまとまった雨が降らない見込みで、鎮火のめどは立っていません。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260113/k10015024791000.html" target="_blank" rel="noopener noreferrer">日韓首脳会談 高市首相 地元奈良で両国関係発展させたい考え</a></div>
-                                    <span class="news-date">01/13 00:07</span>
-                                </div>
-                                <p class="news-description">高市総理大臣と韓国のイ・ジェミョン（李在明）大統領との日韓首脳会談が13日奈良で行われます。高市総理大臣としては、地元での会談を通じて、イ大統領との信頼関係を深めるとともに、両国関係を未来志向で安定的に発展させていくことを確認したい考えです。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260112/k10015024661000.html" target="_blank" rel="noopener noreferrer">イラン反政府デモで死者540人以上に アメリカ側の出方が焦点</a></div>
-                                    <span class="news-date">01/12 22:19</span>
-                                </div>
-                                <p class="news-description">中東イランでは物価の高騰などに抗議する反政府デモの参加者と治安当局が衝突し、これまでに540人以上が死亡したと伝えられています。アメリカのトランプ大統領は「深刻に見ている。強力な対応を検討している」と述べ、イランに対して軍事的な措置を検討する考えを改めて示し、アメリカ側の出方が焦点となっています。</p>
+                                <p class="news-description">首都高速道路が発注した道路清掃の入札をめぐり、東京や神奈川にある4社が、事前に落札する会社を調整する談合を繰り返した疑いがあるとして、公正取引委員会が、30日午前、立ち入り検査に入りました。</p>
                             </article>
                             
                         </div>
@@ -392,46 +162,6 @@
                     <div class="news-column">
                         <h3 class="news-column-title">経済ニュース</h3>
                         <div class="news-list">
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260111/k10015023951000.html" target="_blank" rel="noopener noreferrer">「Ｘ」が生成AIで画像加工する機能を有料会員に限定</a></div>
-                                    <span class="news-date">01/11 10:21</span>
-                                </div>
-                                <p class="news-description">旧ツイッターの「X」は、AIを使って画像を加工する機能を有料会員に限定する措置をとりました。本人の同意なしに性的な画像が拡散される被害が相次いだことを受けた対応とみられます。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260110/k10015022721000.html" target="_blank" rel="noopener noreferrer">年末年始を終えて…会社を辞めたい？</a></div>
-                                    <span class="news-date">01/10 15:35</span>
-                                </div>
-                                <p class="news-description">年末年始、みなさんはどんな時間を過ごしましたか。実はいま、年末年始の休暇をきっかけに「会社を辞めたい」と考える人が少なくないそうです。年明けに出社したら、同僚などが辞めていた「あけおめ退職」を経験した人も…。最新の動向や企業側のあの手この手の取り組み、キャリア形成の専門家の話を交えて年末年始と転職についてお伝えします。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260110/k10015023571000.html" target="_blank" rel="noopener noreferrer">公明 “政府系ファンド創設を” 運用益を政策実現の財源に</a></div>
-                                    <span class="news-date">01/10 13:36</span>
-                                </div>
-                                <p class="news-description">公明党は、国の金融資産を一体的に運用する政府系ファンドの創設を求めています。運用益を政策実現の財源に活用するねらいがあり、政府や各党にも働きかけて実現を目指したい考えです。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260110/k10015023451000.html" target="_blank" rel="noopener noreferrer">EU 南米との自由貿易協定締結を決定 貿易の多角化進めるねらい</a></div>
-                                    <span class="news-date">01/10 10:27</span>
-                                </div>
-                                <p class="news-description">EU＝ヨーロッパ連合は9日、25年余りの協議のすえ、南米のブラジルなどが参加する共同市場「メルコスール」との自由貿易協定を締結することを決めました。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260110/k10015023461000.html" target="_blank" rel="noopener noreferrer">NY株式市場 ダウ平均株価 4万9500ドル台に上昇 最高値更新</a></div>
-                                    <span class="news-date">01/10 07:00</span>
-                                </div>
-                                <p class="news-description">9日のニューヨーク株式市場ではアメリカの雇用情勢が堅調だとの受け止めを背景に買い注文が優勢となり、ダウ平均株価は4万9500ドル台まで上昇し、最高値を更新しました。</p>
-                            </article>
                             
                         </div>
                     </div>
@@ -445,128 +175,11 @@
                         <h3 class="hatena-column-title"><a href="https://b.hatena.ne.jp/hotentry/all" target="_blank" rel="noopener noreferrer">総合</a></h3>
                         <div class="hatena-list">
                             
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://tokyo-last-train-map.pages.dev/" target="_blank" rel="noopener noreferrer">東京終電マップ｜TOKYO LAST TRAIN MAP</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">学び</span>
-                                        <span class="hatena-date">01/12 08:13</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">TOKYO LAST TRAIN MAP 終電を「時間」で可視化するインタラクティブマップです。同心円は経過時間を表し、時間が進むにつれて帰宅可能な路線が消えていきます。 使い方 山手線モード：山手線各駅からの終電を一覧表示 路線図から個別の駅を選択して詳細表示 時間スライダーで時刻を変更 路線をタップ/ホバーで詳細表示 ...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://note.com/403404/n/nc378a5167767" target="_blank" rel="noopener noreferrer">今選挙しないでほしい理由｜Kazuya</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">政治と経済</span>
-                                        <span class="hatena-date">01/12 02:19</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">勘違いしてはいけないこと　よく勘違いされていますが、地方職員は別に選挙をするなとは思っていないはずです。少なくとも僕は思っていません。選挙があると、業務量が増えてウハウハですからね。大体はタイミングに原因があります。前回の衆院選も解散時期がいつまでも決まらず、選管は準備にバタバタさせられたもので...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://news.web.nhk/newsweb/na/na-k10015020111000" target="_blank" rel="noopener noreferrer">前橋市長選 小川晶前市長の当選確実 ホテル問題で辞職も続投へ | NHKニュース</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">世の中</span>
-                                        <span class="hatena-date">01/12 10:03</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">前橋市長選挙は、12日投票が行われ、部下の既婚男性とホテルに通っていた問題で批判を受けて辞職した前市長の小川晶氏（43）の2回目の当選が確実になりました。 前市長の小川氏が、市議会の自民党系の会派…</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://syu-m-5151.hatenablog.com/entry/2026/01/12/003013" target="_blank" rel="noopener noreferrer">おい、辞めないなら頑張れ - じゃあ、おうちで学べる</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">テクノロジー</span>
-                                        <span class="hatena-date">01/11 22:21</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">はじめに 先週、「おい、辞めるな」という記事を書きました。 syu-m-5151.hatenablog.com 思った以上に反響がありました。何人かから連絡をもらいました。辞めないことにしました、考えるきっかけになりました、と。ありがたかったです。嬉しかった、と言っていいです。たぶん。 ただ、何か落ち着きませんでした。辞めな...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://zenn.dev/dhc4aki/articles/af82b70c904faa" target="_blank" rel="noopener noreferrer">Cloudflare入れたのに75%素通りだった話 ー 攻撃者も学習する</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">テクノロジー</span>
-                                        <span class="hatena-date">01/12 02:31</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">Cloudflare入れて安心してた 先日、WordPressサイトにCloudflareを導入しました。 https://zenn.dev/dhc4aki/articles/cloudflare-free-496-blocks 24時間で496件の脅威を緩和。エラー率も45%→32%に改善。「無料でここまでできるのか」と感動してました。 DNS浸透すれば完璧だろう、と。 「あれ、緩和率が下がってる......</p>
-                                
-                            </article>
-                            
                         </div>
                     </div>
                     <div class="hatena-column">
                         <h3 class="hatena-column-title"><a href="https://b.hatena.ne.jp/hotentry/knowledge" target="_blank" rel="noopener noreferrer">学び</a></h3>
                         <div class="hatena-list">
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://delete-all.hatenablog.com/entry/2026/01/12/120000" target="_blank" rel="noopener noreferrer">「分析の結果、コストに見合わない」といわれて解約された。 - Everything you&#39;ve ever Dreamed</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">学び</span>
-                                        <span class="hatena-date">01/12 03:37</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">僕は食品会社の営業部長。昨年夏に某法人から解約通知を受けた。業務内容は福祉施設の給食提供業務だった。解約通知には、ウチの会社に委託している業務を分析した結果、コストに見合わないと書かれていた。インターネットで見つけてきたテンプレ文章で気取っていたけれども、「給食なんて簡単だから自分のところでやる...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://togetter.com/li/2650918" target="_blank" rel="noopener noreferrer">DVやモラハラの加害者が「2人で話し合おう」「顔を見て直接話せばわかる」と言ってくるケースが非常に多い理由を、離婚やDVを取り扱う弁護士が解説</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">学び</span>
-                                        <span class="hatena-date">01/12 08:48</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">弁護士　柴田収＠離婚・DVモラハラ事件に注力中 @themis_okayama 「直接会って話そう」は危険信号。その要求、断って正解です。 DVやモラハラの加害者が 「弁護士なんて入れずに2人で話し合おう」 「顔を見て直接話せばわかる」 と言ってくるケース、実は非常に多いんです。 なぜ調停や代理人を嫌がるのか。 それは、直...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://togetter.com/li/2650934" target="_blank" rel="noopener noreferrer">昭和44年(1969年)の新宿のホストとホストクラブはこんな感じだったらしい「顔の整い具合が素人ではない」「お金持ちのおばさまが遊ぶ所でしたから」</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">学び</span>
-                                        <span class="hatena-date">01/12 08:42</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">昭和44年の新宿ホストクラブの写真。大人びた紳士風の若者が並び、長髪が少なく礼儀正しさが感じられる。俳優上がりや整った顔立ちの者が多く、実年齢より老けて見える例もある。リッキィら個性的な名が目立ち、本名使用の可能性や富裕な女性客相手の場だったことがうかがえる。</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://togetter.com/li/2650925" target="_blank" rel="noopener noreferrer">よく「アンガーマネジメントが大事」と言われるが、まずその怒りはどこから来ているかわかっているのだろうか？</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">学び</span>
-                                        <span class="hatena-date">01/12 09:38</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">リンク ダイヤモンド・オンライン 「怒ったときの6秒我慢」に意味はない!?怒りを鎮める正しいアンガーマネジメントとは？【精神科医が解説】 「怒ったら6秒我慢しろ」。誰もが知るアンガーマネジメントの定番だが、実はこの方法は怒りを根本から鎮めるには不十分なことも多い。精神科医が教える、本当に効果的な怒りとの...</p>
-                                
-                            </article>
                             
                         </div>
                     </div>
@@ -575,7 +188,7 @@
         </main>
 
         <footer>
-            <p class="update-time">最終更新: 2026/01/13 00:30</p>
+            <p class="update-time">最終更新: 2026/01/13 03:39</p>
             <p class="footer-credit">Powered by 天気予報 API (weather.tsukumijima.net) / NHK ニュース RSS / はてなブックマーク</p>
         </footer>
     </div>
