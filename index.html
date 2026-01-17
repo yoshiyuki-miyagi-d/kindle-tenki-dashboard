@@ -14,6 +14,10 @@
     <button class="theme-toggle" id="themeToggle" aria-label="ダークモード切り替え">🌙</button>
     <div class="container">
         
+        <div class="warning-banner">
+            ⚠️ 最新データの取得に失敗しました。サンプルデータを表示しています。
+        </div>
+        
         <main>
             <section class="weather-section">
                 <div class="today-weather">
@@ -21,39 +25,18 @@
                     <div class="weather-main">
                         <div class="location">東京</div>
                         <div class="weather-info">
-                            <div class="weather-icon-large">☀️</div>
-                            <div class="temperature">14℃</div>
+                            <div class="weather-icon-large"></div>
+                            <div class="temperature">22℃</div>
                             <div class="weather-details">
                                 <div class="weather-desc">晴れ</div>
-                                <div class="temp-range">最低5℃ / 最高14℃</div>
-                                <div class="feels-like">体感14℃</div>
+                                <div class="temp-range">最高0℃</div>
+                                <div class="feels-like">体感25℃</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="weather-extra">
                         
-                        <div class="weather-extra-item">
-                            <span class="extra-label">風:</span>
-                            <span class="extra-value">北の風　２３区西部　では　北の風　やや強く</span>
-                        </div>
-                        
-                        
-                        <div class="weather-extra-item">
-                            <span class="extra-label">降水確率:</span>
-                            <span class="extra-value">
-                                
-                                    
-                                    6-12時: 0%
-                                
-                                     / 
-                                    12-18時: 0%
-                                
-                                     / 
-                                    18-24時: 10%
-                                
-                            </span>
-                        </div>
                         
                     </div>
 
@@ -68,90 +51,26 @@
                                 fill="none"
                                 stroke="#000"
                                 stroke-width="2"
-                                points="0,20 50,20 100,20 150,20 200,30 250,30 300,75 350,75 400,39 450,39 500,48 550,48 600,66 650,66 700,75 750,75 800,39 850,39 900,48 950,48"
+                                points="0,0 50,0 100,0 150,0"
                             />
 
                             
                             
-                            <circle cx="0" cy="20" r="3" fill="#000"/>
-                            <text x="0" y="10" text-anchor="middle" font-size="10" fill="#000">14℃</text>
-                            <text x="0" y="110" text-anchor="middle" font-size="9" fill="#000">06:00</text>
+                            <circle cx="0" cy="0" r="3" fill="#000"/>
+                            <text x="0" y="-10" text-anchor="middle" font-size="10" fill="#000">23℃</text>
+                            <text x="0" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
                             
-                            <circle cx="50" cy="20" r="3" fill="#000"/>
-                            <text x="50" y="10" text-anchor="middle" font-size="10" fill="#000">14℃</text>
-                            <text x="50" y="110" text-anchor="middle" font-size="9" fill="#000">09:00</text>
+                            <circle cx="50" cy="0" r="3" fill="#000"/>
+                            <text x="50" y="-10" text-anchor="middle" font-size="10" fill="#000">25℃</text>
+                            <text x="50" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
                             
-                            <circle cx="100" cy="20" r="3" fill="#000"/>
-                            <text x="100" y="10" text-anchor="middle" font-size="10" fill="#000">14℃</text>
-                            <text x="100" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
+                            <circle cx="100" cy="0" r="3" fill="#000"/>
+                            <text x="100" y="-10" text-anchor="middle" font-size="10" fill="#000">21℃</text>
+                            <text x="100" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
                             
-                            <circle cx="150" cy="20" r="3" fill="#000"/>
-                            <text x="150" y="10" text-anchor="middle" font-size="10" fill="#000">14℃</text>
-                            <text x="150" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
-                            
-                            <circle cx="200" cy="30" r="3" fill="#000"/>
-                            <text x="200" y="20" text-anchor="middle" font-size="10" fill="#000">12℃</text>
-                            <text x="200" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
-                            
-                            <circle cx="250" cy="30" r="3" fill="#000"/>
-                            <text x="250" y="20" text-anchor="middle" font-size="10" fill="#000">12℃</text>
-                            <text x="250" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
-                            
-                            <circle cx="300" cy="75" r="3" fill="#000"/>
-                            <text x="300" y="65" text-anchor="middle" font-size="10" fill="#000">2℃</text>
-                            <text x="300" y="110" text-anchor="middle" font-size="9" fill="#000">00:00</text>
-                            
-                            <circle cx="350" cy="75" r="3" fill="#000"/>
-                            <text x="350" y="65" text-anchor="middle" font-size="10" fill="#000">2℃</text>
-                            <text x="350" y="110" text-anchor="middle" font-size="9" fill="#000">03:00</text>
-                            
-                            <circle cx="400" cy="39" r="3" fill="#000"/>
-                            <text x="400" y="29" text-anchor="middle" font-size="10" fill="#000">10℃</text>
-                            <text x="400" y="110" text-anchor="middle" font-size="9" fill="#000">06:00</text>
-                            
-                            <circle cx="450" cy="39" r="3" fill="#000"/>
-                            <text x="450" y="29" text-anchor="middle" font-size="10" fill="#000">10℃</text>
-                            <text x="450" y="110" text-anchor="middle" font-size="9" fill="#000">09:00</text>
-                            
-                            <circle cx="500" cy="48" r="3" fill="#000"/>
-                            <text x="500" y="38" text-anchor="middle" font-size="10" fill="#000">8℃</text>
-                            <text x="500" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
-                            
-                            <circle cx="550" cy="48" r="3" fill="#000"/>
-                            <text x="550" y="38" text-anchor="middle" font-size="10" fill="#000">8℃</text>
-                            <text x="550" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
-                            
-                            <circle cx="600" cy="66" r="3" fill="#000"/>
-                            <text x="600" y="56" text-anchor="middle" font-size="10" fill="#000">4℃</text>
-                            <text x="600" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
-                            
-                            <circle cx="650" cy="66" r="3" fill="#000"/>
-                            <text x="650" y="56" text-anchor="middle" font-size="10" fill="#000">4℃</text>
-                            <text x="650" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
-                            
-                            <circle cx="700" cy="75" r="3" fill="#000"/>
-                            <text x="700" y="65" text-anchor="middle" font-size="10" fill="#000">2℃</text>
-                            <text x="700" y="110" text-anchor="middle" font-size="9" fill="#000">00:00</text>
-                            
-                            <circle cx="750" cy="75" r="3" fill="#000"/>
-                            <text x="750" y="65" text-anchor="middle" font-size="10" fill="#000">2℃</text>
-                            <text x="750" y="110" text-anchor="middle" font-size="9" fill="#000">03:00</text>
-                            
-                            <circle cx="800" cy="39" r="3" fill="#000"/>
-                            <text x="800" y="29" text-anchor="middle" font-size="10" fill="#000">10℃</text>
-                            <text x="800" y="110" text-anchor="middle" font-size="9" fill="#000">06:00</text>
-                            
-                            <circle cx="850" cy="39" r="3" fill="#000"/>
-                            <text x="850" y="29" text-anchor="middle" font-size="10" fill="#000">10℃</text>
-                            <text x="850" y="110" text-anchor="middle" font-size="9" fill="#000">09:00</text>
-                            
-                            <circle cx="900" cy="48" r="3" fill="#000"/>
-                            <text x="900" y="38" text-anchor="middle" font-size="10" fill="#000">8℃</text>
-                            <text x="900" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
-                            
-                            <circle cx="950" cy="48" r="3" fill="#000"/>
-                            <text x="950" y="38" text-anchor="middle" font-size="10" fill="#000">8℃</text>
-                            <text x="950" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
+                            <circle cx="150" cy="0" r="3" fill="#000"/>
+                            <text x="150" y="-10" text-anchor="middle" font-size="10" fill="#000">19℃</text>
+                            <text x="150" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
                             
                         </svg>
                     </div>
@@ -163,33 +82,9 @@
                         
                         
                         <div class="hourly-item">
-                            <div class="hourly-time">06:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">14℃</div>
-                            
-                            <div class="hourly-rain">0%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">09:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">14℃</div>
-                            
-                            <div class="hourly-rain">0%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
                             <div class="hourly-time">12:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">14℃</div>
-                            
-                            <div class="hourly-rain">0%</div>
+                            <div class="hourly-icon"></div>
+                            <div class="hourly-temp">23℃</div>
                             
                         </div>
                         
@@ -197,10 +92,8 @@
                         
                         <div class="hourly-item">
                             <div class="hourly-time">15:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">14℃</div>
-                            
-                            <div class="hourly-rain">0%</div>
+                            <div class="hourly-icon"></div>
+                            <div class="hourly-temp">25℃</div>
                             
                         </div>
                         
@@ -208,10 +101,8 @@
                         
                         <div class="hourly-item">
                             <div class="hourly-time">18:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">12℃</div>
-                            
-                            <div class="hourly-rain">10%</div>
+                            <div class="hourly-icon"></div>
+                            <div class="hourly-temp">21℃</div>
                             
                         </div>
                         
@@ -219,94 +110,10 @@
                         
                         <div class="hourly-item">
                             <div class="hourly-time">21:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">12℃</div>
-                            
-                            <div class="hourly-rain">10%</div>
+                            <div class="hourly-icon"></div>
+                            <div class="hourly-temp">19℃</div>
                             
                         </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">00:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">2℃</div>
-                            
-                            <div class="hourly-rain">30%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">03:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">2℃</div>
-                            
-                            <div class="hourly-rain">30%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">06:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">10℃</div>
-                            
-                            <div class="hourly-rain">30%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">09:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">10℃</div>
-                            
-                            <div class="hourly-rain">30%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">12:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">8℃</div>
-                            
-                            <div class="hourly-rain">30%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        <div class="hourly-item">
-                            <div class="hourly-time">15:00</div>
-                            <div class="hourly-icon">☀️</div>
-                            <div class="hourly-temp">8℃</div>
-                            
-                            <div class="hourly-rain">30%</div>
-                            
-                        </div>
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
-                        
                         
                         
                     </div>
@@ -314,27 +121,6 @@
                     <div class="daily-forecast">
                         <h2 class="section-title">3日間の予報</h2>
                         <div class="daily-cards">
-                            
-                            <div class="daily-card">
-                                <div class="daily-date">今日</div>
-                                <div class="daily-icon">☀️</div>
-                                <div class="daily-temp">14℃</div>
-                                <div class="daily-rain">10%</div>
-                            </div>
-                            
-                            <div class="daily-card">
-                                <div class="daily-date">明日</div>
-                                <div class="daily-icon">☀️</div>
-                                <div class="daily-temp">10℃</div>
-                                <div class="daily-rain">30%</div>
-                            </div>
-                            
-                            <div class="daily-card">
-                                <div class="daily-date">明後日</div>
-                                <div class="daily-icon">☀️</div>
-                                <div class="daily-temp">11℃</div>
-                                <div class="daily-rain">20%</div>
-                            </div>
                             
                         </div>
                     </div>
@@ -349,42 +135,26 @@
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260117/k10015028971000.html" target="_blank" rel="noopener noreferrer">首相“通常国会の早期に衆院解散” 与野党幹部が政策など発言</a></div>
-                                    <span class="news-date">01/17 19:24</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20250930/k10014936121000.html" target="_blank" rel="noopener noreferrer">新浪氏の処遇 経済同友会が協議 審査会は&#34;辞任勧告が相当&#34;</a></div>
+                                    <span class="news-date">09/30 12:19</span>
                                 </div>
-                                <p class="news-description">高市総理大臣が来週23日に召集される通常国会の早期に衆議院を解散する意向を与党に伝えてから、最初の週末となりました。訴える政策や選挙に受けた準備などをめぐって発言が相次ぎました。17日の動きなどをまとめています。</p>
+                                <p class="news-description">経済同友会は、サプリメントをめぐる警察の捜査を受けて活動を自粛している、新浪剛史代表幹事の処遇について30日、理事会を開いて協議しています。</p>
                             </article>
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260117/k10015029161000.html" target="_blank" rel="noopener noreferrer">ウクライナ ロシアの攻撃で深刻な電力不足 各国に支援呼びかけ</a></div>
-                                    <span class="news-date">01/17 20:49</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20250930/k10014935951000.html" target="_blank" rel="noopener noreferrer">10月 値上げの食品 半年ぶり3000品目超 7割が「酒類・飲料」</a></div>
+                                    <span class="news-date">09/30 11:26</span>
                                 </div>
-                                <p class="news-description">ウクライナではエネルギー施設に対するロシアの相次ぐ攻撃で、必要な電力の4割ほどが供給できないなど深刻な電力不足に陥っていて、ゼレンスキー大統領は16日、ロシアの攻撃を撃退するための防空システムが不足しているとして、各国に支援を呼びかけました。</p>
+                                <p class="news-description">10月に値上げされる食品は3000品目を超え、ことし4月以来、半年ぶりの高い水準になることが民間の調査でわかりました。</p>
                             </article>
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260117/k10015028921000.html" target="_blank" rel="noopener noreferrer">菅元首相 次の衆院選に立候補せず 政界引退の意向表明</a></div>
-                                    <span class="news-date">01/17 19:00</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20250930/k10014936281000.html" target="_blank" rel="noopener noreferrer">首都高発注の道路清掃入札で談合か 4社に立ち入り検査 公取委</a></div>
+                                    <span class="news-date">09/30 11:46</span>
                                 </div>
-                                <p class="news-description">自民党の菅元総理大臣は、地元の横浜市で記者団に対し「後進に道を譲りたい」と述べ、次の衆議院選挙には立候補せず、政界を引退する意向を表明しました。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260117/k10015029071000.html" target="_blank" rel="noopener noreferrer">杉並区 切りつけ死傷事件「たまたま目に入った2人を刺した」</a></div>
-                                    <span class="news-date">01/17 18:39</span>
-                                </div>
-                                <p class="news-description">東京 杉並区のアパートの前で、部屋の明け渡しの手続きのために訪れた裁判所の執行官と保証会社の社員が刃物で切りつけられ、このうち社員の男性が死亡した事件で、逮捕された40歳の住人が調べに対し「たまたま目に入った2人を刺した」と供述していることが捜査関係者への取材で分かりました。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260116/k10015027871000.html" target="_blank" rel="noopener noreferrer">【1日の動き】阪神・淡路大震災31年 つむいだ教訓を語り継ぐ</a></div>
-                                    <span class="news-date">01/17 19:38</span>
-                                </div>
-                                <p class="news-description">6434人が亡くなった阪神・淡路大震災の発生から、31年です。神戸市の追悼行事の会場では、犠牲者を悼む灯籠が「つむぐ」という文字のかたちに並べられました。震災を直接経験していない人が増える中、つむいできた経験や教訓を次の世代にどう継承していくのかが課題となっています。若い世代の中には記憶の継承に主体的に取り組む動きも出ていて、教訓を語り継ぐ一日となっています。16日から17日にかけての各地の動きをまとめました。</p>
+                                <p class="news-description">首都高速道路が発注した道路清掃の入札をめぐり、東京や神奈川にある4社が、事前に落札する会社を調整する談合を繰り返した疑いがあるとして、公正取引委員会が、30日午前、立ち入り検査に入りました。</p>
                             </article>
                             
                         </div>
@@ -392,46 +162,6 @@
                     <div class="news-column">
                         <h3 class="news-column-title">経済ニュース</h3>
                         <div class="news-list">
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260117/k10015028981000.html" target="_blank" rel="noopener noreferrer">恵方巻き商戦 コメやのり高値でコンビニが原材料見直し対応も</a></div>
-                                    <span class="news-date">01/17 15:00</span>
-                                </div>
-                                <p class="news-description">ことしの節分に向けた恵方巻きの商戦が小売各社で本格化しています。コメやのりが高値となる中、コンビニ大手の間では原材料の見直しなどによって価格への転嫁を抑えようという動きが出ています。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260117/k10015028861000.html" target="_blank" rel="noopener noreferrer">米FRB議長人事 トランプ氏 後任は“側近ハセット氏以外”示唆</a></div>
-                                    <span class="news-date">01/17 08:54</span>
-                                </div>
-                                <p class="news-description">アメリカのトランプ大統領は、FRB＝連邦準備制度理事会のパウエル議長の後任人事をめぐって、有力候補となっているホワイトハウスの高官で側近のハセット氏について、「本音をいえばいまの役職にとどめたい」と発言しました。市場関係者の間ではハセット氏以外の候補者の指名を示唆したとの受け止めも出ています。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260117/k10015028791000.html" target="_blank" rel="noopener noreferrer">プルデンシャル生命31億円不適切受領 金融庁は厳しく対処へ</a></div>
-                                    <span class="news-date">01/17 05:15</span>
-                                </div>
-                                <p class="news-description">外資系生命保険会社のプルデンシャル生命は16日、社員らが、およそ500人の顧客から31億円余りの金銭をだまし取ったり不適切に受け取っていたと明らかにしました。報告を受けた金融庁は事態を重く見ていて、会社の調査結果を詳しく検証した上で、法令にもとづいて厳しく対処する方針です。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260116/k10015028531000.html" target="_blank" rel="noopener noreferrer">投資信託 去年の運用残高 初めて300兆円超える</a></div>
-                                    <span class="news-date">01/16 23:24</span>
-                                </div>
-                                <p class="news-description">去年、投資信託に流入した資金は、解約などによる流出分を15兆5000億円上回り、運用残高の合計は初めて300兆円を超えました。NISAの拡充や株高を背景に、投資に向かう個人の資金が一段と増えています。</p>
-                            </article>
-                            
-                            <article class="news-item">
-                                <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260116/k10015028371000.html" target="_blank" rel="noopener noreferrer">ウィキペディア AI開発企業と合意 データ提供し資金支援受ける</a></div>
-                                    <span class="news-date">01/16 23:15</span>
-                                </div>
-                                <p class="news-description">インターネット上の百科事典「ウィキペディア」を運営する財団は、IT大手の「マイクロソフト」などAIを開発する企業に対してデータを提供し、見返りとして資金面で支援を受けることで合意したと発表しました。</p>
-                            </article>
                             
                         </div>
                     </div>
@@ -445,128 +175,11 @@
                         <h3 class="hatena-column-title"><a href="https://b.hatena.ne.jp/hotentry/all" target="_blank" rel="noopener noreferrer">総合</a></h3>
                         <div class="hatena-list">
                             
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://www.47news.jp/13736249.html" target="_blank" rel="noopener noreferrer">【速報】自民、衆院選で裏金議員の比例重複を容認へ</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">政治と経済</span>
-                                        <span class="hatena-date">01/17 07:11</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">自民党は衆院選に向け、派閥裏金事件に関係した議員について比例代表への重複立候補を認める方向で調整に入った。複数の党幹部が17日、明らかにした。</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://anond.hatelabo.jp/20260117152812" target="_blank" rel="noopener noreferrer">はてな民って本当にズレてるよな。 立憲が公明と合併するって話に対して ..</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">政治と経済</span>
-                                        <span class="hatena-date">01/17 06:30</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">はてな民って本当にズレてるよな。 立憲が公明と合併するって話に対して 「それでもよりマシなクソを選ぶだけ」とか言ってるの見て、 ああ、思考停止ってこういうことなんだなって思った。 多分どっかの漫画か、誰かの受け売りなんだろうけどさ。 自分の中では納得感あるのかもしれないけど、 その判断、普通にアホだと...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://nazology.kusuguru.co.jp/archives/190476" target="_blank" rel="noopener noreferrer">女性は異性愛者でも「同性でエッチな妄想が楽しめる」と判明 - ナゾロジー</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">学び</span>
-                                        <span class="hatena-date">01/17 06:25</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">女性アイドルやVTuberなどがメンバー同士で胸を触り合ったり、同性で出かけることを「デート」と称したりする、いわゆる「百合（ゆり）」的な演出を目にすることは珍しくありません。 こうした女性同士の親密なスキンシップや表現は、多くのファンに好意的に受け入れられる一方で、男性の視点からは「同性愛なの？」ある...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://anond.hatelabo.jp/20260117141037" target="_blank" rel="noopener noreferrer">毎年コンビニのおにぎりの値段が上がって辛い</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">暮らし</span>
-                                        <span class="hatena-date">01/17 05:11</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">気づくとコンビニのおにぎりの値段が上がっている。 昼休憩になって、カサカサの肌のまま何も考えずにコンビニへ直行。手に取って、レジで一瞬だけ脳が止まる。前より高い。コンビニおにぎりは卑怯な値上げ方をする。料金据え置きでも中身の具が減っていることもある。見えなきゃいいのかよ。 昨日からの徹夜明けで、正...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://newsnews.today/archives/14527" target="_blank" rel="noopener noreferrer">立憲民主党の原口一博議員、政党「ゆうこく連合」を立ち上げへ 公明党との新党には参加せず - News News Today（ニュースニューストゥデイ）</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">政治と経済</span>
-                                        <span class="hatena-date">01/16 00:11</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">立憲民主党の原口一博議員、政党「ゆうこく連合」を立ち上げへ　公明党との新党には参加せず 原口　一博@kharaguchi 賢明な判断だと思います。希望の党が解体した時に私は当時の民進党（直前の総選挙を民進党藉を持ったまま無所属で闘う）を代表して「国民民主党」の綱領、基本政策の草案を提出しました。 国民民主党は...</p>
-                                
-                            </article>
-                            
                         </div>
                     </div>
                     <div class="hatena-column">
                         <h3 class="hatena-column-title"><a href="https://b.hatena.ne.jp/hotentry/knowledge" target="_blank" rel="noopener noreferrer">学び</a></h3>
                         <div class="hatena-list">
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://togetter.com/li/2652933" target="_blank" rel="noopener noreferrer">部下から「他部署と調整するのが苦手」との相談を受けたので、自分が気付いた部下の問題点を伝えたら、困った表情をしていた… どうやら相手に嫌われたくないらしい</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">学び</span>
-                                        <span class="hatena-date">01/17 10:54</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">どーも☆ちあき @domochiaki 部下から「他部署と調整するのが苦手」との相談を受けた。私（上司）と他部署との板挟みにあっていると感じているとのこと。 何回か他部署との協議に同席して気づいたことをメモしておく。 2026-01-17 09:22:32 どーも☆ちあき @domochiaki ①相手の言い分を鵜呑みにしている。 悩んでいる相手...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://togetter.com/li/2652775" target="_blank" rel="noopener noreferrer">弁護士が語る「法律相談で一番辛いのは『明らかに相手が悪いのに、証拠がないから勝てない』と伝える瞬間」…法律は&#34;弱い者の味方&#34;ではなく&#34;準備した者の味方&#34;である事実</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">学び</span>
-                                        <span class="hatena-date">01/17 03:23</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">弁護士ビーノ⚖令和の虎事業再生版🐯 @bino_bengoshi 法律相談で一番辛いのは「明らかに相手が悪いのに、証拠がないから勝てない」と伝える瞬間です。法律の世界では「真実」よりも「証拠」が優先されます。 ・口約束で貸したお金 ・録音のないパワハラ ・契約書のない下請けいじめ これらは法廷で証明できなければ「なか...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://togetter.com/li/2652788" target="_blank" rel="noopener noreferrer">「産後の恨みは一生」とよく言われるけど、配偶者の親が亡くなった時の振る舞いも同じぐらい気を付けた方が良いという話「関係性が一気に変わる」「普段は思うところあっても…」</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">学び</span>
-                                        <span class="hatena-date">01/17 07:08</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">しまき @readeigo 産後の恨みは一生ってよく聞くけども、配偶者の親が亡くなった時も振る舞いには気をつけた方が良くてお通夜やお葬式には駆けつけるなりしてリスペクトを示すべき。どうでもいいように振る舞ったり自分には無関係な態度でいれば、夫婦生活が長くても亡くなった親がひどい親でも結婚が破綻する事がある。...</p>
-                                
-                            </article>
-                            
-                            <article class="hatena-item">
-                                <div class="hatena-header">
-                                    <div class="hatena-title"><a href="https://www.lifehacker.jp/article/2601_book_to_read-1866/" target="_blank" rel="noopener noreferrer">【毎日書評】辛い練習はもう過去のもの。楽しみながら成果につなげる「デリバレイト・プレイ」 | ライフハッカー・ジャパン</a></div>
-                                    <div class="hatena-meta">
-                                        <span class="hatena-category">学び</span>
-                                        <span class="hatena-date">01/15 03:32</span>
-                                    </div>
-                                </div>
-                                
-                                <p class="hatena-description">心をすり減らさない、本当の情熱の育て方一流になるには1万時間の練習が必要であると説く「1万時間の法則」が注目を集めて以来、多くの人が「デリバレイト・プラクティス（限界的練習）」と呼ばれる練習方法に強い関心を示すようになったそう。 これは体系的に構築された反復練習のこと。明確な目標を設定し、継続的にフ...</p>
-                                
-                            </article>
                             
                         </div>
                     </div>
@@ -575,7 +188,7 @@
         </main>
 
         <footer>
-            <p class="update-time">最終更新: 2026/01/18 03:34</p>
+            <p class="update-time">最終更新: 2026/01/18 06:21</p>
             <p class="footer-credit">Powered by 天気予報 API (weather.tsukumijima.net) / NHK ニュース RSS / はてなブックマーク</p>
         </footer>
     </div>
