@@ -14,10 +14,6 @@
     <button class="theme-toggle" id="themeToggle" aria-label="ダークモード切り替え">🌙</button>
     <div class="container">
         
-        <div class="warning-banner">
-            ⚠️ 最新データの取得に失敗しました。サンプルデータを表示しています。
-        </div>
-        
         <main>
             <section class="weather-section">
                 <div class="today-weather">
@@ -25,18 +21,39 @@
                     <div class="weather-main">
                         <div class="location">東京</div>
                         <div class="weather-info">
-                            <div class="weather-icon-large"></div>
-                            <div class="temperature">22℃</div>
+                            <div class="weather-icon-large">☀️</div>
+                            <div class="temperature">13℃</div>
                             <div class="weather-details">
-                                <div class="weather-desc">晴れ</div>
-                                <div class="temp-range">最高0℃</div>
-                                <div class="feels-like">体感25℃</div>
+                                <div class="weather-desc">晴のち曇</div>
+                                <div class="temp-range">最高13℃</div>
+                                <div class="feels-like">体感13℃</div>
                             </div>
                         </div>
                     </div>
 
                     <div class="weather-extra">
                         
+                        <div class="weather-extra-item">
+                            <span class="extra-label">風:</span>
+                            <span class="extra-value">東の風</span>
+                        </div>
+                        
+                        
+                        <div class="weather-extra-item">
+                            <span class="extra-label">降水確率:</span>
+                            <span class="extra-value">
+                                
+                                    
+                                    6-12時: --%
+                                
+                                     / 
+                                    12-18時: 10%
+                                
+                                     / 
+                                    18-24時: 20%
+                                
+                            </span>
+                        </div>
                         
                     </div>
 
@@ -51,26 +68,90 @@
                                 fill="none"
                                 stroke="#000"
                                 stroke-width="2"
-                                points="0,0 50,0 100,0 150,0"
+                                points="0,20 50,20 100,33 150,33 200,75 250,75 300,39 350,39 400,51 450,51 500,63 550,63 600,75 650,75 700,39 750,39 800,51 850,51 900,63 950,63"
                             />
 
                             
                             
-                            <circle cx="0" cy="0" r="3" fill="#000"/>
-                            <text x="0" y="-10" text-anchor="middle" font-size="10" fill="#000">23℃</text>
+                            <circle cx="0" cy="20" r="3" fill="#000"/>
+                            <text x="0" y="10" text-anchor="middle" font-size="10" fill="#000">13℃</text>
                             <text x="0" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
                             
-                            <circle cx="50" cy="0" r="3" fill="#000"/>
-                            <text x="50" y="-10" text-anchor="middle" font-size="10" fill="#000">25℃</text>
+                            <circle cx="50" cy="20" r="3" fill="#000"/>
+                            <text x="50" y="10" text-anchor="middle" font-size="10" fill="#000">13℃</text>
                             <text x="50" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
                             
-                            <circle cx="100" cy="0" r="3" fill="#000"/>
-                            <text x="100" y="-10" text-anchor="middle" font-size="10" fill="#000">21℃</text>
+                            <circle cx="100" cy="33" r="3" fill="#000"/>
+                            <text x="100" y="23" text-anchor="middle" font-size="10" fill="#000">11℃</text>
                             <text x="100" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
                             
-                            <circle cx="150" cy="0" r="3" fill="#000"/>
-                            <text x="150" y="-10" text-anchor="middle" font-size="10" fill="#000">19℃</text>
+                            <circle cx="150" cy="33" r="3" fill="#000"/>
+                            <text x="150" y="23" text-anchor="middle" font-size="10" fill="#000">11℃</text>
                             <text x="150" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
+                            
+                            <circle cx="200" cy="75" r="3" fill="#000"/>
+                            <text x="200" y="65" text-anchor="middle" font-size="10" fill="#000">4℃</text>
+                            <text x="200" y="110" text-anchor="middle" font-size="9" fill="#000">00:00</text>
+                            
+                            <circle cx="250" cy="75" r="3" fill="#000"/>
+                            <text x="250" y="65" text-anchor="middle" font-size="10" fill="#000">4℃</text>
+                            <text x="250" y="110" text-anchor="middle" font-size="9" fill="#000">03:00</text>
+                            
+                            <circle cx="300" cy="39" r="3" fill="#000"/>
+                            <text x="300" y="29" text-anchor="middle" font-size="10" fill="#000">10℃</text>
+                            <text x="300" y="110" text-anchor="middle" font-size="9" fill="#000">06:00</text>
+                            
+                            <circle cx="350" cy="39" r="3" fill="#000"/>
+                            <text x="350" y="29" text-anchor="middle" font-size="10" fill="#000">10℃</text>
+                            <text x="350" y="110" text-anchor="middle" font-size="9" fill="#000">09:00</text>
+                            
+                            <circle cx="400" cy="51" r="3" fill="#000"/>
+                            <text x="400" y="41" text-anchor="middle" font-size="10" fill="#000">8℃</text>
+                            <text x="400" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
+                            
+                            <circle cx="450" cy="51" r="3" fill="#000"/>
+                            <text x="450" y="41" text-anchor="middle" font-size="10" fill="#000">8℃</text>
+                            <text x="450" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
+                            
+                            <circle cx="500" cy="63" r="3" fill="#000"/>
+                            <text x="500" y="53" text-anchor="middle" font-size="10" fill="#000">6℃</text>
+                            <text x="500" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
+                            
+                            <circle cx="550" cy="63" r="3" fill="#000"/>
+                            <text x="550" y="53" text-anchor="middle" font-size="10" fill="#000">6℃</text>
+                            <text x="550" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
+                            
+                            <circle cx="600" cy="75" r="3" fill="#000"/>
+                            <text x="600" y="65" text-anchor="middle" font-size="10" fill="#000">4℃</text>
+                            <text x="600" y="110" text-anchor="middle" font-size="9" fill="#000">00:00</text>
+                            
+                            <circle cx="650" cy="75" r="3" fill="#000"/>
+                            <text x="650" y="65" text-anchor="middle" font-size="10" fill="#000">4℃</text>
+                            <text x="650" y="110" text-anchor="middle" font-size="9" fill="#000">03:00</text>
+                            
+                            <circle cx="700" cy="39" r="3" fill="#000"/>
+                            <text x="700" y="29" text-anchor="middle" font-size="10" fill="#000">10℃</text>
+                            <text x="700" y="110" text-anchor="middle" font-size="9" fill="#000">06:00</text>
+                            
+                            <circle cx="750" cy="39" r="3" fill="#000"/>
+                            <text x="750" y="29" text-anchor="middle" font-size="10" fill="#000">10℃</text>
+                            <text x="750" y="110" text-anchor="middle" font-size="9" fill="#000">09:00</text>
+                            
+                            <circle cx="800" cy="51" r="3" fill="#000"/>
+                            <text x="800" y="41" text-anchor="middle" font-size="10" fill="#000">8℃</text>
+                            <text x="800" y="110" text-anchor="middle" font-size="9" fill="#000">12:00</text>
+                            
+                            <circle cx="850" cy="51" r="3" fill="#000"/>
+                            <text x="850" y="41" text-anchor="middle" font-size="10" fill="#000">8℃</text>
+                            <text x="850" y="110" text-anchor="middle" font-size="9" fill="#000">15:00</text>
+                            
+                            <circle cx="900" cy="63" r="3" fill="#000"/>
+                            <text x="900" y="53" text-anchor="middle" font-size="10" fill="#000">6℃</text>
+                            <text x="900" y="110" text-anchor="middle" font-size="9" fill="#000">18:00</text>
+                            
+                            <circle cx="950" cy="63" r="3" fill="#000"/>
+                            <text x="950" y="53" text-anchor="middle" font-size="10" fill="#000">6℃</text>
+                            <text x="950" y="110" text-anchor="middle" font-size="9" fill="#000">21:00</text>
                             
                         </svg>
                     </div>
@@ -83,8 +164,10 @@
                         
                         <div class="hourly-item">
                             <div class="hourly-time">12:00</div>
-                            <div class="hourly-icon"></div>
-                            <div class="hourly-temp">23℃</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">13℃</div>
+                            
+                            <div class="hourly-rain">10%</div>
                             
                         </div>
                         
@@ -92,8 +175,10 @@
                         
                         <div class="hourly-item">
                             <div class="hourly-time">15:00</div>
-                            <div class="hourly-icon"></div>
-                            <div class="hourly-temp">25℃</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">13℃</div>
+                            
+                            <div class="hourly-rain">10%</div>
                             
                         </div>
                         
@@ -101,8 +186,10 @@
                         
                         <div class="hourly-item">
                             <div class="hourly-time">18:00</div>
-                            <div class="hourly-icon"></div>
-                            <div class="hourly-temp">21℃</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">11℃</div>
+                            
+                            <div class="hourly-rain">20%</div>
                             
                         </div>
                         
@@ -110,10 +197,116 @@
                         
                         <div class="hourly-item">
                             <div class="hourly-time">21:00</div>
-                            <div class="hourly-icon"></div>
-                            <div class="hourly-temp">19℃</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">11℃</div>
+                            
+                            <div class="hourly-rain">20%</div>
                             
                         </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">00:00</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">4℃</div>
+                            
+                            <div class="hourly-rain">20%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">03:00</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">4℃</div>
+                            
+                            <div class="hourly-rain">20%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">06:00</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">10℃</div>
+                            
+                            <div class="hourly-rain">10%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">09:00</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">10℃</div>
+                            
+                            <div class="hourly-rain">10%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">12:00</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">8℃</div>
+                            
+                            <div class="hourly-rain">10%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">15:00</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">8℃</div>
+                            
+                            <div class="hourly-rain">10%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">18:00</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">6℃</div>
+                            
+                            <div class="hourly-rain">10%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        <div class="hourly-item">
+                            <div class="hourly-time">21:00</div>
+                            <div class="hourly-icon">☀️</div>
+                            <div class="hourly-temp">6℃</div>
+                            
+                            <div class="hourly-rain">10%</div>
+                            
+                        </div>
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         
                         
                     </div>
@@ -121,6 +314,27 @@
                     <div class="daily-forecast">
                         <h2 class="section-title">3日間の予報</h2>
                         <div class="daily-cards">
+                            
+                            <div class="daily-card">
+                                <div class="daily-date">今日</div>
+                                <div class="daily-icon">☀️</div>
+                                <div class="daily-temp">13℃</div>
+                                <div class="daily-rain">20%</div>
+                            </div>
+                            
+                            <div class="daily-card">
+                                <div class="daily-date">明日</div>
+                                <div class="daily-icon">☀️</div>
+                                <div class="daily-temp">10℃</div>
+                                <div class="daily-rain">20%</div>
+                            </div>
+                            
+                            <div class="daily-card">
+                                <div class="daily-date">明後日</div>
+                                <div class="daily-icon">☀️</div>
+                                <div class="daily-temp">10℃</div>
+                                <div class="daily-rain">20%</div>
+                            </div>
                             
                         </div>
                     </div>
@@ -135,26 +349,42 @@
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20250930/k10014936121000.html" target="_blank" rel="noopener noreferrer">新浪氏の処遇 経済同友会が協議 審査会は&#34;辞任勧告が相当&#34;</a></div>
-                                    <span class="news-date">09/30 12:19</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260118/k10015029341000.html" target="_blank" rel="noopener noreferrer">トランプ大統領 グリーンランドめぐり欧州8か国に関税措置</a></div>
+                                    <span class="news-date">01/18 07:21</span>
                                 </div>
-                                <p class="news-description">経済同友会は、サプリメントをめぐる警察の捜査を受けて活動を自粛している、新浪剛史代表幹事の処遇について30日、理事会を開いて協議しています。</p>
+                                <p class="news-description">アメリカのトランプ大統領は、領有に意欲を示しているデンマーク自治領のグリーンランドをめぐり、デンマークをはじめとしたヨーロッパの8か国に対して来月から新たな関税措置を講じると明らかにしました。グリーンランドの購入で合意に至るまで続けるとしています。</p>
                             </article>
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20250930/k10014935951000.html" target="_blank" rel="noopener noreferrer">10月 値上げの食品 半年ぶり3000品目超 7割が「酒類・飲料」</a></div>
-                                    <span class="news-date">09/30 11:26</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260118/k10015029191000.html" target="_blank" rel="noopener noreferrer">高市首相 19日に衆議院の解散表明へ 各党は選挙準備本格化</a></div>
+                                    <span class="news-date">01/18 05:46</span>
                                 </div>
-                                <p class="news-description">10月に値上げされる食品は3000品目を超え、ことし4月以来、半年ぶりの高い水準になることが民間の調査でわかりました。</p>
+                                <p class="news-description">高市総理大臣は、19日に記者会見し、衆議院を解散する意向を表明する見通しです。これを前に、各党は、公約の検討や候補の擁立など選挙に向けた準備を本格化させています。</p>
                             </article>
                             
                             <article class="news-item">
                                 <div class="news-header">
-                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20250930/k10014936281000.html" target="_blank" rel="noopener noreferrer">首都高発注の道路清掃入札で談合か 4社に立ち入り検査 公取委</a></div>
-                                    <span class="news-date">09/30 11:46</span>
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260118/k10015029321000.html" target="_blank" rel="noopener noreferrer">愛知 豊田の集合住宅火災 死亡女性は殺害されたか 警察が捜査</a></div>
+                                    <span class="news-date">01/18 04:44</span>
                                 </div>
-                                <p class="news-description">首都高速道路が発注した道路清掃の入札をめぐり、東京や神奈川にある4社が、事前に落札する会社を調整する談合を繰り返した疑いがあるとして、公正取引委員会が、30日午前、立ち入り検査に入りました。</p>
+                                <p class="news-description">愛知県豊田市にある集合住宅の1室で火事があり、女性1人が遺体で見つかりました。死因は首を絞められたことによる窒息死とみられ、警察は、何者かが女性を殺害した後に火をつけたとみて、捜査しています。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260118/k10015029291000.html" target="_blank" rel="noopener noreferrer">大学入学共通テスト 2日目は理科・数学・情報の試験</a></div>
+                                    <span class="news-date">01/18 06:20</span>
+                                </div>
+                                <p class="news-description">49万人余りが出願する「大学入学共通テスト」は2日目の18日、理科と数学、情報の試験が行われます。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260118/k10015029301000.html" target="_blank" rel="noopener noreferrer">台湾“中国無人機が領空侵犯”「挑発的で無責任な行為」と非難</a></div>
+                                    <span class="news-date">01/18 06:32</span>
+                                </div>
+                                <p class="news-description">台湾国防部は、中国軍の偵察用の無人機が台湾が実効支配する南シナ海の離島の領空に入ったと発表し、「非常に挑発的で無責任な行為だ」と非難しました。これに対し、中国軍は通常の飛行訓練を実施したとして「完全に正当かつ合法だ」と主張しています。</p>
                             </article>
                             
                         </div>
@@ -162,6 +392,46 @@
                     <div class="news-column">
                         <h3 class="news-column-title">経済ニュース</h3>
                         <div class="news-list">
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260118/k10015029211000.html" target="_blank" rel="noopener noreferrer">冬のボーナス 2年連続で過去最高 平均95万7184円</a></div>
+                                    <span class="news-date">01/18 04:56</span>
+                                </div>
+                                <p class="news-description">労働組合がある主要な企業での去年の冬のボーナスは、働く人1人あたりの平均で95万円余りと2年連続で過去最高だったことが厚生労働省のまとめでわかりました。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260117/k10015028981000.html" target="_blank" rel="noopener noreferrer">恵方巻き商戦 コメやのり高値でコンビニが原材料見直し対応も</a></div>
+                                    <span class="news-date">01/17 15:00</span>
+                                </div>
+                                <p class="news-description">ことしの節分に向けた恵方巻きの商戦が小売各社で本格化しています。コメやのりが高値となる中、コンビニ大手の間では原材料の見直しなどによって価格への転嫁を抑えようという動きが出ています。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260117/k10015028861000.html" target="_blank" rel="noopener noreferrer">米FRB議長人事 トランプ氏 後任は“側近ハセット氏以外”示唆</a></div>
+                                    <span class="news-date">01/17 08:54</span>
+                                </div>
+                                <p class="news-description">アメリカのトランプ大統領は、FRB＝連邦準備制度理事会のパウエル議長の後任人事をめぐって、有力候補となっているホワイトハウスの高官で側近のハセット氏について、「本音をいえばいまの役職にとどめたい」と発言しました。市場関係者の間ではハセット氏以外の候補者の指名を示唆したとの受け止めも出ています。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260117/k10015028791000.html" target="_blank" rel="noopener noreferrer">プルデンシャル生命31億円不適切受領 金融庁は厳しく対処へ</a></div>
+                                    <span class="news-date">01/17 05:15</span>
+                                </div>
+                                <p class="news-description">外資系生命保険会社のプルデンシャル生命は16日、社員らが、およそ500人の顧客から31億円余りの金銭をだまし取ったり不適切に受け取っていたと明らかにしました。報告を受けた金融庁は事態を重く見ていて、会社の調査結果を詳しく検証した上で、法令にもとづいて厳しく対処する方針です。</p>
+                            </article>
+                            
+                            <article class="news-item">
+                                <div class="news-header">
+                                    <div class="news-title"><a href="http://www3.nhk.or.jp/news/html/20260116/k10015028531000.html" target="_blank" rel="noopener noreferrer">投資信託 去年の運用残高 初めて300兆円超える</a></div>
+                                    <span class="news-date">01/16 23:24</span>
+                                </div>
+                                <p class="news-description">去年、投資信託に流入した資金は、解約などによる流出分を15兆5000億円上回り、運用残高の合計は初めて300兆円を超えました。NISAの拡充や株高を背景に、投資に向かう個人の資金が一段と増えています。</p>
+                            </article>
                             
                         </div>
                     </div>
@@ -175,11 +445,141 @@
                         <h3 class="hatena-column-title"><a href="https://b.hatena.ne.jp/hotentry/all" target="_blank" rel="noopener noreferrer">総合</a></h3>
                         <div class="hatena-list">
                             
+                            <article class="hatena-item">
+                                <div class="hatena-header">
+                                    <div class="hatena-title"><a href="https://www.recordchina.co.jp/b968284-s27-c20-d0000.html" target="_blank" rel="noopener noreferrer">個性的すぎた日本の「失敗スマホ」が、中国で謎のブームを起こしている</a></div>
+                                    <div class="hatena-meta">
+                                        <span class="hatena-category">政治と経済</span>
+                                        <span class="hatena-date">01/17 15:27</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="hatena-description">日本の家電ブランド、バルミューダが2021年に発売したスマートフォン「BALMUDA Phone」は、市場に一石を投じつつも残念ながら「失敗作」の烙印を押された。 (1 / 2 枚) 日本の家電ブランド、バルミューダが2021年に発売したスマートフォン「BALMUDA Phone」は、市場に一石を投じつつも残念ながら「失敗作」の烙印を押さ...</p>
+                                
+                            </article>
+                            
+                            <article class="hatena-item">
+                                <div class="hatena-header">
+                                    <div class="hatena-title"><a href="https://note.com/keiophonetics/n/nfc8d2171df32" target="_blank" rel="noopener noreferrer">AIと研究不正②：Geminiの超危険な親切｜川原繁人のnote（言語学者・音声学者）</a></div>
+                                    <div class="hatena-meta">
+                                        <span class="hatena-category">テクノロジー</span>
+                                        <span class="hatena-date">01/17 13:57</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="hatena-description">はじめにAI依存、消費電力問題、ディープフェイク……AI倫理に関して、考え続けなければならない問題はたくさんありますが、やはり私は研究者なわけで、「AIと研究不正」についても気になるわけです。今回は、前回の記事に続いて、「AIと研究不正」に関する話題です。 きっかけ 昨年の5月初旬、｢言語学者、生成AIを危ぶむ...</p>
+                                
+                            </article>
+                            
+                            <article class="hatena-item">
+                                <div class="hatena-header">
+                                    <div class="hatena-title"><a href="https://www.yomiuri.co.jp/world/20260116-GYT1T00247/" target="_blank" rel="noopener noreferrer">トランプ氏が中間選挙「行うべきでない」と発言し物議…報道官は「ただの冗談」と説明、食い下がる記者に「真に受けているのはあなたのような人だけ」</a></div>
+                                    <div class="hatena-meta">
+                                        <span class="hatena-category">世の中</span>
+                                        <span class="hatena-date">01/16 18:09</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="hatena-description">【読売新聞】　【ワシントン＝淵上隆悠】米国のトランプ大統領がロイター通信のインタビューで、１１月に予定されている中間選挙を必要ないと主張したことが物議を醸している。キャロライン・レビット大統領報道官は１５日の記者会見で「ただの冗談」</p>
+                                
+                            </article>
+                            
+                            <article class="hatena-item">
+                                <div class="hatena-header">
+                                    <div class="hatena-title"><a href="https://mainichi.jp/articles/20260117/k00/00m/010/197000c" target="_blank" rel="noopener noreferrer">大阪ダブル選、自民・公明など擁立見送り決定　無投票の可能性も | 毎日新聞</a></div>
+                                    <div class="hatena-meta">
+                                        <span class="hatena-category">政治と経済</span>
+                                        <span class="hatena-date">01/17 13:20</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="hatena-description">大阪府知事と大阪市長の出直しダブル選を巡り、自民党府連は17日、独自候補の擁立見送りを決めた。公明党府本部も同様の方針を決定、立憲民主党府連も対抗馬を擁立しないと明らかにした。16日には、共産党系の市民団体が同様の方針を表明。国民民主党府連は最後まで可能性を模索するとしているが具体化には至っておらず...</p>
+                                
+                            </article>
+                            
+                            <article class="hatena-item">
+                                <div class="hatena-header">
+                                    <div class="hatena-title"><a href="https://smart-flash.jp/entertainment/entertainment-news/387347/" target="_blank" rel="noopener noreferrer">フィフィ　ジョーカー議員との“愛憎バトル”が泥沼化…「キスの経緯」めぐる中年の応酬に「誰得なんだ」ウンザリの声 - Smart FLASH/スマフラ[光文社週刊誌]</a></div>
+                                    <div class="hatena-meta">
+                                        <span class="hatena-category">政治と経済</span>
+                                        <span class="hatena-date">01/17 12:23</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="hatena-description">“ジョーカー議員”こと戸田市議会議員の河合ゆうすけ氏をめぐり、思わぬバトルが勃発している。相手は、歯に衣着せぬ発言で知られるエジプト出身の女性タレント、フィフィだ。発端は、河合氏の過激な発言だった。 事の経緯を振り返る。 「1月10日、河合氏は自身のYouTubeで、元プロボクサーで実業家の細川バレンタイン氏...</p>
+                                
+                            </article>
+                            
                         </div>
                     </div>
                     <div class="hatena-column">
                         <h3 class="hatena-column-title"><a href="https://b.hatena.ne.jp/hotentry/knowledge" target="_blank" rel="noopener noreferrer">学び</a></h3>
                         <div class="hatena-list">
+                            
+                            <article class="hatena-item">
+                                <div class="hatena-header">
+                                    <div class="hatena-title"><a href="https://togetter.com/li/2652933" target="_blank" rel="noopener noreferrer">部下から「他部署と調整するのが苦手」との相談を受けたので、自分が気付いた部下の問題点を伝えたら、困った表情をしていた… どうやら相手に嫌われたくないらしい</a></div>
+                                    <div class="hatena-meta">
+                                        <span class="hatena-category">学び</span>
+                                        <span class="hatena-date">01/17 10:54</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="hatena-description">どーも☆ちあき @domochiaki 部下から「他部署と調整するのが苦手」との相談を受けた。私（上司）と他部署との板挟みにあっていると感じているとのこと。 何回か他部署との協議に同席して気づいたことをメモしておく。 2026-01-17 09:22:32 どーも☆ちあき @domochiaki ①相手の言い分を鵜呑みにしている。 悩んでいる相手...</p>
+                                
+                            </article>
+                            
+                            <article class="hatena-item">
+                                <div class="hatena-header">
+                                    <div class="hatena-title"><a href="https://nazology.kusuguru.co.jp/archives/190476" target="_blank" rel="noopener noreferrer">女性は異性愛者でも「同性でエッチな妄想が楽しめる」と判明 - ナゾロジー</a></div>
+                                    <div class="hatena-meta">
+                                        <span class="hatena-category">学び</span>
+                                        <span class="hatena-date">01/17 06:25</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="hatena-description">女性アイドルやVTuberなどがメンバー同士で胸を触り合ったり、同性で出かけることを「デート」と称したりする、いわゆる「百合（ゆり）」的な演出を目にすることは珍しくありません。 こうした女性同士の親密なスキンシップや表現は、多くのファンに好意的に受け入れられる一方で、男性の視点からは「同性愛なの？」ある...</p>
+                                
+                            </article>
+                            
+                            <article class="hatena-item">
+                                <div class="hatena-header">
+                                    <div class="hatena-title"><a href="https://www.lifehacker.jp/article/260110-google-maps-hacks-everyone-should-know/" target="_blank" rel="noopener noreferrer">知らないと損？ Googleマップを200%使い倒すための設定10選 | ライフハッカー・ジャパン</a></div>
+                                    <div class="hatena-meta">
+                                        <span class="hatena-category">学び</span>
+                                        <span class="hatena-date">01/17 08:31</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="hatena-description">Googleマップは、私が唯一愛用している地図アプリです。長年使い続ける中で、多くの便利なテクニックを習得してきました。 ほとんどの人にとってデフォルト設定のままでも十分役立ちますが、自分が必要な情報を確実に得るためには、一度全機能を見直してみる価値があります。 たとえば「有料道路を避ける」設定は、住ん...</p>
+                                
+                            </article>
+                            
+                            <article class="hatena-item">
+                                <div class="hatena-header">
+                                    <div class="hatena-title"><a href="https://anond.hatelabo.jp/20260117124641" target="_blank" rel="noopener noreferrer">本が宙に浮かんで開いてページがパラパラ勝手にめくれるシーンあるじゃん？</a></div>
+                                    <div class="hatena-meta">
+                                        <span class="hatena-category">学び</span>
+                                        <span class="hatena-date">01/17 03:47</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="hatena-description">いちいちページをパラパラめくってないで最初に目当てのページの部分を普通に開けよって思う</p>
+                                
+                            </article>
+                            
+                            <article class="hatena-item">
+                                <div class="hatena-header">
+                                    <div class="hatena-title"><a href="https://www.itmedia.co.jp/news/articles/2601/16/news098.html" target="_blank" rel="noopener noreferrer">国立天文台、歌手MISIAさんとコラボ　「天文学と音楽の力を掛け合わせる」</a></div>
+                                    <div class="hatena-meta">
+                                        <span class="hatena-category">学び</span>
+                                        <span class="hatena-date">01/16 06:04</span>
+                                    </div>
+                                </div>
+                                
+                                <p class="hatena-description">1月24日にスタートしたライブツアー「STARTS presents MISIA 星空のライヴXIII GRAND HORIZON」でコラボグッズを販売する。 グッズは5種類で、国立天文台が企画・設計・製造をプロデュースした組み立て式天体望遠鏡「国立天文台望遠鏡キットII」の限定パッケージ版（1万円／うち寄附金1000円）、国立天文台で撮影された...</p>
+                                
+                            </article>
                             
                         </div>
                     </div>
@@ -188,7 +588,7 @@
         </main>
 
         <footer>
-            <p class="update-time">最終更新: 2026/01/18 06:21</p>
+            <p class="update-time">最終更新: 2026/01/18 11:11</p>
             <p class="footer-credit">Powered by 天気予報 API (weather.tsukumijima.net) / NHK ニュース RSS / はてなブックマーク</p>
         </footer>
     </div>
