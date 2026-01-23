@@ -9,18 +9,33 @@
 body {
     font-family: "游ゴシック体", "Yu Gothic", YuGothic, "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, "MS Pゴシック", sans-serif;
     font-size: clamp(14px, 2.5vw, 16px);
-    line-height: 1.4;
+    line-height: 1.6;
     color: #000;
     background: #fff;
     padding: clamp(4px, 1vw, 8px);
     transition: background-color 0.3s ease, color 0.3s ease;
+
+    /* 日本語テキスト最適化 */
     text-autospace: normal;
     overflow-wrap: anywhere;
     word-break: normal;
-    line-break: strict;
+    line-break: normal;
+
+    /* OpenType機能で日本語を美しく */
+    font-feature-settings:
+        "palt" 1,  /* 約物の幅を調整 */
+        "pkna" 1,  /* かなの幅を調整 */
+        "liga" 1,  /* 合字を有効化 */
+        "kern" 1;  /* カーニングを有効化 */
+
+    /* フォントレンダリング最適化 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+
+    /* 最新のCSS機能 (モダンブラウザ向け) */
+    text-spacing-trim: space-all;
+    hanging-punctuation: allow-end;
 }
 
 /* ダークモード */
