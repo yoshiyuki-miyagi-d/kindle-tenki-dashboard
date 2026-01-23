@@ -1,3 +1,3 @@
 module kindle-tenki-dashboard
 
-go 1.21
+go 1.23

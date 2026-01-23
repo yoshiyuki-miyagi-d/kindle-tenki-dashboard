@@ -23,7 +23,7 @@ jobs:
     - name: Go言語をセットアップ
       uses: actions/setup-go@v5
       with:
-        go-version: '1.21'
+        go-version: '1.23'
 
     - name: 天気データを取得してHTMLを生成
       env:
