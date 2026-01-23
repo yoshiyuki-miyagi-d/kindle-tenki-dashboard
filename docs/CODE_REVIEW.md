@@ -508,6 +508,80 @@ func copyCSS() error {
 
 ---
 
+## 10. Context7によるモダン化レビュー (2026-01-23)
+
+### 概要
+
+Context7のGoドキュメントレビューに基づき、最新のGoベストプラクティスとAPIを適用した。詳細は[MODERNIZATION.md](./MODERNIZATION.md)を参照。
+
+### 実施内容
+
+#### Phase 1: HTTPリクエストのコンテキスト追加 ✅
+- 5つのHTTP fetch関数にcontext.WithTimeout()を追加
+- 個別リクエストごとのタイムアウト制御(5秒)を実装
+- Go 1.13以降の推奨パターンに準拠
+
+**対応関数**:
+- `fetchWeatherData()`
+- `fetchNewsData()`
+- `fetchEconomyNewsData()`
+- `fetchHatenaBookmarks()`
+- `fetchKnowledgeHatenaBookmarks()`
+
+#### Phase 2: ストリーミングデコードの採用 ✅
+- io.ReadAll() + Unmarshal()から json.NewDecoder()およびxml.NewDecoder()へ変更
+- メモリ効率とパフォーマンスの向上
+- 5箇所すべてで実装完了
+
+**改善箇所**:
+- JSON: `fetchWeatherData()`
+- XML: `fetchNewsData()`, `fetchEconomyNewsData()`, `fetchHatenaBookmarks()`, `fetchKnowledgeHatenaBookmarks()`
+
+#### Phase 3: エラーハンドリングの改善 ✅
+- `parseTemperature()`の改善 - 入力値をエラーメッセージに含めるように変更
+- 空文字列とnullを別々に処理
+- fmt.Errorf()で%wを使用したエラーラッピングの一貫性向上
+
+#### Phase 4: HTTP Transport設定の追加 ✅
+- `ResponseHeaderTimeout: 5 * time.Second` を追加
+- サーバーがレスポンスヘッダーを返すまでの待機時間を制御
+
+#### Phase 5: Go 1.23へのアップデート ✅
+- go.modをGo 1.23に更新
+- GitHub ActionsのGo設定を1.23に更新
+- setup-go@v5へアップグレード
+
+### 追加改善 (CSS最適化)
+
+Context7のCSS-Tricks Almanacレビューに基づき、日本語テキストの可読性を大幅に向上させた。
+
+**実施内容**:
+- `line-height` を1.4から1.6に変更
+- `line-break` をstrictからnormalに変更
+- `font-feature-settings` にOpenType機能を追加 (palt, pkna, liga, kern)
+- `text-spacing-trim` と `hanging-punctuation` を追加
+
+### 実装完了コミット
+
+- `0449774` - モダン化提案ドキュメント作成
+- `6a8e8ba` - Phase 1-3の実装 (HTTPコンテキスト、ストリーミングデコード、エラーハンドリング等)
+- `c4d5910` - go.modクリーンアップ
+- `d371d41` - Go 1.23アップデート
+- `8e27b9e` - 日本語CSS最適化
+
+### 効果
+
+| 項目 | 改善内容 | 効果 |
+|------|----------|------|
+| **信頼性** | コンテキストによるタイムアウト制御 | ⭐⭐⭐⭐⭐ |
+| **パフォーマンス** | ストリーミングデコード | ⭐⭐⭐⭐ |
+| **保守性** | エラーハンドリングの改善 | ⭐⭐⭐⭐ |
+| **セキュリティ** | 最新Goバージョンへの更新 | ⭐⭐⭐ |
+| **効率性** | HTTP Transport設定の追加 | ⭐⭐⭐ |
+| **可読性** | 日本語テキストのCSS最適化 | ⭐⭐⭐⭐ |
+
+---
+
 ## まとめ
 
 全体として、コードの品質は非常に高く、実用的なアプリケーションとして十分に機能している。
