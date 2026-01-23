@@ -99,6 +99,7 @@ python -m http.server 8000 --directory dist
 - **[CONTRIBUTING.md](./docs/CONTRIBUTING.md)** - コーディング規約とコミットガイドライン
 - **[EXTERNAL_API.md](./docs/EXTERNAL_API.md)** - 外部API仕様と使用方法
 - **[DEVELOPMENT.md](./docs/DEVELOPMENT.md)** - 開発環境のセットアップとデバッグ方法
+- **[MODERNIZATION.md](./docs/MODERNIZATION.md)** - Goモダン化提案とアップデート計画
 
 ## 使用しているAPI
 

@@ -210,6 +210,7 @@ kindle-tenki-dashboard/
 │   ├── EXTERNAL_API.md    # 外部API仕様
 │   ├── DEVELOPMENT.md     # 開発環境セットアップ詳細
 │   ├── CODE_REVIEW.md     # コードレビュー
+│   ├── MODERNIZATION.md   # Goモダン化提案
 │   └── FEATURE_IDEAS.md   # 機能アイデア
 ├── src/
 │   ├── templates/         # HTMLテンプレート
@@ -320,3 +321,4 @@ go run main.go
 - [CONTRIBUTING.md](./docs/CONTRIBUTING.md) - 開発ガイドライン
 - [EXTERNAL_API.md](./docs/EXTERNAL_API.md) - 外部API仕様
 - [DEVELOPMENT.md](./docs/DEVELOPMENT.md) - 開発環境セットアップ
+- [MODERNIZATION.md](./docs/MODERNIZATION.md) - Goモダン化提案とアップデート計画
