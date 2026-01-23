@@ -1,11 +1,11 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -33,6 +33,7 @@ var httpClient = &http.Client{
 		IdleConnTimeout:       90 * time.Second, // アイドル接続のタイムアウト
 		TLSHandshakeTimeout:   5 * time.Second,  // TLSハンドシェイクのタイムアウト
 		ExpectContinueTimeout: 1 * time.Second,  // 100-continueレスポンスの待機時間
+		ResponseHeaderTimeout: 5 * time.Second,  // レスポンスヘッダー待機のタイムアウト
 		DisableKeepAlives:     false,            // Keep-Aliveを有効化
 		DisableCompression:    false,            // 圧縮を有効化
 		ForceAttemptHTTP2:     true,             // HTTP/2を強制的に試行
@@ -212,8 +213,20 @@ func fetchWeatherData() (*WeatherData, error) {
 	cityCode := getEnv("CITY_CODE", "130010") // 東京のデフォルト
 	weatherURL := fmt.Sprintf("https://weather.tsukumijima.net/api/forecast/city/%s", cityCode)
 
-	// 天気データを取得
-	resp, err := httpClient.Get(weatherURL)
+	// コンテキストを作成 (5秒のタイムアウト)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// コンテキスト付きリクエストを作成
+	req, err := http.NewRequestWithContext(ctx, "GET", weatherURL, nil)
+	if err != nil {
+		log.Printf("⚠️  天気APIリクエストの作成に失敗しました: %v", err)
+		log.Println("   サンプルデータを使用します")
+		return getSampleData()
+	}
+
+	// リクエストを実行
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		log.Printf("⚠️  天気APIの取得に失敗しました: %v", err)
 		log.Println("   サンプルデータを使用します")
@@ -227,15 +240,8 @@ func fetchWeatherData() (*WeatherData, error) {
 		return getSampleData()
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("⚠️  天気データの読み込みに失敗しました: %v", err)
-		log.Println("   サンプルデータを使用します")
-		return getSampleData()
-	}
-
 	var weatherResponse TsukumijimaWeatherResponse
-	if err := json.Unmarshal(body, &weatherResponse); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&weatherResponse); err != nil {
 		log.Printf("⚠️  天気データのパースに失敗しました: %v", err)
 		log.Println("   サンプルデータを使用します")
 		return getSampleData()
@@ -574,12 +580,15 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 }
 
 func parseTemperature(tempStr string) (int, error) {
-	if tempStr == "" || tempStr == "null" {
-		return 0, fmt.Errorf("empty temperature")
+	if tempStr == "" {
+		return 0, fmt.Errorf("temperature is empty")
+	}
+	if tempStr == "null" {
+		return 0, fmt.Errorf("temperature is null")
 	}
 	temp, err := strconv.Atoi(tempStr)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("invalid temperature format %q: %w", tempStr, err)
 	}
 	return temp, nil
 }
@@ -605,7 +614,15 @@ func getSampleData() (*WeatherData, error) {
 func fetchNewsData() ([]NewsItem, error) {
 	url := "https://www3.nhk.or.jp/rss/news/cat0.xml"
 
-	resp, err := httpClient.Get(url)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("ニュースRSSリクエストの作成に失敗しました: %w", err)
+	}
+
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("ニュースRSSの取得に失敗しました: %w", err)
 	}
@@ -615,13 +632,8 @@ func fetchNewsData() ([]NewsItem, error) {
 		return nil, fmt.Errorf("ニュースRSS API Error: %d", resp.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("ニュースRSSの読み込みに失敗しました: %w", err)
-	}
-
 	var rss NHKNewsRSS
-	if err := xml.Unmarshal(body, &rss); err != nil {
+	if err := xml.NewDecoder(resp.Body).Decode(&rss); err != nil {
 		return nil, fmt.Errorf("ニュースRSSのパースに失敗しました: %w", err)
 	}
 
@@ -656,7 +668,15 @@ func fetchNewsData() ([]NewsItem, error) {
 func fetchEconomyNewsData() ([]NewsItem, error) {
 	url := "https://www3.nhk.or.jp/rss/news/cat5.xml" // 経済ニュースRSS
 
-	resp, err := httpClient.Get(url)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("経済ニュースRSSリクエストの作成に失敗しました: %w", err)
+	}
+
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("経済ニュースRSSの取得に失敗しました: %w", err)
 	}
@@ -666,13 +686,8 @@ func fetchEconomyNewsData() ([]NewsItem, error) {
 		return nil, fmt.Errorf("経済ニュースRSS API Error: %d", resp.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("経済ニュースRSSの読み込みに失敗しました: %w", err)
-	}
-
 	var rss NHKNewsRSS
-	if err := xml.Unmarshal(body, &rss); err != nil {
+	if err := xml.NewDecoder(resp.Body).Decode(&rss); err != nil {
 		return nil, fmt.Errorf("経済ニュースRSSのパースに失敗しました: %w", err)
 	}
 
@@ -708,7 +723,15 @@ func fetchEconomyNewsData() ([]NewsItem, error) {
 func fetchHatenaBookmarks() ([]HatenaEntry, error) {
 	url := "https://b.hatena.ne.jp/hotentry/all.rss"
 
-	resp, err := httpClient.Get(url)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("はてなブックマークRSSリクエストの作成に失敗しました: %w", err)
+	}
+
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("はてなブックマークRSSの取得に失敗しました: %w", err)
 	}
@@ -718,13 +741,8 @@ func fetchHatenaBookmarks() ([]HatenaEntry, error) {
 		return nil, fmt.Errorf("はてなブックマークRSS API Error: %d", resp.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("はてなブックマークRSSの読み込みに失敗しました: %w", err)
-	}
-
 	var rss HatenaBookmarkRSS
-	if err := xml.Unmarshal(body, &rss); err != nil {
+	if err := xml.NewDecoder(resp.Body).Decode(&rss); err != nil {
 		return nil, fmt.Errorf("はてなブックマークRSSのパースに失敗しました: %w", err)
 	}
 
@@ -768,7 +786,15 @@ func fetchHatenaBookmarks() ([]HatenaEntry, error) {
 func fetchKnowledgeHatenaBookmarks() ([]HatenaEntry, error) {
 	url := "https://b.hatena.ne.jp/hotentry/knowledge.rss"
 
-	resp, err := httpClient.Get(url)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("はてなブックマーク(学び)RSSリクエストの作成に失敗しました: %w", err)
+	}
+
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("はてなブックマーク(学び)RSSの取得に失敗しました: %w", err)
 	}
@@ -778,13 +804,8 @@ func fetchKnowledgeHatenaBookmarks() ([]HatenaEntry, error) {
 		return nil, fmt.Errorf("はてなブックマーク(学び)RSS API Error: %d", resp.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("はてなブックマーク(学び)RSSの読み込みに失敗しました: %w", err)
-	}
-
 	var rss HatenaBookmarkRSS
-	if err := xml.Unmarshal(body, &rss); err != nil {
+	if err := xml.NewDecoder(resp.Body).Decode(&rss); err != nil {
 		return nil, fmt.Errorf("はてなブックマーク(学び)RSSのパースに失敗しました: %w", err)
 	}
 
