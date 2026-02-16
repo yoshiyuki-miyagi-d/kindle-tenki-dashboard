@@ -48,22 +48,18 @@ body.dark-mode {
     padding: clamp(8px, 2vw, 10px);
 }
 
-/* 警告バナー */
-.warning-banner {
-    background: #fff3cd;
-    color: #856404;
-    border: 2px solid #ffc107;
+/* エラーメッセージ */
+.error-message {
+    border: 2px solid #000;
     padding: 12px;
-    margin-bottom: 12px;
+    margin: 8px 0;
     text-align: center;
     font-size: 14px;
-    font-weight: bold;
 }
 
-body.dark-mode .warning-banner {
-    background: #4a3f1f;
-    color: #ffc107;
-    border-color: #856404;
+body.dark-mode .error-message {
+    border-color: #e0e0e0;
+    color: #e0e0e0;
 }
 
 /* メインコンテンツ */
