@@ -347,62 +347,34 @@ func TestProcessWeatherData(t *testing.T) {
 	}
 }
 
-// getSampleData のテスト
-func TestGetSampleData(t *testing.T) {
-	data, err := getSampleData()
-
-	if err != nil {
-		t.Fatalf("getSampleData がエラーを返しました: %v", err)
-	}
+// weatherDataAllError のテスト
+func TestWeatherDataAllError(t *testing.T) {
+	data := weatherDataAllError()
 
 	if data == nil {
-		t.Fatal("getSampleData が nil を返しました")
+		t.Fatal("weatherDataAllError が nil を返しました")
 	}
 
-	if data.Location != "東京" {
-		t.Errorf("Location: 期待=東京, 実際=%s", data.Location)
+	if !data.HasWeatherError {
+		t.Error("HasWeatherError が true であるべき")
 	}
-
-	if data.Temperature != 22 {
-		t.Errorf("Temperature: 期待=22, 実際=%d", data.Temperature)
+	if !data.HasNewsError {
+		t.Error("HasNewsError が true であるべき")
 	}
-
-	if len(data.HourlyForecast) == 0 {
-		t.Error("HourlyForecast が空です")
+	if !data.HasEconomyNewsError {
+		t.Error("HasEconomyNewsError が true であるべき")
 	}
-
-	if len(data.News) == 0 {
-		t.Error("News が空です")
+	if !data.HasHatenaError {
+		t.Error("HasHatenaError が true であるべき")
+	}
+	if !data.HasKnowledgeHatenaError {
+		t.Error("HasKnowledgeHatenaError が true であるべき")
 	}
 
 	// UpdateTime が正しいフォーマットかチェック
-	_, err = time.Parse("2006/01/02 15:04", data.UpdateTime)
+	_, err := time.Parse("2006/01/02 15:04", data.UpdateTime)
 	if err != nil {
 		t.Errorf("UpdateTime のフォーマットが不正: %s, エラー: %v", data.UpdateTime, err)
-	}
-}
-
-// getSampleNews のテスト
-func TestGetSampleNews(t *testing.T) {
-	news := getSampleNews()
-
-	if len(news) == 0 {
-		t.Fatal("getSampleNews が空の配列を返しました")
-	}
-
-	for i, item := range news {
-		if item.Title == "" {
-			t.Errorf("News[%d].Title が空です", i)
-		}
-		if item.Link == "" {
-			t.Errorf("News[%d].Link が空です", i)
-		}
-		if item.Description == "" {
-			t.Errorf("News[%d].Description が空です", i)
-		}
-		if item.PubDate == "" {
-			t.Errorf("News[%d].PubDate が空です", i)
-		}
 	}
 }
 
@@ -460,17 +432,13 @@ func TestFetchWeatherDataIntegration(t *testing.T) {
 		}
 	})
 
-	t.Run("APIエラー時のフォールバック", func(t *testing.T) {
-		// getSampleData() が正常に動作することを確認
-		data, err := getSampleData()
-		if err != nil {
-			t.Fatalf("getSampleData がエラーを返しました: %v", err)
-		}
+	t.Run("APIエラー時のエラーフラグ", func(t *testing.T) {
+		data := weatherDataAllError()
 		if data == nil {
 			t.Fatal("data が nil です")
 		}
-		if data.Location != "東京" {
-			t.Errorf("サンプルデータの Location が期待と異なります")
+		if !data.HasWeatherError {
+			t.Error("HasWeatherError が true であるべき")
 		}
 	})
 }
@@ -531,14 +499,4 @@ func TestFetchNewsDataIntegration(t *testing.T) {
 		}
 	})
 
-	t.Run("サンプルニュースのフォールバック", func(t *testing.T) {
-		// getSampleNews() が正常に動作することを確認
-		news := getSampleNews()
-		if len(news) == 0 {
-			t.Fatal("サンプルニュースが空です")
-		}
-		if news[0].Title == "" {
-			t.Error("サンプルニュースのTitleが空です")
-		}
-	})
 }

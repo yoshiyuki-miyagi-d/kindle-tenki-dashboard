@@ -57,8 +57,12 @@ type WeatherData struct {
 	HatenaEntries          []HatenaEntry    `json:"hatenaEntries"`         // はてなブックマーク(総合)
 	KnowledgeHatenaEntries []HatenaEntry    `json:"knowledgeHatenaEntries"` // はてなブックマーク(学び)
 	DailyForecasts         []DailyForecast  `json:"dailyForecasts"`        // 3日間の予報
-	IsUsingFallbackData    bool             `json:"isUsingFallbackData"`    // フォールバックデータを使用しているか
 	HasMinTemp             bool             `json:"hasMinTemp"`             // 最低気温データが有効かどうか
+	HasWeatherError         bool `json:"hasWeatherError"`         // 天気API失敗
+	HasNewsError            bool `json:"hasNewsError"`            // ニュース(主要)API失敗
+	HasEconomyNewsError     bool `json:"hasEconomyNewsError"`     // ニュース(経済)API失敗
+	HasHatenaError          bool `json:"hasHatenaError"`          // はてなブックマーク(総合)API失敗
+	HasKnowledgeHatenaError bool `json:"hasKnowledgeHatenaError"` // はてなブックマーク(学び)API失敗
 }
 
 type DailyForecast struct {
@@ -221,30 +225,26 @@ func fetchWeatherData() (*WeatherData, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", weatherURL, nil)
 	if err != nil {
 		log.Printf("⚠️  天気APIリクエストの作成に失敗しました: %v", err)
-		log.Println("   サンプルデータを使用します")
-		return getSampleData()
+		return weatherDataAllError(), nil
 	}
 
 	// リクエストを実行
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		log.Printf("⚠️  天気APIの取得に失敗しました: %v", err)
-		log.Println("   サンプルデータを使用します")
-		return getSampleData()
+		return weatherDataAllError(), nil
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("⚠️  天気API Error: %d", resp.StatusCode)
-		log.Println("   サンプルデータを使用します")
-		return getSampleData()
+		return weatherDataAllError(), nil
 	}
 
 	var weatherResponse TsukumijimaWeatherResponse
 	if err := json.NewDecoder(resp.Body).Decode(&weatherResponse); err != nil {
 		log.Printf("⚠️  天気データのパースに失敗しました: %v", err)
-		log.Println("   サンプルデータを使用します")
-		return getSampleData()
+		return weatherDataAllError(), nil
 	}
 
 	weatherData := processWeatherData(weatherResponse)
@@ -296,8 +296,7 @@ func fetchWeatherData() (*WeatherData, error) {
 	// ニュースデータの処理
 	if newsRes.err != nil {
 		log.Printf("⚠️  ニュースデータの取得に失敗しました: %v", newsRes.err)
-		log.Println("   サンプルのニュースデータを使用します")
-		weatherData.News = getSampleNews()
+		weatherData.HasNewsError = true
 	} else {
 		weatherData.News = newsRes.news
 	}
@@ -305,8 +304,7 @@ func fetchWeatherData() (*WeatherData, error) {
 	// 経済ニュースデータの処理
 	if economyNewsRes.err != nil {
 		log.Printf("⚠️  経済ニュースデータの取得に失敗しました: %v", economyNewsRes.err)
-		log.Println("   サンプルの経済ニュースデータを使用します")
-		weatherData.EconomyNews = getSampleNews()
+		weatherData.HasEconomyNewsError = true
 	} else {
 		// 主要ニュースと重複する記事を経済ニュースから除外
 		weatherData.EconomyNews = filterDuplicateNews(economyNewsRes.news, weatherData.News)
@@ -315,8 +313,7 @@ func fetchWeatherData() (*WeatherData, error) {
 	// はてなブックマーク(総合)データの処理
 	if hatenaRes.err != nil {
 		log.Printf("⚠️  はてなブックマーク(総合)データの取得に失敗しました: %v", hatenaRes.err)
-		log.Println("   サンプルのはてなブックマークデータを使用します")
-		weatherData.HatenaEntries = getSampleHatenaBookmarks()
+		weatherData.HasHatenaError = true
 	} else {
 		weatherData.HatenaEntries = hatenaRes.entries
 	}
@@ -324,8 +321,7 @@ func fetchWeatherData() (*WeatherData, error) {
 	// はてなブックマーク(学び)データの処理
 	if knowledgeHatenaRes.err != nil {
 		log.Printf("⚠️  はてなブックマーク(学び)データの取得に失敗しました: %v", knowledgeHatenaRes.err)
-		log.Println("   サンプルのはてなブックマーク(学び)データを使用します")
-		weatherData.KnowledgeHatenaEntries = getSampleKnowledgeHatenaBookmarks()
+		weatherData.HasKnowledgeHatenaError = true
 	} else {
 		// 総合はてなブックマークと重複するエントリーを学びから除外
 		weatherData.KnowledgeHatenaEntries = filterDuplicateHatenaEntries(knowledgeHatenaRes.entries, weatherData.HatenaEntries)
@@ -593,22 +589,16 @@ func parseTemperature(tempStr string) (int, error) {
 	return temp, nil
 }
 
-func getSampleData() (*WeatherData, error) {
+// weatherDataAllError は全API失敗時のWeatherDataを返す
+func weatherDataAllError() *WeatherData {
 	return &WeatherData{
-		Location:            "東京",
-		Temperature:         22,
-		FeelsLike:           25,
-		Description:         "晴れ",
-		UpdateTime:          time.Now().Format("2006/01/02 15:04"),
-		HourlyForecast: []HourlyForecast{
-			{Time: "12:00", Temp: 23, Desc: "晴れ"},
-			{Time: "15:00", Temp: 25, Desc: "晴れ"},
-			{Time: "18:00", Temp: 21, Desc: "曇り"},
-			{Time: "21:00", Temp: 19, Desc: "曇り"},
-		},
-		News:                getSampleNews(),
-		IsUsingFallbackData: true, // フォールバックデータを使用していることを示す
-	}, nil
+		UpdateTime:              time.Now().Format("2006/01/02 15:04"),
+		HasWeatherError:         true,
+		HasNewsError:            true,
+		HasEconomyNewsError:     true,
+		HasHatenaError:          true,
+		HasKnowledgeHatenaError: true,
+	}
 }
 
 func fetchNewsData() ([]NewsItem, error) {
@@ -844,57 +834,6 @@ func fetchKnowledgeHatenaBookmarks() ([]HatenaEntry, error) {
 	return entries, nil
 }
 
-func getSampleHatenaBookmarks() []HatenaEntry {
-	return []HatenaEntry{
-		{
-			Title:       "Affinity | プロフェッショナル クリエイティブ ソフトウェア、無料で万人のために",
-			Link:        "https://www.affinity.studio/ja_jp",
-			Description: "ブラウザを更新してください 古いバージョンまたはサポート対象外のブラウザをお使いの可能性があります。",
-			PubDate:     "10/30 16:24",
-			Category:    "学び",
-		},
-		{
-			Title:       "記憶喪失のモヒカン〜意識が戻ってからの記録〜",
-			Link:        "https://ameblo.jp/amnesiac-mohawk/",
-			Description: "9/2に報道された記憶喪失のモヒカン【田中 一(仮)】です",
-			PubDate:     "10/30 15:20",
-			Category:    "暮らし",
-		},
-		{
-			Title:       "石破内閣、続投に意欲 所信表明演説で丁寧な政権運営を訴え",
-			Link:        "https://www.tokyo-np.co.jp/article/446032",
-			Description: "第214臨時国会が31日召集され、衆院本会議で石破茂首相が所信表明演説を行った。",
-			PubDate:     "10/31 08:00",
-			Category:    "政治と経済",
-		},
-	}
-}
-
-func getSampleKnowledgeHatenaBookmarks() []HatenaEntry {
-	return []HatenaEntry{
-		{
-			Title:       "プログラミング言語の歴史と進化について",
-			Link:        "https://example.com/programming-history",
-			Description: "プログラミング言語がどのように発展してきたかを解説します。",
-			PubDate:     "10/30 14:00",
-			Category:    "テクノロジー",
-		},
-		{
-			Title:       "量子コンピュータの基礎知識",
-			Link:        "https://example.com/quantum-computing",
-			Description: "量子コンピュータの仕組みと応用分野について学びます。",
-			PubDate:     "10/30 12:30",
-			Category:    "学び",
-		},
-		{
-			Title:       "効果的な学習方法とは",
-			Link:        "https://example.com/learning-methods",
-			Description: "科学的に証明された効果的な学習テクニックを紹介します。",
-			PubDate:     "10/29 18:00",
-			Category:    "学び",
-		},
-	}
-}
 
 func filterDuplicateNews(economyNews []NewsItem, mainNews []NewsItem) []NewsItem {
 	// 主要ニュースのタイトルをマップに格納
@@ -938,28 +877,6 @@ func filterDuplicateHatenaEntries(knowledgeEntries []HatenaEntry, generalEntries
 	return filtered
 }
 
-func getSampleNews() []NewsItem {
-	return []NewsItem{
-		{
-			Title:       "新浪氏の処遇 経済同友会が協議 審査会は\"辞任勧告が相当\"",
-			Link:        "http://www3.nhk.or.jp/news/html/20250930/k10014936121000.html",
-			Description: "経済同友会は、サプリメントをめぐる警察の捜査を受けて活動を自粛している、新浪剛史代表幹事の処遇について30日、理事会を開いて協議しています。",
-			PubDate:     "09/30 12:19",
-		},
-		{
-			Title:       "10月 値上げの食品 半年ぶり3000品目超 7割が「酒類・飲料」",
-			Link:        "http://www3.nhk.or.jp/news/html/20250930/k10014935951000.html",
-			Description: "10月に値上げされる食品は3000品目を超え、ことし4月以来、半年ぶりの高い水準になることが民間の調査でわかりました。",
-			PubDate:     "09/30 11:26",
-		},
-		{
-			Title:       "首都高発注の道路清掃入札で談合か 4社に立ち入り検査 公取委",
-			Link:        "http://www3.nhk.or.jp/news/html/20250930/k10014936281000.html",
-			Description: "首都高速道路が発注した道路清掃の入札をめぐり、東京や神奈川にある4社が、事前に落札する会社を調整する談合を繰り返した疑いがあるとして、公正取引委員会が、30日午前、立ち入り検査に入りました。",
-			PubDate:     "09/30 11:46",
-		},
-	}
-}
 
 func generateHTML(data *WeatherData) error {
 	// テンプレートファイルを読み込み

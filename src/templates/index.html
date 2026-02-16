@@ -13,12 +13,12 @@
 <body>
     <button class="theme-toggle" id="themeToggle" aria-label="ダークモード切り替え">🌙</button>
     <div class="container">
-        {{if .IsUsingFallbackData}}
-        <div class="warning-banner">
-            ⚠️ 最新データの取得に失敗しました。サンプルデータを表示しています。
-        </div>
-        {{end}}
         <main>
+            {{if .HasWeatherError}}
+            <section class="weather-section">
+                <div class="error-message">天気データの取得に失敗しました</div>
+            </section>
+            {{else}}
             <section class="weather-section">
                 <div class="today-weather">
                     <h2 class="section-title">今日の天気</h2>
@@ -111,11 +111,15 @@
                     </div>
                 </div>
             </section>
+            {{end}}
 
             <section class="news">
                 <div class="news-container">
                     <div class="news-column">
                         <h3 class="news-column-title">主要ニュース</h3>
+                        {{if .HasNewsError}}
+                        <div class="error-message">ニュースデータの取得に失敗しました</div>
+                        {{else}}
                         <div class="news-list">
                             {{range .News}}
                             <article class="news-item">
@@ -127,9 +131,13 @@
                             </article>
                             {{end}}
                         </div>
+                        {{end}}
                     </div>
                     <div class="news-column">
                         <h3 class="news-column-title">経済ニュース</h3>
+                        {{if .HasEconomyNewsError}}
+                        <div class="error-message">経済ニュースデータの取得に失敗しました</div>
+                        {{else}}
                         <div class="news-list">
                             {{range .EconomyNews}}
                             <article class="news-item">
@@ -141,6 +149,7 @@
                             </article>
                             {{end}}
                         </div>
+                        {{end}}
                     </div>
                 </div>
             </section>
@@ -150,6 +159,9 @@
                 <div class="hatena-container">
                     <div class="hatena-column">
                         <h3 class="hatena-column-title"><a href="https://b.hatena.ne.jp/hotentry/all" target="_blank" rel="noopener noreferrer">総合</a></h3>
+                        {{if .HasHatenaError}}
+                        <div class="error-message">はてなブックマークデータの取得に失敗しました</div>
+                        {{else}}
                         <div class="hatena-list">
                             {{range .HatenaEntries}}
                             <article class="hatena-item">
@@ -166,9 +178,13 @@
                             </article>
                             {{end}}
                         </div>
+                        {{end}}
                     </div>
                     <div class="hatena-column">
                         <h3 class="hatena-column-title"><a href="https://b.hatena.ne.jp/hotentry/knowledge" target="_blank" rel="noopener noreferrer">学び</a></h3>
+                        {{if .HasKnowledgeHatenaError}}
+                        <div class="error-message">はてなブックマーク(学び)データの取得に失敗しました</div>
+                        {{else}}
                         <div class="hatena-list">
                             {{range .KnowledgeHatenaEntries}}
                             <article class="hatena-item">
@@ -185,6 +201,7 @@
                             </article>
                             {{end}}
                         </div>
+                        {{end}}
                     </div>
                 </div>
             </section>
