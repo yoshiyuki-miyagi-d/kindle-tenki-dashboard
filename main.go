@@ -91,11 +91,12 @@ type NewsItem struct {
 }
 
 type HatenaEntry struct {
-	Title       string `json:"title"`
-	Link        string `json:"link"`
-	Description string `json:"description"`
-	PubDate     string `json:"pubDate"`
-	Category    string `json:"category"` // カテゴリ(学び、テクノロジーなど)
+	Title        string `json:"title"`
+	Link         string `json:"link"`
+	BookmarkLink string `json:"bookmarkLink"` // はてなブックマークページURL (https://b.hatena.ne.jp/entry/s/...)
+	Description  string `json:"description"`
+	PubDate      string `json:"pubDate"`
+	Category     string `json:"category"` // カテゴリ(学び、テクノロジーなど)
 }
 
 type NHKNewsRSS struct {
@@ -211,6 +212,14 @@ func containsAny(s string, substrs []string) bool {
 		}
 	}
 	return false
+}
+
+// hatenaBookmarkURL は記事URLからはてなブックマークページのURLを生成する
+// 例: "https://example.com/article" → "https://b.hatena.ne.jp/entry/s/example.com/article"
+func hatenaBookmarkURL(articleURL string) string {
+	trimmed := strings.TrimPrefix(articleURL, "https://")
+	trimmed = strings.TrimPrefix(trimmed, "http://")
+	return "https://b.hatena.ne.jp/entry/s/" + trimmed
 }
 
 func fetchWeatherData() (*WeatherData, error) {
@@ -761,11 +770,12 @@ func fetchHatenaBookmarks() ([]HatenaEntry, error) {
 		}
 
 		entries = append(entries, HatenaEntry{
-			Title:       item.Title,
-			Link:        item.Link,
-			Description: item.Description,
-			PubDate:     formattedDate,
-			Category:    category,
+			Title:        item.Title,
+			Link:         item.Link,
+			BookmarkLink: hatenaBookmarkURL(item.Link),
+			Description:  item.Description,
+			PubDate:      formattedDate,
+			Category:     category,
 		})
 	}
 
@@ -823,17 +833,17 @@ func fetchKnowledgeHatenaBookmarks() ([]HatenaEntry, error) {
 		}
 
 		entries = append(entries, HatenaEntry{
-			Title:       item.Title,
-			Link:        item.Link,
-			Description: item.Description,
-			PubDate:     formattedDate,
-			Category:    category,
+			Title:        item.Title,
+			Link:         item.Link,
+			BookmarkLink: hatenaBookmarkURL(item.Link),
+			Description:  item.Description,
+			PubDate:      formattedDate,
+			Category:     category,
 		})
 	}
 
 	return entries, nil
 }
-
 
 func filterDuplicateNews(economyNews []NewsItem, mainNews []NewsItem) []NewsItem {
 	// 主要ニュースのタイトルをマップに格納
