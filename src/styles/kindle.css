@@ -36,6 +36,9 @@ body {
     /* 最新のCSS機能 (モダンブラウザ向け) */
     text-spacing-trim: space-all;
     hanging-punctuation: allow-end;
+
+    /* タッチ操作の最適化 */
+    touch-action: manipulation;
 }
 
 /* ダークモード */
@@ -62,6 +65,28 @@ body.dark-mode .error-message {
     color: #e0e0e0;
 }
 
+/* スキップナビゲーション */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    background: #000;
+    color: #fff;
+    padding: 8px 16px;
+    z-index: 10000;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.skip-link:focus-visible {
+    left: 0;
+}
+
+body.dark-mode .skip-link {
+    background: #e0e0e0;
+    color: #1a1a1a;
+}
+
 /* メインコンテンツ */
 main {
     margin-bottom: 8px;
@@ -74,6 +99,7 @@ main {
     margin-bottom: 8px;
     padding-bottom: 2px;
     border-bottom: 1px solid #000;
+    text-wrap: balance;
 }
 
 body.dark-mode .section-title {
@@ -125,6 +151,7 @@ body.dark-mode .section-title {
     font-size: clamp(48px, 12vw, 64px);
     font-weight: bold;
     white-space: nowrap;
+    font-variant-numeric: tabular-nums;
 }
 
 .weather-details {
@@ -201,10 +228,12 @@ body.dark-mode .extra-value {
     width: 100%;
     height: 120px;
     border: 1px solid #000;
+    color: #000;
 }
 
 body.dark-mode .line-chart {
     border-color: #666;
+    color: #e0e0e0;
 }
 
 /* 3時間ごとの天気予報 */
@@ -212,6 +241,7 @@ body.dark-mode .line-chart {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
     gap: 8px;
+    list-style: none;
 }
 
 .hourly-item {
@@ -239,6 +269,7 @@ body.dark-mode .hourly-item {
 .hourly-temp {
     font-size: 14px;
     font-weight: bold;
+    font-variant-numeric: tabular-nums;
 }
 
 .hourly-rain {
@@ -261,6 +292,7 @@ body.dark-mode .hourly-rain {
     display: flex;
     gap: 8px;
     justify-content: center;
+    list-style: none;
 }
 
 .daily-card {
@@ -293,6 +325,7 @@ body.dark-mode .daily-card {
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 2px;
+    font-variant-numeric: tabular-nums;
 }
 
 .daily-rain {
@@ -371,6 +404,7 @@ body.dark-mode .news-item {
     line-height: 1.4;
     flex: 1;
     letter-spacing: 0.02em;
+    text-wrap: balance;
 }
 
 .news-title a {
@@ -384,12 +418,12 @@ body.dark-mode .news-title a {
 
 .news-date {
     font-size: 11px;
-    color: #999;
+    color: #767676;
     white-space: nowrap;
 }
 
 body.dark-mode .news-date {
-    color: #666;
+    color: #888;
 }
 
 .news-description {
@@ -485,6 +519,7 @@ body.dark-mode .hatena-item {
     line-height: 1.4;
     margin-bottom: 4px;
     letter-spacing: 0.02em;
+    text-wrap: balance;
 }
 
 .hatena-title a {
@@ -526,12 +561,12 @@ body.dark-mode .hatena-category {
 }
 
 .hatena-date {
-    color: #999;
+    color: #767676;
     white-space: nowrap;
 }
 
 body.dark-mode .hatena-date {
-    color: #666;
+    color: #888;
 }
 
 .hatena-bookmark-link {
@@ -571,16 +606,16 @@ body.dark-mode footer {
 
 .update-time {
     font-size: 10px;
-    color: #999;
+    color: #767676;
     margin: 0 0 4px 0;
 }
 
 body.dark-mode .update-time {
-    color: #666;
+    color: #888;
 }
 
 .footer-credit {
-    font-size: 8px;
+    font-size: 10px;
     color: #666;
     margin: 0;
 }
@@ -637,13 +672,13 @@ body.dark-mode .theme-toggle:hover {
 }
 
 /* アクセシビリティ: フォーカススタイル */
-a:focus, button:focus {
+a:focus-visible, button:focus-visible {
     outline: 2px solid #000;
     outline-offset: 2px;
 }
 
-body.dark-mode a:focus,
-body.dark-mode button:focus {
+body.dark-mode a:focus-visible,
+body.dark-mode button:focus-visible {
     outline-color: #e0e0e0;
 }
 
@@ -659,6 +694,14 @@ a:hover {
 
 body.dark-mode .news-title a:hover {
     color: #fff;
+}
+
+/* アニメーション抑制 */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 /* 印刷時の最適化 */

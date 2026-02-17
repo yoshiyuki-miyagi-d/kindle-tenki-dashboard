@@ -6,14 +6,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#fff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
     <title>天気ダッシュボード</title>
     <link rel="stylesheet" href="styles/kindle.css">
     <meta http-equiv="refresh" content="1800">
 </head>
 <body>
+    <a href="#main-content" class="skip-link">メインコンテンツへスキップ</a>
     <button class="theme-toggle" id="themeToggle" aria-label="ダークモード切り替え">🌙</button>
     <div class="container">
-        <main>
+        <main id="main-content">
             {{if .HasWeatherError}}
             <section class="weather-section">
                 <div class="error-message">天気データの取得に失敗しました</div>
@@ -59,21 +63,21 @@
                         <svg class="line-chart" viewBox="0 0 800 120" preserveAspectRatio="xMidYMid meet" role="img" aria-label="48時間の気温変化グラフ">
                             <title>48時間の気温変化</title>
                             <!-- グリッド線 -->
-                            <line x1="0" y1="95" x2="800" y2="95" stroke="#000" stroke-width="1"/>
+                            <line x1="0" y1="95" x2="800" y2="95" stroke="currentColor" stroke-width="1"/>
 
                             <!-- 折れ線グラフ -->
                             <polyline
                                 fill="none"
-                                stroke="#000"
+                                stroke="currentColor"
                                 stroke-width="2"
                                 points="{{range $index, $element := .HourlyForecast}}{{if $index}} {{end}}{{mul $index 50}},{{$element.ChartHeight}}{{end}}"
                             />
 
                             <!-- データポイント -->
                             {{range $index, $element := .HourlyForecast}}
-                            <circle cx="{{mul $index 50}}" cy="{{$element.ChartHeight}}" r="3" fill="#000"/>
-                            <text x="{{mul $index 50}}" y="{{sub $element.ChartHeight 10}}" text-anchor="middle" font-size="10" fill="#000">{{$element.Temp}}℃</text>
-                            <text x="{{mul $index 50}}" y="110" text-anchor="middle" font-size="9" fill="#000">{{$element.Time}}</text>
+                            <circle cx="{{mul $index 50}}" cy="{{$element.ChartHeight}}" r="3" fill="currentColor"/>
+                            <text x="{{mul $index 50}}" y="{{sub $element.ChartHeight 10}}" text-anchor="middle" font-size="10" fill="currentColor">{{$element.Temp}}℃</text>
+                            <text x="{{mul $index 50}}" y="110" text-anchor="middle" font-size="9" fill="currentColor">{{$element.Time}}</text>
                             {{end}}
                         </svg>
                     </div>
@@ -81,33 +85,33 @@
 
                 <div class="forecast-weather">
                     <h2 class="section-title">今後の天気</h2>
-                    <div class="hourly-forecast">
+                    <ul class="hourly-forecast">
                         {{range $index, $element := .HourlyForecast}}
                         {{if lt $index 12}}
-                        <div class="hourly-item">
+                        <li class="hourly-item">
                             <div class="hourly-time">{{$element.Time}}</div>
                             <div class="hourly-icon">{{$element.WeatherIcon}}</div>
                             <div class="hourly-temp">{{$element.Temp}}℃</div>
                             {{if $element.RainChance}}
                             <div class="hourly-rain">{{$element.RainChance}}</div>
                             {{end}}
-                        </div>
+                        </li>
                         {{end}}
                         {{end}}
-                    </div>
+                    </ul>
 
                     <div class="daily-forecast">
                         <h2 class="section-title">3日間の予報</h2>
-                        <div class="daily-cards">
+                        <ul class="daily-cards">
                             {{range .DailyForecasts}}
-                            <div class="daily-card">
+                            <li class="daily-card">
                                 <div class="daily-date">{{.Date}}</div>
                                 <div class="daily-icon">{{.WeatherIcon}}</div>
                                 <div class="daily-temp">{{.MaxTemp}}℃</div>
                                 <div class="daily-rain">{{.RainChance}}</div>
-                            </div>
+                            </li>
                             {{end}}
-                        </div>
+                        </ul>
                     </div>
                 </div>
             </section>
@@ -233,25 +237,6 @@
             themeToggle.textContent = '☀️';
         }
 
-        // SVGの色をダークモードに対応させる
-        function updateSVGColors() {
-            const isDarkMode = body.classList.contains('dark-mode');
-            const svgElements = document.querySelectorAll('.line-chart line, .line-chart polyline, .line-chart circle, .line-chart text');
-
-            svgElements.forEach(el => {
-                if (el.tagName.toLowerCase() === 'line' || el.tagName.toLowerCase() === 'polyline') {
-                    el.setAttribute('stroke', isDarkMode ? '#e0e0e0' : '#000');
-                } else if (el.tagName.toLowerCase() === 'circle') {
-                    el.setAttribute('fill', isDarkMode ? '#e0e0e0' : '#000');
-                } else if (el.tagName.toLowerCase() === 'text') {
-                    el.setAttribute('fill', isDarkMode ? '#e0e0e0' : '#000');
-                }
-            });
-        }
-
-        // 初期表示時にSVGの色を更新
-        updateSVGColors();
-
         // ボタンクリックでテーマを切り替え
         themeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
@@ -263,9 +248,6 @@
                 themeToggle.textContent = '🌙';
                 localStorage.setItem('theme', 'light');
             }
-
-            // SVGの色も更新
-            updateSVGColors();
         });
     </script>
 </body>
