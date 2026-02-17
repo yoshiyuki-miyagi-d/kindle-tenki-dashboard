@@ -22,6 +22,11 @@ const (
 	MaxEconomyNewsItems    = 10 // 経済ニュースの最大取得数(重複除外前)
 	MaxHatenaItems         = 5  // はてなブックマークの最大表示数
 	HTTPClientTimeout      = 10 * time.Second
+
+	// SVG気温グラフのY座標定数
+	ChartTopY    = 20 // 最高気温のY座標(上部)
+	ChartBottomY = 75 // 最低気温のY座標(下部)
+	ChartMiddleY = 47 // 全気温同一時の中央Y座標 (ChartTopY + ChartBottomY) / 2
 )
 
 // グローバルHTTPクライアント (Keep-Alive接続を再利用)
@@ -222,22 +227,70 @@ func hatenaBookmarkURL(articleURL string) string {
 	return "https://b.hatena.ne.jp/entry/s/" + trimmed
 }
 
+// fetchAndDecodeXML はURLからXMLを取得しデコードする
+func fetchAndDecodeXML[T any](url string) (T, error) {
+	var zero T
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return zero, fmt.Errorf("RSSリクエストの作成に失敗しました(%s): %w", url, err)
+	}
+
+	resp, err := httpClient.Do(req)
+	if err != nil {
+		return zero, fmt.Errorf("RSSの取得に失敗しました(%s): %w", url, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return zero, fmt.Errorf("RSS API Error(%s): %d", url, resp.StatusCode)
+	}
+
+	var result T
+	if err := xml.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return zero, fmt.Errorf("RSSのパースに失敗しました(%s): %w", url, err)
+	}
+
+	return result, nil
+}
+
+// formatRSSDate は日付文字列を "01/02 15:04" 形式に変換する
+func formatRSSDate(dateStr, layout string) string {
+	pubTime, err := time.Parse(layout, dateStr)
+	if err != nil {
+		return dateStr
+	}
+	return pubTime.Format("01/02 15:04")
+}
+
+// rssResults はRSS並列取得の結果をまとめる構造体
+type rssResults struct {
+	news           []NewsItem
+	economyNews    []NewsItem
+	hatenaEntries  []HatenaEntry
+	knowledgeHatena []HatenaEntry
+	hasNewsError            bool
+	hasEconomyNewsError     bool
+	hasHatenaError          bool
+	hasKnowledgeHatenaError bool
+}
+
 func fetchWeatherData() (*WeatherData, error) {
 	cityCode := getEnv("CITY_CODE", "130010") // 東京のデフォルト
 	weatherURL := fmt.Sprintf("https://weather.tsukumijima.net/api/forecast/city/%s", cityCode)
 
-	// コンテキストを作成 (5秒のタイムアウト)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// コンテキスト付きリクエストを作成
 	req, err := http.NewRequestWithContext(ctx, "GET", weatherURL, nil)
 	if err != nil {
 		log.Printf("⚠️  天気APIリクエストの作成に失敗しました: %v", err)
 		return weatherDataAllError(), nil
 	}
 
-	// リクエストを実行
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		log.Printf("⚠️  天気APIの取得に失敗しました: %v", err)
@@ -257,9 +310,22 @@ func fetchWeatherData() (*WeatherData, error) {
 	}
 
 	weatherData := processWeatherData(weatherResponse)
+	rss := fetchAllRSSData()
 
-	// === API呼び出しを並列化 ===
-	// 結果を受け取るための構造体
+	weatherData.News = rss.news
+	weatherData.EconomyNews = rss.economyNews
+	weatherData.HatenaEntries = rss.hatenaEntries
+	weatherData.KnowledgeHatenaEntries = rss.knowledgeHatena
+	weatherData.HasNewsError = rss.hasNewsError
+	weatherData.HasEconomyNewsError = rss.hasEconomyNewsError
+	weatherData.HasHatenaError = rss.hasHatenaError
+	weatherData.HasKnowledgeHatenaError = rss.hasKnowledgeHatenaError
+
+	return weatherData, nil
+}
+
+// fetchAllRSSData は4つのRSS APIをgoroutineで並列取得し、エラー処理・重複除外まで行う
+func fetchAllRSSData() rssResults {
 	type newsResult struct {
 		news []NewsItem
 		err  error
@@ -269,99 +335,132 @@ func fetchWeatherData() (*WeatherData, error) {
 		err     error
 	}
 
-	// チャネルを作成
 	newsCh := make(chan newsResult, 1)
 	economyNewsCh := make(chan newsResult, 1)
 	hatenaCh := make(chan hatenaResult, 1)
 	knowledgeHatenaCh := make(chan hatenaResult, 1)
 
-	// 4つのAPIを並列で呼び出し
 	go func() {
 		news, err := fetchNewsData()
 		newsCh <- newsResult{news: news, err: err}
 	}()
-
 	go func() {
 		economyNews, err := fetchEconomyNewsData()
 		economyNewsCh <- newsResult{news: economyNews, err: err}
 	}()
-
 	go func() {
 		hatena, err := fetchHatenaBookmarks()
 		hatenaCh <- hatenaResult{entries: hatena, err: err}
 	}()
-
 	go func() {
 		knowledgeHatena, err := fetchKnowledgeHatenaBookmarks()
 		knowledgeHatenaCh <- hatenaResult{entries: knowledgeHatena, err: err}
 	}()
 
-	// 結果を受け取る
 	newsRes := <-newsCh
 	economyNewsRes := <-economyNewsCh
 	hatenaRes := <-hatenaCh
 	knowledgeHatenaRes := <-knowledgeHatenaCh
 
-	// ニュースデータの処理
+	var result rssResults
+
 	if newsRes.err != nil {
 		log.Printf("⚠️  ニュースデータの取得に失敗しました: %v", newsRes.err)
-		weatherData.HasNewsError = true
+		result.hasNewsError = true
 	} else {
-		weatherData.News = newsRes.news
+		result.news = newsRes.news
 	}
 
-	// 経済ニュースデータの処理
 	if economyNewsRes.err != nil {
 		log.Printf("⚠️  経済ニュースデータの取得に失敗しました: %v", economyNewsRes.err)
-		weatherData.HasEconomyNewsError = true
+		result.hasEconomyNewsError = true
 	} else {
-		// 主要ニュースと重複する記事を経済ニュースから除外
-		weatherData.EconomyNews = filterDuplicateNews(economyNewsRes.news, weatherData.News)
+		result.economyNews = filterDuplicateNews(economyNewsRes.news, result.news)
 	}
 
-	// はてなブックマーク(総合)データの処理
 	if hatenaRes.err != nil {
 		log.Printf("⚠️  はてなブックマーク(総合)データの取得に失敗しました: %v", hatenaRes.err)
-		weatherData.HasHatenaError = true
+		result.hasHatenaError = true
 	} else {
-		weatherData.HatenaEntries = hatenaRes.entries
+		result.hatenaEntries = hatenaRes.entries
 	}
 
-	// はてなブックマーク(学び)データの処理
 	if knowledgeHatenaRes.err != nil {
 		log.Printf("⚠️  はてなブックマーク(学び)データの取得に失敗しました: %v", knowledgeHatenaRes.err)
-		weatherData.HasKnowledgeHatenaError = true
+		result.hasKnowledgeHatenaError = true
 	} else {
-		// 総合はてなブックマークと重複するエントリーを学びから除外
-		weatherData.KnowledgeHatenaEntries = filterDuplicateHatenaEntries(knowledgeHatenaRes.entries, weatherData.HatenaEntries)
+		result.knowledgeHatena = filterDuplicateHatenaEntries(knowledgeHatenaRes.entries, result.hatenaEntries)
 	}
 
-	return weatherData, nil
+	return result
 }
 
 func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 	now := time.Now()
+	todayForecast := response.Forecasts[0]
 
-	// 今日の天気情報（最初の予報データを使用）
-	var todayForecast = response.Forecasts[0]
+	temperature, minTemp, maxTemp, feelsLike, hasMinTemp := extractTemperatures(response.Forecasts)
+	hourlyForecast := generateHourlyForecasts(response.Forecasts, now.Hour(), temperature)
+	calculateChartHeights(hourlyForecast)
+	dailyForecasts := generateDailyForecasts(response.Forecasts)
 
-	// 温度の処理（文字列から数値に変換）
-	// 今日のデータがnullの場合は明日のデータを使用
-	temperature := 0
-	minTemp := 0
-	maxTemp := 0
-	feelsLike := 0
-	hasMinTemp := false
+	return &WeatherData{
+		Location:       response.Location.City,
+		Temperature:    temperature,
+		MinTemp:        minTemp,
+		MaxTemp:        maxTemp,
+		FeelsLike:      feelsLike,
+		Description:    todayForecast.Telop,
+		WeatherIcon:    getWeatherIcon(todayForecast.Telop),
+		Wind:           todayForecast.Detail.Wind,
+		ChanceOfRain:   []string{todayForecast.ChanceOfRain.T06_12, todayForecast.ChanceOfRain.T12_18, todayForecast.ChanceOfRain.T18_24},
+		UpdateTime:     now.Format("2006/01/02 15:04"),
+		HourlyForecast: hourlyForecast,
+		News:           []NewsItem{},
+		DailyForecasts: dailyForecasts,
+		HasMinTemp:     hasMinTemp,
+	}
+}
+
+// extractTemperatures は予報データから今日/明日の気温情報を抽出する
+func extractTemperatures(forecasts []struct {
+	Date      string `json:"date"`
+	DateLabel string `json:"dateLabel"`
+	Telop     string `json:"telop"`
+	Detail    struct {
+		Weather string `json:"weather"`
+		Wind    string `json:"wind"`
+		Wave    string `json:"wave"`
+	} `json:"detail"`
+	Temperature struct {
+		Min struct {
+			Celsius string `json:"celsius"`
+		} `json:"min"`
+		Max struct {
+			Celsius string `json:"celsius"`
+		} `json:"max"`
+	} `json:"temperature"`
+	ChanceOfRain struct {
+		T00_06 string `json:"T00_06"`
+		T06_12 string `json:"T06_12"`
+		T12_18 string `json:"T12_18"`
+		T18_24 string `json:"T18_24"`
+	} `json:"chanceOfRain"`
+	Image struct {
+		Title string `json:"title"`
+		URL   string `json:"url"`
+	} `json:"image"`
+}) (temperature, minTemp, maxTemp, feelsLike int, hasMinTemp bool) {
+	todayForecast := forecasts[0]
 
 	if todayForecast.Temperature.Max.Celsius != "" {
 		if temp, err := parseTemperature(todayForecast.Temperature.Max.Celsius); err == nil {
 			temperature = temp
 			maxTemp = temp
-			feelsLike = temp // 体感温度は最高気温で代用
+			feelsLike = temp
 		}
-	} else if len(response.Forecasts) >= 2 && response.Forecasts[1].Temperature.Max.Celsius != "" {
-		// 今日のデータがない場合は明日の最高気温を使用
-		if temp, err := parseTemperature(response.Forecasts[1].Temperature.Max.Celsius); err == nil {
+	} else if len(forecasts) >= 2 && forecasts[1].Temperature.Max.Celsius != "" {
+		if temp, err := parseTemperature(forecasts[1].Temperature.Max.Celsius); err == nil {
 			temperature = temp
 			maxTemp = temp
 			feelsLike = temp
@@ -371,155 +470,201 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 	if todayForecast.Temperature.Min.Celsius != "" {
 		if temp, err := parseTemperature(todayForecast.Temperature.Min.Celsius); err == nil {
 			minTemp = temp
-			hasMinTemp = true // 最低気温データが有効
+			hasMinTemp = true
 		}
 	}
 
-	// 風の情報
-	wind := todayForecast.Detail.Wind
+	return
+}
 
-	// 降水確率（6時間ごと）
-	chanceOfRain := []string{
-		todayForecast.ChanceOfRain.T06_12,
-		todayForecast.ChanceOfRain.T12_18,
-		todayForecast.ChanceOfRain.T18_24,
+// generateHourlyForecasts は現在時刻以降の3時間ごとの時間別予報を生成する
+func generateHourlyForecasts(forecasts []struct {
+	Date      string `json:"date"`
+	DateLabel string `json:"dateLabel"`
+	Telop     string `json:"telop"`
+	Detail    struct {
+		Weather string `json:"weather"`
+		Wind    string `json:"wind"`
+		Wave    string `json:"wave"`
+	} `json:"detail"`
+	Temperature struct {
+		Min struct {
+			Celsius string `json:"celsius"`
+		} `json:"min"`
+		Max struct {
+			Celsius string `json:"celsius"`
+		} `json:"max"`
+	} `json:"temperature"`
+	ChanceOfRain struct {
+		T00_06 string `json:"T00_06"`
+		T06_12 string `json:"T06_12"`
+		T12_18 string `json:"T12_18"`
+		T18_24 string `json:"T18_24"`
+	} `json:"chanceOfRain"`
+	Image struct {
+		Title string `json:"title"`
+		URL   string `json:"url"`
+	} `json:"image"`
+}, currentHour int, todayMaxTemp int) []HourlyForecast {
+	if len(forecasts) < 2 {
+		return nil
 	}
 
-	// 時間別予報を生成（現在時刻以降の予報のみ表示）
+	todayForecast := forecasts[0]
+	tomorrowForecast := forecasts[1]
+
+	var tomorrowMinTemp, tomorrowMaxTemp int
+	if tomorrowForecast.Temperature.Min.Celsius != "" {
+		if temp, err := parseTemperature(tomorrowForecast.Temperature.Min.Celsius); err == nil {
+			tomorrowMinTemp = temp
+		}
+	}
+	if tomorrowForecast.Temperature.Max.Celsius != "" {
+		if temp, err := parseTemperature(tomorrowForecast.Temperature.Max.Celsius); err == nil {
+			tomorrowMaxTemp = temp
+		}
+	}
+
+	// 予報時刻のスロット(3時間ごと、72時間分)
+	type forecastSlot struct {
+		hour  int
+		label string
+	}
+	var forecastTimes []forecastSlot
+	for h := 0; h <= 72; h += 3 {
+		forecastTimes = append(forecastTimes, forecastSlot{
+			hour:  h,
+			label: fmt.Sprintf("%02d:00", h%24),
+		})
+	}
+
 	var hourlyForecast []HourlyForecast
-	currentHour := now.Hour()
-
-	if len(response.Forecasts) >= 2 {
-		tomorrowForecast := response.Forecasts[1]
-		var tomorrowMinTemp, tomorrowMaxTemp int
-		if tomorrowForecast.Temperature.Min.Celsius != "" {
-			if minTemp, err := parseTemperature(tomorrowForecast.Temperature.Min.Celsius); err == nil {
-				tomorrowMinTemp = minTemp
-			}
-		}
-		if tomorrowForecast.Temperature.Max.Celsius != "" {
-			if maxTemp, err := parseTemperature(tomorrowForecast.Temperature.Max.Celsius); err == nil {
-				tomorrowMaxTemp = maxTemp
-			}
+	for _, ft := range forecastTimes {
+		if ft.hour <= currentHour {
+			continue
 		}
 
-		// 予報時刻のスロット（3時間ごと、48時間後まで）
-		var forecastTimes []struct {
-			hour  int
-			label string
-		}
+		var temp int
+		var desc string
+		var rainChance string
 
-		// 現在時刻から48時間後までの3時間ごとのスロットを生成
-		for h := 0; h <= 72; h += 3 {
-			hourInDay := h % 24
-			forecastTimes = append(forecastTimes, struct {
-				hour  int
-				label string
-			}{
-				hour:  h,
-				label: fmt.Sprintf("%02d:00", hourInDay),
-			})
-		}
-
-		for _, ft := range forecastTimes {
-			// 現在時刻以降の予報のみ追加
-			if ft.hour > currentHour {
-				var temp int
-				var desc string
-				var rainChance string
-
-				// 24時以降は明日の予報
-				if ft.hour >= 24 {
-					// 明日の予報：時間帯によって気温を調整
-					hourInDay := ft.hour % 24
-					if hourInDay >= 0 && hourInDay < 6 {
-						temp = tomorrowMinTemp
-						rainChance = tomorrowForecast.ChanceOfRain.T00_06
-					} else if hourInDay >= 6 && hourInDay < 12 {
-						temp = tomorrowMaxTemp
-						rainChance = tomorrowForecast.ChanceOfRain.T06_12
-					} else if hourInDay >= 12 && hourInDay < 18 {
-						temp = tomorrowMaxTemp - 2
-						rainChance = tomorrowForecast.ChanceOfRain.T12_18
-					} else {
-						temp = tomorrowMinTemp + 2
-						rainChance = tomorrowForecast.ChanceOfRain.T18_24
-					}
-					desc = tomorrowForecast.Telop
-				} else {
-					// 今日の予報
-					hourInDay := ft.hour
-					// 時間帯によって気温と降水確率を調整
-					if hourInDay >= 0 && hourInDay < 6 {
-						temp = temperature - 4
-						rainChance = todayForecast.ChanceOfRain.T00_06
-					} else if hourInDay >= 6 && hourInDay < 12 {
-						temp = temperature
-						rainChance = todayForecast.ChanceOfRain.T06_12
-					} else if hourInDay >= 12 && hourInDay < 18 {
-						temp = temperature
-						rainChance = todayForecast.ChanceOfRain.T12_18
-					} else {
-						temp = temperature - 2
-						rainChance = todayForecast.ChanceOfRain.T18_24
-					}
-					desc = todayForecast.Telop
-				}
-
-				hourlyForecast = append(hourlyForecast, HourlyForecast{
-					Time:        ft.label,
-					Temp:        temp,
-					Desc:        desc,
-					WeatherIcon: getWeatherIcon(desc),
-					RainChance:  rainChance,
-				})
-
-				// 48時間後まで（最大件数）
-				if len(hourlyForecast) >= MaxHourlyForecastItems {
-					break
-				}
+		if ft.hour >= 24 {
+			// 明日の予報
+			hourInDay := ft.hour % 24
+			if hourInDay < 6 {
+				temp = tomorrowMinTemp
+				rainChance = tomorrowForecast.ChanceOfRain.T00_06
+			} else if hourInDay < 12 {
+				temp = tomorrowMaxTemp
+				rainChance = tomorrowForecast.ChanceOfRain.T06_12
+			} else if hourInDay < 18 {
+				temp = tomorrowMaxTemp - 2
+				rainChance = tomorrowForecast.ChanceOfRain.T12_18
+			} else {
+				temp = tomorrowMinTemp + 2
+				rainChance = tomorrowForecast.ChanceOfRain.T18_24
 			}
-		}
-	}
-
-	// グラフ表示用の高さを計算
-	if len(hourlyForecast) > 0 {
-		minTemp := hourlyForecast[0].Temp
-		maxTemp := hourlyForecast[0].Temp
-		for _, hf := range hourlyForecast {
-			if hf.Temp < minTemp {
-				minTemp = hf.Temp
-			}
-			if hf.Temp > maxTemp {
-				maxTemp = hf.Temp
-			}
-		}
-
-		// SVGのY座標系に合わせて計算 (上が小さい値、下が大きい値)
-		// 最高気温を上部(y=20)、最低気温を下部(y=75)に配置
-		tempRange := maxTemp - minTemp
-		if tempRange == 0 {
-			// 全て同じ気温の場合は中央に配置
-			for i := range hourlyForecast {
-				hourlyForecast[i].ChartHeight = 47 // (75 + 20) / 2
-			}
+			desc = tomorrowForecast.Telop
 		} else {
-			for i := range hourlyForecast {
-				// 最低気温 → heightPercent=75(下部), 最高気温 → heightPercent=20(上部)
-				// Y座標は上が小さいので、温度が高いほど小さいY値にする
-				heightPercent := 75 - ((hourlyForecast[i].Temp-minTemp)*55)/tempRange
-				hourlyForecast[i].ChartHeight = heightPercent
+			// 今日の予報
+			if ft.hour < 6 {
+				temp = todayMaxTemp - 4
+				rainChance = todayForecast.ChanceOfRain.T00_06
+			} else if ft.hour < 12 {
+				temp = todayMaxTemp
+				rainChance = todayForecast.ChanceOfRain.T06_12
+			} else if ft.hour < 18 {
+				temp = todayMaxTemp
+				rainChance = todayForecast.ChanceOfRain.T12_18
+			} else {
+				temp = todayMaxTemp - 2
+				rainChance = todayForecast.ChanceOfRain.T18_24
 			}
+			desc = todayForecast.Telop
+		}
+
+		hourlyForecast = append(hourlyForecast, HourlyForecast{
+			Time:        ft.label,
+			Temp:        temp,
+			Desc:        desc,
+			WeatherIcon: getWeatherIcon(desc),
+			RainChance:  rainChance,
+		})
+
+		if len(hourlyForecast) >= MaxHourlyForecastItems {
+			break
 		}
 	}
 
-	// 3日間の予報を生成
-	var dailyForecasts []DailyForecast
-	dateLabels := []string{"今日", "明日", "明後日"}
-	for i := 0; i < 3 && i < len(response.Forecasts); i++ {
-		forecast := response.Forecasts[i]
+	return hourlyForecast
+}
 
-		// 最高気温と最低気温を取得
+// calculateChartHeights はSVG座標系でのグラフ高さを計算する(スライスを直接変更)
+func calculateChartHeights(hourlyForecast []HourlyForecast) {
+	if len(hourlyForecast) == 0 {
+		return
+	}
+
+	minTemp := hourlyForecast[0].Temp
+	maxTemp := hourlyForecast[0].Temp
+	for _, hf := range hourlyForecast {
+		if hf.Temp < minTemp {
+			minTemp = hf.Temp
+		}
+		if hf.Temp > maxTemp {
+			maxTemp = hf.Temp
+		}
+	}
+
+	tempRange := maxTemp - minTemp
+	if tempRange == 0 {
+		for i := range hourlyForecast {
+			hourlyForecast[i].ChartHeight = ChartMiddleY
+		}
+		return
+	}
+
+	chartYRange := ChartBottomY - ChartTopY
+	for i := range hourlyForecast {
+		hourlyForecast[i].ChartHeight = ChartBottomY - ((hourlyForecast[i].Temp-minTemp)*chartYRange)/tempRange
+	}
+}
+
+// generateDailyForecasts は3日間の日別予報を生成する
+func generateDailyForecasts(forecasts []struct {
+	Date      string `json:"date"`
+	DateLabel string `json:"dateLabel"`
+	Telop     string `json:"telop"`
+	Detail    struct {
+		Weather string `json:"weather"`
+		Wind    string `json:"wind"`
+		Wave    string `json:"wave"`
+	} `json:"detail"`
+	Temperature struct {
+		Min struct {
+			Celsius string `json:"celsius"`
+		} `json:"min"`
+		Max struct {
+			Celsius string `json:"celsius"`
+		} `json:"max"`
+	} `json:"temperature"`
+	ChanceOfRain struct {
+		T00_06 string `json:"T00_06"`
+		T06_12 string `json:"T06_12"`
+		T12_18 string `json:"T12_18"`
+		T18_24 string `json:"T18_24"`
+	} `json:"chanceOfRain"`
+	Image struct {
+		Title string `json:"title"`
+		URL   string `json:"url"`
+	} `json:"image"`
+}) []DailyForecast {
+	dateLabels := []string{"今日", "明日", "明後日"}
+	var dailyForecasts []DailyForecast
+
+	for i := 0; i < 3 && i < len(forecasts); i++ {
+		forecast := forecasts[i]
+
 		var dailyMaxTemp, dailyMinTemp int
 		if forecast.Temperature.Max.Celsius != "" {
 			if temp, err := parseTemperature(forecast.Temperature.Max.Celsius); err == nil {
@@ -532,28 +677,11 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 			}
 		}
 
-		// 降水確率の最大値を取得
 		rainChances := []string{
 			forecast.ChanceOfRain.T00_06,
 			forecast.ChanceOfRain.T06_12,
 			forecast.ChanceOfRain.T12_18,
 			forecast.ChanceOfRain.T18_24,
-		}
-		maxRainChance := "0%"
-		maxPercent := 0
-		for _, rc := range rainChances {
-			if rc != "" && rc != "-" {
-				// %を除去して数値として比較
-				percentStr := rc
-				if len(rc) > 0 && rc[len(rc)-1] == '%' {
-					percentStr = rc[:len(rc)-1]
-				}
-				currentPercent, err := strconv.Atoi(percentStr)
-				if err == nil && currentPercent > maxPercent {
-					maxPercent = currentPercent
-					maxRainChance = rc
-				}
-			}
 		}
 
 		dailyForecasts = append(dailyForecasts, DailyForecast{
@@ -562,26 +690,31 @@ func processWeatherData(response TsukumijimaWeatherResponse) *WeatherData {
 			Description: forecast.Telop,
 			MaxTemp:     dailyMaxTemp,
 			MinTemp:     dailyMinTemp,
-			RainChance:  maxRainChance,
+			RainChance:  maxRainChancePercent(rainChances),
 		})
 	}
 
-	return &WeatherData{
-		Location:       response.Location.City,
-		Temperature:    temperature,
-		MinTemp:        minTemp,
-		MaxTemp:        maxTemp,
-		FeelsLike:      feelsLike,
-		Description:    todayForecast.Telop,
-		WeatherIcon:    getWeatherIcon(todayForecast.Telop),
-		Wind:           wind,
-		ChanceOfRain:   chanceOfRain,
-		UpdateTime:     now.Format("2006/01/02 15:04"),
-		HourlyForecast: hourlyForecast,
-		News:           []NewsItem{}, // 後で設定
-		DailyForecasts: dailyForecasts,
-		HasMinTemp:     hasMinTemp,
+	return dailyForecasts
+}
+
+// maxRainChancePercent は降水確率4スロットから最大値を返す
+func maxRainChancePercent(chances []string) string {
+	maxRainChance := "0%"
+	maxPercent := 0
+	for _, rc := range chances {
+		if rc == "" || rc == "-" {
+			continue
+		}
+		percentStr := rc
+		if len(rc) > 0 && rc[len(rc)-1] == '%' {
+			percentStr = rc[:len(rc)-1]
+		}
+		if currentPercent, err := strconv.Atoi(percentStr); err == nil && currentPercent > maxPercent {
+			maxPercent = currentPercent
+			maxRainChance = rc
+		}
 	}
+	return maxRainChance
 }
 
 func parseTemperature(tempStr string) (int, error) {
@@ -611,280 +744,106 @@ func weatherDataAllError() *WeatherData {
 }
 
 func fetchNewsData() ([]NewsItem, error) {
-	url := "https://www3.nhk.or.jp/rss/news/cat0.xml"
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	rss, err := fetchAndDecodeXML[NHKNewsRSS]("https://www3.nhk.or.jp/rss/news/cat0.xml")
 	if err != nil {
-		return nil, fmt.Errorf("ニュースRSSリクエストの作成に失敗しました: %w", err)
+		return nil, err
 	}
-
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("ニュースRSSの取得に失敗しました: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("ニュースRSS API Error: %d", resp.StatusCode)
-	}
-
-	var rss NHKNewsRSS
-	if err := xml.NewDecoder(resp.Body).Decode(&rss); err != nil {
-		return nil, fmt.Errorf("ニュースRSSのパースに失敗しました: %w", err)
-	}
-
-	var news []NewsItem
-	maxItems := MaxNewsItems
-	if len(rss.Channel.Items) < maxItems {
-		maxItems = len(rss.Channel.Items)
-	}
-
-	for i := 0; i < maxItems; i++ {
-		item := rss.Channel.Items[i]
-		// 日付をパースして表示用にフォーマット
-		pubTime, err := time.Parse("Mon, 02 Jan 2006 15:04:05 -0700", item.PubDate)
-		var formattedDate string
-		if err != nil {
-			formattedDate = item.PubDate
-		} else {
-			formattedDate = pubTime.Format("01/02 15:04")
-		}
-
-		news = append(news, NewsItem{
-			Title:       item.Title,
-			Link:        item.Link,
-			Description: item.Description,
-			PubDate:     formattedDate,
-		})
-	}
-
-	return news, nil
+	return convertRSSItemsToNews(rss.Channel.Items, MaxNewsItems), nil
 }
 
 func fetchEconomyNewsData() ([]NewsItem, error) {
-	url := "https://www3.nhk.or.jp/rss/news/cat5.xml" // 経済ニュースRSS
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	rss, err := fetchAndDecodeXML[NHKNewsRSS]("https://www3.nhk.or.jp/rss/news/cat5.xml")
 	if err != nil {
-		return nil, fmt.Errorf("経済ニュースRSSリクエストの作成に失敗しました: %w", err)
+		return nil, err
 	}
+	return convertRSSItemsToNews(rss.Channel.Items, MaxEconomyNewsItems), nil
+}
 
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("経済ニュースRSSの取得に失敗しました: %w", err)
+// convertRSSItemsToNews はNHKのRSSアイテムをNewsItemスライスに変換する
+func convertRSSItemsToNews(items []RSSItem, maxItems int) []NewsItem {
+	if len(items) < maxItems {
+		maxItems = len(items)
 	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("経済ニュースRSS API Error: %d", resp.StatusCode)
-	}
-
-	var rss NHKNewsRSS
-	if err := xml.NewDecoder(resp.Body).Decode(&rss); err != nil {
-		return nil, fmt.Errorf("経済ニュースRSSのパースに失敗しました: %w", err)
-	}
-
-	var news []NewsItem
-	maxItems := MaxEconomyNewsItems
-	if len(rss.Channel.Items) < maxItems {
-		maxItems = len(rss.Channel.Items)
-	}
-
+	news := make([]NewsItem, 0, maxItems)
 	for i := 0; i < maxItems; i++ {
-		item := rss.Channel.Items[i]
-		// 日付をパースして表示用にフォーマット
-		pubTime, err := time.Parse("Mon, 02 Jan 2006 15:04:05 -0700", item.PubDate)
-		var formattedDate string
-		if err != nil {
-			formattedDate = item.PubDate
-		} else {
-			formattedDate = pubTime.Format("01/02 15:04")
-		}
-
+		item := items[i]
 		news = append(news, NewsItem{
 			Title:       item.Title,
 			Link:        item.Link,
 			Description: item.Description,
-			PubDate:     formattedDate,
+			PubDate:     formatRSSDate(item.PubDate, "Mon, 02 Jan 2006 15:04:05 -0700"),
 		})
 	}
-
-	return news, nil
+	return news
 }
 
 // fetchHatenaBookmarks はてなブックマークの人気エントリーを取得する
 func fetchHatenaBookmarks() ([]HatenaEntry, error) {
-	url := "https://b.hatena.ne.jp/hotentry/all.rss"
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	rss, err := fetchAndDecodeXML[HatenaBookmarkRSS]("https://b.hatena.ne.jp/hotentry/all.rss")
 	if err != nil {
-		return nil, fmt.Errorf("はてなブックマークRSSリクエストの作成に失敗しました: %w", err)
+		return nil, err
 	}
-
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("はてなブックマークRSSの取得に失敗しました: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("はてなブックマークRSS API Error: %d", resp.StatusCode)
-	}
-
-	var rss HatenaBookmarkRSS
-	if err := xml.NewDecoder(resp.Body).Decode(&rss); err != nil {
-		return nil, fmt.Errorf("はてなブックマークRSSのパースに失敗しました: %w", err)
-	}
-
-	var entries []HatenaEntry
-	maxItems := MaxHatenaItems
-	if len(rss.Items) < maxItems {
-		maxItems = len(rss.Items)
-	}
-
-	for i := 0; i < maxItems; i++ {
-		item := rss.Items[i]
-		// 日付をパースして表示用にフォーマット
-		// はてなブックマークの日付形式: 2025-10-30T16:24:16Z
-		pubTime, err := time.Parse("2006-01-02T15:04:05Z", item.Date)
-		var formattedDate string
-		if err != nil {
-			formattedDate = item.Date
-		} else {
-			formattedDate = pubTime.Format("01/02 15:04")
-		}
-
-		// カテゴリを取得 (最初のSubjectを使用)
-		category := ""
-		if len(item.Subjects) > 0 {
-			category = item.Subjects[0]
-		}
-
-		entries = append(entries, HatenaEntry{
-			Title:        item.Title,
-			Link:         item.Link,
-			BookmarkLink: hatenaBookmarkURL(item.Link),
-			Description:  item.Description,
-			PubDate:      formattedDate,
-			Category:     category,
-		})
-	}
-
-	return entries, nil
+	return convertHatenaRSSToEntries(rss.Items, MaxHatenaItems), nil
 }
 
 // fetchKnowledgeHatenaBookmarks はてなブックマークの学びカテゴリの人気エントリーを取得する
 func fetchKnowledgeHatenaBookmarks() ([]HatenaEntry, error) {
-	url := "https://b.hatena.ne.jp/hotentry/knowledge.rss"
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	rss, err := fetchAndDecodeXML[HatenaBookmarkRSS]("https://b.hatena.ne.jp/hotentry/knowledge.rss")
 	if err != nil {
-		return nil, fmt.Errorf("はてなブックマーク(学び)RSSリクエストの作成に失敗しました: %w", err)
+		return nil, err
 	}
+	return convertHatenaRSSToEntries(rss.Items, MaxHatenaItems), nil
+}
 
-	resp, err := httpClient.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("はてなブックマーク(学び)RSSの取得に失敗しました: %w", err)
+// convertHatenaRSSToEntries ははてなブックマークのRSSアイテムをHatenaEntryスライスに変換する
+func convertHatenaRSSToEntries(items []HatenaRSSItem, maxItems int) []HatenaEntry {
+	if len(items) < maxItems {
+		maxItems = len(items)
 	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("はてなブックマーク(学び)RSS API Error: %d", resp.StatusCode)
-	}
-
-	var rss HatenaBookmarkRSS
-	if err := xml.NewDecoder(resp.Body).Decode(&rss); err != nil {
-		return nil, fmt.Errorf("はてなブックマーク(学び)RSSのパースに失敗しました: %w", err)
-	}
-
-	var entries []HatenaEntry
-	maxItems := MaxHatenaItems
-	if len(rss.Items) < maxItems {
-		maxItems = len(rss.Items)
-	}
-
+	entries := make([]HatenaEntry, 0, maxItems)
 	for i := 0; i < maxItems; i++ {
-		item := rss.Items[i]
-		// 日付をパースして表示用にフォーマット
-		pubTime, err := time.Parse("2006-01-02T15:04:05Z", item.Date)
-		var formattedDate string
-		if err != nil {
-			formattedDate = item.Date
-		} else {
-			formattedDate = pubTime.Format("01/02 15:04")
-		}
-
-		// カテゴリを取得 (最初のSubjectを使用)
+		item := items[i]
 		category := ""
 		if len(item.Subjects) > 0 {
 			category = item.Subjects[0]
 		}
-
 		entries = append(entries, HatenaEntry{
 			Title:        item.Title,
 			Link:         item.Link,
 			BookmarkLink: hatenaBookmarkURL(item.Link),
 			Description:  item.Description,
-			PubDate:      formattedDate,
+			PubDate:      formatRSSDate(item.Date, "2006-01-02T15:04:05Z"),
 			Category:     category,
 		})
 	}
+	return entries
+}
 
-	return entries, nil
+// filterDuplicates はexcludeItemsに含まれるキーと重複しないアイテムを最大maxItems件返す
+func filterDuplicates[T any](items, excludeItems []T, getKey func(T) string, maxItems int) []T {
+	excludeKeys := make(map[string]bool, len(excludeItems))
+	for _, item := range excludeItems {
+		excludeKeys[getKey(item)] = true
+	}
+
+	var filtered []T
+	for _, item := range items {
+		if !excludeKeys[getKey(item)] {
+			filtered = append(filtered, item)
+			if len(filtered) >= maxItems {
+				break
+			}
+		}
+	}
+	return filtered
 }
 
 func filterDuplicateNews(economyNews []NewsItem, mainNews []NewsItem) []NewsItem {
-	// 主要ニュースのタイトルをマップに格納
-	mainTitles := make(map[string]bool)
-	for _, item := range mainNews {
-		mainTitles[item.Title] = true
-	}
-
-	// 重複しない経済ニュースを抽出し、最大件数になるまで追加
-	var filtered []NewsItem
-	for _, item := range economyNews {
-		if !mainTitles[item.Title] {
-			filtered = append(filtered, item)
-			if len(filtered) >= MaxNewsItems {
-				break
-			}
-		}
-	}
-
-	return filtered
+	return filterDuplicates(economyNews, mainNews, func(n NewsItem) string { return n.Title }, MaxNewsItems)
 }
 
 func filterDuplicateHatenaEntries(knowledgeEntries []HatenaEntry, generalEntries []HatenaEntry) []HatenaEntry {
-	// 総合はてなブックマークのタイトルをマップに格納
-	generalTitles := make(map[string]bool)
-	for _, item := range generalEntries {
-		generalTitles[item.Title] = true
-	}
-
-	// 重複しない学びはてなブックマークを抽出し、最大件数になるまで追加
-	var filtered []HatenaEntry
-	for _, item := range knowledgeEntries {
-		if !generalTitles[item.Title] {
-			filtered = append(filtered, item)
-			if len(filtered) >= MaxHatenaItems {
-				break
-			}
-		}
-	}
-
-	return filtered
+	return filterDuplicates(knowledgeEntries, generalEntries, func(e HatenaEntry) string { return e.Title }, MaxHatenaItems)
 }
 
 
